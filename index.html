@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accurate Penetration Docs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #11100f;
+            --bg-panel: #1b1a18;
+            --bg-code: #090908;
+            --text-main: #f2eee8;
+            --text-muted: #b8afa5;
+            --text-dim: #7d746b;
+            --accent: #2dd4bf;
+            --accent-dim: rgba(45, 212, 191, 0.10);
+            --purple: #c084fc;
+            --purple-dim: rgba(192, 132, 252, 0.10);
+            --warning: #f59e0b;
+            --warning-dim: rgba(245, 158, 11, 0.10);
+            --border: #2c2925;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            background:
+                radial-gradient(circle at 20% 0%, rgba(45, 212, 191, 0.08), transparent 28rem),
+                linear-gradient(180deg, #151311 0%, var(--bg-body) 48rem);
+            color: var(--text-main);
+            line-height: 1.7;
+        }
+        main {
+            width: min(1120px, calc(100% - 2.5rem));
+            margin: 0 auto;
+            padding: 4rem 0 5rem;
+        }
+        header {
+            margin-bottom: 2.5rem;
+        }
+        .eyebrow {
+            color: var(--accent);
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.65rem;
+        }
+        h1 {
+            font-size: clamp(2rem, 4vw, 3.4rem);
+            line-height: 1.12;
+            letter-spacing: 0;
+            margin-bottom: 0.9rem;
+        }
+        header p {
+            color: var(--text-muted);
+            max-width: 760px;
+            font-size: 1.03rem;
+        }
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .doc-card {
+            display: flex;
+            min-height: 260px;
+            flex-direction: column;
+            justify-content: space-between;
+            text-decoration: none;
+            color: var(--text-main);
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+        }
+        .doc-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(45, 212, 191, 0.5);
+            background: #201f1c;
+        }
+        .doc-card .icon {
+            width: 2.4rem;
+            height: 2.4rem;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-weight: 700;
+            font-size: 0.92rem;
+        }
+        .doc-card h2 {
+            font-size: 1.18rem;
+            margin-bottom: 0.55rem;
+        }
+        .doc-card p {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+        }
+        .doc-card .footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1.4rem;
+            color: var(--text-dim);
+            font-size: 0.82rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .race .icon { color: var(--accent); background: var(--accent-dim); }
+        .face .icon { color: var(--purple); background: var(--purple-dim); }
+        .sound .icon { color: var(--warning); background: var(--warning-dim); }
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .panel {
+            background: rgba(27, 26, 24, 0.72);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+        }
+        .panel h2 {
+            font-size: 1rem;
+            margin-bottom: 0.7rem;
+        }
+        .panel p, .panel li {
+            color: var(--text-muted);
+            font-size: 0.91rem;
+        }
+        .panel ul {
+            list-style: none;
+        }
+        .panel li + li {
+            margin-top: 0.4rem;
+        }
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(255, 255, 255, 0.07);
+            padding: 0.12rem 0.35rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 0.82rem;
+        }
+        @media (max-width: 900px) {
+            main { padding-top: 2.5rem; }
+            .doc-grid, .quick-links { grid-template-columns: 1fr; }
+            .doc-card { min-height: 220px; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <div class="eyebrow">Accurate Penetration</div>
+        <h1>Configuration Documentation</h1>
+        <p>Reference pages for the current TOML configuration systems: inherited RaceConfig overrides, facial expression presets, and sound effect overrides.</p>
+    </header>
+
+    <section class="doc-grid" aria-label="Documentation pages">
+        <a class="doc-card race" href="overrides.html">
+            <div>
+                <div class="icon">RC</div>
+                <h2>RaceConfig Overrides</h2>
+                <p>Per-race and predicate-based physics configuration, including the current <code>Inherits</code> modes, named base configs, and runtime <code>any</code> overlays.</p>
+            </div>
+            <div class="footer"><span>overrides.html</span><span>Open</span></div>
+        </a>
+
+        <a class="doc-card face" href="expressions.html">
+            <div>
+                <div class="icon">FX</div>
+                <h2>Facial Expressions</h2>
+                <p>Facial presets, morph effects, depth scaling, scene context filters, MFEE usage, and how presets participate in RaceConfig inheritance.</p>
+            </div>
+            <div class="footer"><span>expressions.html</span><span>Open</span></div>
+        </a>
+
+        <a class="doc-card sound" href="sound-effects.html">
+            <div>
+                <div class="icon">SE</div>
+                <h2>Sound Effects</h2>
+                <p>Targeted clap and wet sound lists, clap impulse overrides, penetrator predicates, girth matching, wildcard paths, and sound override inheritance.</p>
+            </div>
+            <div class="footer"><span>sound-effects.html</span><span>Open</span></div>
+        </a>
+    </section>
+
+    <section class="quick-links">
+        <div class="panel">
+            <h2>Config Locations</h2>
+            <ul>
+                <li><code>Data/SKSE/Plugins/accurate-penetration.toml</code></li>
+                <li><code>Data/SKSE/Plugins/ppa-override-configs/</code></li>
+                <li><code>Data/SKSE/Plugins/ppa-sound-effect-configs/</code></li>
+            </ul>
+        </div>
+        <div class="panel">
+            <h2>Current Scope</h2>
+            <p>These docs intentionally cover the non-voice settings path. Voice settings are not included here yet.</p>
+        </div>
+    </section>
+
+    <footer>Website-Docs index</footer>
+</main>
+</body>
+</html>
