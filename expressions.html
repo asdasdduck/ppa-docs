@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facial Expressions | Accurate Penetration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #11100f;
+            --bg-panel: #1b1a18;
+            --bg-code: #090908;
+            --text-main: #f2eee8;
+            --text-muted: #b8afa5;
+            --text-dim: #7d746b;
+            --accent: #2dd4bf;
+            --accent-dim: rgba(45, 212, 191, 0.10);
+            --purple: #c084fc;
+            --purple-dim: rgba(192, 132, 252, 0.10);
+            --warning: #f59e0b;
+            --warning-dim: rgba(245, 158, 11, 0.10);
+            --danger: #fb7185;
+            --danger-dim: rgba(251, 113, 133, 0.10);
+            --success: #84cc16;
+            --success-dim: rgba(132, 204, 22, 0.10);
+            --border: #2c2925;
+            --sidebar-width: 280px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.7;
+            display: flex;
+        }
+        nav {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #0c0b0a;
+            padding: 2rem 1.4rem;
+            position: fixed;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            z-index: 10;
+        }
+        nav .logo { font-size: 0.78rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; }
+        nav ul { list-style: none; }
+        nav li { margin-bottom: 0.2rem; }
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.84rem;
+            display: block;
+            padding: 0.36rem 0.65rem;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+        nav a:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
+        nav .nav-section { font-size: 0.68rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin: 1.35rem 0 0.45rem 0.65rem; }
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        main {
+            width: 100%;
+            max-width: 1540px;
+            padding: 3rem 4rem 6rem;
+        }
+        .hero { margin-bottom: 3.5rem; }
+        .hero h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: 0; margin-bottom: 0.75rem; }
+        .hero p { color: var(--text-muted); font-size: 1.04rem; max-width: 760px; }
+        h2 {
+            font-size: 1.35rem;
+            font-weight: 650;
+            margin: 3.2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        h3 { font-size: 1.02rem; font-weight: 650; margin: 1.8rem 0 0.75rem; }
+        p { margin-bottom: 1rem; color: var(--text-muted); }
+        p strong, li strong { color: var(--text-main); }
+        a { color: var(--accent); }
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(255, 255, 255, 0.07);
+            padding: 0.12rem 0.35rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        pre {
+            background: var(--bg-code);
+            color: #d8d2ca;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.1rem 1.25rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.65;
+            margin: 1rem 0 1.4rem;
+        }
+        pre .cm { color: #7d746b; }
+        pre .kw { color: #2dd4bf; }
+        pre .str { color: #a7f3d0; }
+        pre .num { color: #fbbf24; }
+        pre .bool { color: #c084fc; }
+        .callout {
+            padding: 1rem 1.15rem;
+            border-radius: 8px;
+            margin: 1.4rem 0;
+            border-left: 3px solid;
+            background: var(--accent-dim);
+            border-color: var(--accent);
+        }
+        .callout p { margin: 0; }
+        .callout p + p { margin-top: 0.55rem; }
+        .callout-label { font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; color: var(--accent); }
+        .callout-warn { background: var(--warning-dim); border-color: var(--warning); }
+        .callout-warn .callout-label { color: var(--warning); }
+        .callout-danger { background: var(--danger-dim); border-color: var(--danger); }
+        .callout-danger .callout-label { color: var(--danger); }
+        .callout-purple { background: var(--purple-dim); border-color: var(--purple); }
+        .callout-purple .callout-label { color: var(--purple); }
+        .prop-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0 1.5rem;
+            font-size: 0.88rem;
+        }
+        .prop-table th {
+            text-align: left;
+            padding: 0.58rem 0.85rem;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-dim);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+        .prop-table td {
+            padding: 0.62rem 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: top;
+            color: var(--text-muted);
+        }
+        .prop-table td:first-child { color: var(--accent); font-family: 'Fira Code', monospace; font-size: 0.82rem; white-space: nowrap; }
+        .prop-table td:nth-child(2) { color: var(--purple); font-family: 'Fira Code', monospace; font-size: 0.82rem; white-space: nowrap; }
+        .example-block { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; margin: 1.5rem 0; overflow: hidden; }
+        .example-header { padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.04); border-bottom: 1px solid var(--border); font-size: 0.86rem; font-weight: 650; }
+        .example-desc { padding: 1rem; }
+        .example-desc p { margin: 0; }
+        .example-block pre { margin: 0; border: none; border-radius: 0; border-top: 1px solid var(--border); }
+        .ref-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin: 1rem 0 1.5rem; }
+        .ref-box { border: 1px solid var(--border); border-radius: 8px; background: var(--bg-panel); padding: 1rem; }
+        .ref-box h3 { margin-top: 0; color: var(--accent); }
+        .ref-list { columns: 2; column-gap: 1.25rem; color: var(--text-muted); font-family: 'Fira Code', monospace; font-size: 0.8rem; }
+        .step { display: grid; grid-template-columns: 2rem 1fr; gap: 0.75rem; margin: 0.75rem 0; color: var(--text-muted); }
+        .step-number { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--accent-dim); color: var(--accent); font-size: 0.82rem; font-weight: 700; }
+        footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.8rem; }
+        @media (max-width: 960px) {
+            nav { display: none; }
+            .main-wrapper { margin-left: 0; }
+            main { padding: 2rem 1.25rem 4rem; }
+            .prop-table { display: block; overflow-x: auto; }
+            .ref-list { columns: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">Facial Expressions</div>
+    <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#placement">Placement</a></li>
+        <li><a href="#structure">Structure</a></li>
+        <li><a href="#preset-fields">Preset Fields</a></li>
+        <li><a href="#effect-fields">Effect Fields</a></li>
+        <li><a href="#depth">Depth Scaling</a></li>
+        <li><a href="#contexts">Scene Contexts</a></li>
+        <li><a href="#selection">Selection</a></li>
+        <li><a href="#mfee">MFEE</a></li>
+        <li><a href="#reference">Morph Reference</a></li>
+        <div class="nav-section">Examples</div>
+        <li><a href="#ex-basic">Basic Mouth</a></li>
+        <li><a href="#ex-context">Context Variant</a></li>
+        <li><a href="#ex-override">Override File</a></li>
+        <div class="nav-section">Other Docs</div>
+        <li><a href="overrides.html">RaceConfig Overrides</a></li>
+        <li><a href="sound-effects.html">Sound Effects</a></li>
+    </ul>
+</nav>
+
+<div class="main-wrapper">
+<main>
+    <div class="hero">
+        <h1>Facial Expression System</h1>
+        <p>Define facial presets that react to active penetration targets, scene contexts, penetrator size and girth, and penetration depth.</p>
+    </div>
+
+    <section id="overview">
+        <h2>Overview</h2>
+        <p>A facial preset is a group of morph effects. The resolver chooses one winning preset per actor, then applies its effects to phonemes, expressions, modifiers, and optional MFEE morphs.</p>
+        <p>Presets are part of <code>RaceConfig</code>. That means default-inheriting override files keep inherited presets and append their own. The list is sorted by priority after loading.</p>
+    </section>
+
+    <section id="placement">
+        <h2>Placement</h2>
+        <p>Place root defaults in <code>accurate-penetration.toml</code> or place race-specific entries in <code>ppa-override-configs</code>.</p>
+<pre><span class="cm"># Root config or single override file</span>
+<span class="kw">[[FacialPreset]]</span>
+<span class="kw">Targets</span> = [<span class="str">"Mouth"</span>]
+<span class="kw">Priority</span> = <span class="num">10</span></pre>
+<pre><span class="cm"># Inside an array-style RaceConfig override</span>
+<span class="kw">[[Override]]</span>
+<span class="kw">Races</span> = [<span class="str">"Skyrim.esm|013745"</span>]
+
+<span class="kw">[[Override.FacialPreset]]</span>
+<span class="kw">Targets</span> = [<span class="str">"Mouth"</span>]
+<span class="kw">Priority</span> = <span class="num">10</span></pre>
+        <div class="callout callout-purple">
+            <div class="callout-label">Inheritance</div>
+            <p>Because presets are appended to the inherited list, use <code>Inherits = ""</code> on a RaceConfig override when you need the actor to start with no inherited facial presets.</p>
+        </div>
+    </section>
+
+    <section id="structure">
+        <h2>Structure</h2>
+<pre><span class="kw">[[FacialPreset]]</span>
+<span class="kw">Targets</span> = [<span class="str">"Mouth"</span>]
+<span class="kw">Priority</span> = <span class="num">50</span>
+<span class="kw">Smoothing</span> = <span class="num">8.0</span>
+<span class="kw">OverridePhonemes</span> = <span class="bool">true</span>
+
+<span class="kw">[[FacialPreset.Effects]]</span>
+<span class="kw">Type</span> = <span class="str">"Phoneme"</span>
+<span class="kw">Index</span> = <span class="num">1</span>
+<span class="kw">TargetValue</span> = <span class="num">0.8</span>
+
+<span class="kw">[[FacialPreset.Effects]]</span>
+<span class="kw">Type</span> = <span class="str">"Modifier"</span>
+<span class="kw">Index</span> = <span class="num">12</span>
+<span class="kw">TargetValue</span> = <span class="num">0.5</span></pre>
+    </section>
+
+    <section id="preset-fields">
+        <h2>Preset Fields</h2>
+        <table class="prop-table">
+            <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>Targets</td><td>string or string[]</td><td>Optional active targets. Accepted values are <code>Mouth</code>, <code>Vagina</code>, <code>Anus</code>, and <code>Hands</code>. If omitted, the preset can match any active target.</td></tr>
+                <tr><td>Contexts</td><td>string or string[]</td><td>Optional scene context flags. All listed contexts must be present.</td></tr>
+                <tr><td>PenisSizeMin</td><td>float</td><td>Minimum penetrator size. <code>0</code> disables the minimum.</td></tr>
+                <tr><td>PenisSizeMax</td><td>float</td><td>Maximum penetrator size. <code>0</code> disables the maximum.</td></tr>
+                <tr><td>PenisGirthMin</td><td>float</td><td>Minimum penetrator girth. <code>0</code> disables the minimum.</td></tr>
+                <tr><td>PenisGirthMax</td><td>float</td><td>Maximum penetrator girth. <code>0</code> disables the maximum.</td></tr>
+                <tr><td>Priority</td><td>int</td><td>Higher priority wins among matching presets.</td></tr>
+                <tr><td>Smoothing</td><td>float</td><td>How quickly morph values approach the target. Default is <code>8.0</code>.</td></tr>
+                <tr><td>OverridePhonemes</td><td>bool</td><td>Zeros phonemes not driven by the winning preset. Legacy alias <code>OverridePhoneme</code> is still accepted.</td></tr>
+                <tr><td>OverrideExpressions</td><td>bool</td><td>Zeros expressions not driven by the winning preset.</td></tr>
+                <tr><td>OverrideModifiers</td><td>bool</td><td>Zeros modifiers not driven by the winning preset.</td></tr>
+            </tbody>
+        </table>
+        <div class="callout callout-warn">
+            <div class="callout-label">Targets Are Optional</div>
+            <p>The loader does not require <code>Targets</code>. A targetless preset can match any active target and uses the strongest active target input for size, girth, and depth calculations.</p>
+        </div>
+    </section>
+
+    <section id="effect-fields">
+        <h2>Effect Fields</h2>
+        <table class="prop-table">
+            <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>Type</td><td>string</td><td><code>Phoneme</code>, <code>Expression</code>, <code>Modifier</code>, or <code>MFEE</code>. Defaults to <code>Phoneme</code> if omitted or invalid.</td></tr>
+                <tr><td>Index</td><td>int</td><td>Numeric morph index for phoneme, expression, and modifier effects.</td></tr>
+                <tr><td>MorphCategory</td><td>string</td><td>MFEE category name.</td></tr>
+                <tr><td>MorphName</td><td>string</td><td>MFEE morph name.</td></tr>
+                <tr><td>TargetValue</td><td>float</td><td>Value reached at full effect strength. Default is <code>1.0</code>.</td></tr>
+                <tr><td>MinTargetValue</td><td>float</td><td>Starting value when depth scaling is active. Default is <code>0.0</code>.</td></tr>
+                <tr><td>MinPenetrationDepth</td><td>float</td><td>Depth where scaling starts. Negative values are clamped to <code>0.0</code>.</td></tr>
+                <tr><td>MaxPenetrationDepth</td><td>float</td><td>Depth where scaling reaches <code>TargetValue</code>. Negative values are clamped to <code>0.0</code>.</td></tr>
+            </tbody>
+        </table>
+        <p>If <code>MinPenetrationDepth</code> is greater than <code>MaxPenetrationDepth</code> and max is above zero, the loader swaps them.</p>
+    </section>
+
+    <section id="depth">
+        <h2>Depth Scaling</h2>
+        <p>An effect uses depth scaling when <code>MaxPenetrationDepth</code> is greater than <code>MinPenetrationDepth</code>. The value interpolates from <code>MinTargetValue</code> to <code>TargetValue</code> across that depth range.</p>
+<pre><span class="kw">[[FacialPreset.Effects]]</span>
+<span class="kw">Type</span> = <span class="str">"Expression"</span>
+<span class="kw">Index</span> = <span class="num">15</span>
+<span class="kw">MinTargetValue</span> = <span class="num">0.2</span>
+<span class="kw">TargetValue</span> = <span class="num">1.0</span>
+<span class="kw">MinPenetrationDepth</span> = <span class="num">2.0</span>
+<span class="kw">MaxPenetrationDepth</span> = <span class="num">10.0</span></pre>
+    </section>
+
+    <section id="contexts">
+        <h2>Scene Contexts</h2>
+        <p>These strings are accepted by the settings loader. A preset with multiple contexts requires all of them.</p>
+        <table class="prop-table">
+            <thead><tr><th>Context</th><th>Description</th><th>Notes</th></tr></thead>
+            <tbody>
+                <tr><td>Vaginal</td><td>Vaginal scene context.</td><td>Can be combined with tone tags.</td></tr>
+                <tr><td>Anal</td><td>Anal scene context.</td><td></td></tr>
+                <tr><td>Oral</td><td>Oral scene context.</td><td></td></tr>
+                <tr><td>Aggressive</td><td>Aggressive scene context.</td><td></td></tr>
+                <tr><td>FemDom</td><td>Female-dominant scene context.</td><td></td></tr>
+                <tr><td>Loving</td><td>Loving scene context.</td><td></td></tr>
+                <tr><td>Dirty</td><td>Dirty scene context.</td><td></td></tr>
+                <tr><td>Boobjob</td><td>Boobjob context.</td><td></td></tr>
+                <tr><td>Handjob</td><td>Handjob context.</td><td></td></tr>
+                <tr><td>Footjob</td><td>Footjob context.</td><td></td></tr>
+                <tr><td>Masturbation</td><td>Masturbation context.</td><td></td></tr>
+            </tbody>
+        </table>
+<pre><span class="kw">[[FacialPreset]]</span>
+<span class="kw">Targets</span> = [<span class="str">"Vagina"</span>]
+<span class="kw">Contexts</span> = [<span class="str">"Vaginal"</span>, <span class="str">"Aggressive"</span>]
+<span class="kw">Priority</span> = <span class="num">20</span></pre>
+    </section>
+
+    <section id="selection">
+        <h2>Selection</h2>
+        <p>The update loop chooses one active preset per actor.</p>
+        <div class="step"><span class="step-number">1</span><p>The preset must match at least one active target, or have no targets.</p></div>
+        <div class="step"><span class="step-number">2</span><p>Context, size, and girth conditions must pass.</p></div>
+        <div class="step"><span class="step-number">3</span><p>The highest priority matching preset wins.</p></div>
+        <p>When a preset has multiple targets, size, girth, and depth calculations use the maximum values among the relevant active target inputs.</p>
+    </section>
+
+    <section id="mfee">
+        <h2>MFEE</h2>
+        <p>MFEE effects use <code>MorphCategory</code> and <code>MorphName</code> instead of a numeric index.</p>
+<pre><span class="kw">[[FacialPreset.Effects]]</span>
+<span class="kw">Type</span> = <span class="str">"MFEE"</span>
+<span class="kw">MorphCategory</span> = <span class="str">"Misc"</span>
+<span class="kw">MorphName</span> = <span class="str">"Biting_lips"</span>
+<span class="kw">TargetValue</span> = <span class="num">100.0</span></pre>
+        <div class="callout callout-purple">
+            <div class="callout-label">Scale</div>
+            <p>Standard Skyrim phoneme, expression, and modifier effects normally use a <code>0.0</code> to <code>1.0</code> scale. MFEE morphs commonly use a <code>0</code> to <code>100</code> scale.</p>
+        </div>
+    </section>
+
+    <section id="reference">
+        <h2>Morph Reference</h2>
+        <div class="ref-grid">
+            <div class="ref-box">
+                <h3>Phonemes 0-15</h3>
+                <div class="ref-list">
+                    0 Aah<br>
+                    1 BigAah<br>
+                    2 BMP<br>
+                    3 ChJSh<br>
+                    4 DST<br>
+                    5 Eee<br>
+                    6 Eh<br>
+                    7 FV<br>
+                    8 I<br>
+                    9 K<br>
+                    10 N<br>
+                    11 Oh<br>
+                    12 OohQ<br>
+                    13 R<br>
+                    14 Th<br>
+                    15 W
+                </div>
+            </div>
+            <div class="ref-box">
+                <h3>Expressions 0-16</h3>
+                <div class="ref-list">
+                    0 Dialogue Anger<br>
+                    1 Dialogue Fear<br>
+                    2 Dialogue Happy<br>
+                    3 Dialogue Sad<br>
+                    4 Dialogue Surprise<br>
+                    5 Dialogue Puzzled<br>
+                    6 Dialogue Disgusted<br>
+                    7 Mood Neutral<br>
+                    8 Mood Anger<br>
+                    9 Mood Fear<br>
+                    10 Mood Happy<br>
+                    11 Mood Sad<br>
+                    12 Mood Surprise<br>
+                    13 Mood Puzzled<br>
+                    14 Mood Disgusted<br>
+                    15 Combat Shout<br>
+                    16 Combat Anger
+                </div>
+            </div>
+            <div class="ref-box">
+                <h3>Modifiers 0-13</h3>
+                <div class="ref-list">
+                    0 Blink Left<br>
+                    1 Blink Right<br>
+                    2 Brow Down Left<br>
+                    3 Brow Down Right<br>
+                    4 Brow In Left<br>
+                    5 Brow In Right<br>
+                    6 Brow Up Left<br>
+                    7 Brow Up Right<br>
+                    8 Look Down<br>
+                    9 Look Left<br>
+                    10 Look Right<br>
+                    11 Look Up<br>
+                    12 Squint Left<br>
+                    13 Squint Right
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ex-basic">
+        <h2>Example: Basic Mouth</h2>
+        <div class="example-block">
+            <div class="example-header">Default-style oral preset</div>
+            <div class="example-desc">
+                <p>Drives a blended open-mouth shape and zeroes other phonemes while active.</p>
+            </div>
+<pre><span class="kw">[[FacialPreset]]</span>
+<span class="kw">Targets</span> = [<span class="str">"Mouth"</span>]
+<span class="kw">Priority</span> = <span class="num">99999</span>
+<span class="kw">OverridePhonemes</span> = <span class="bool">true</span>
+<span class="kw">Smoothing</span> = <span class="num">8.0</span>
+
+<span class="kw">[[FacialPreset.Effects]]</span>
+<span class="kw">Type</span> = <span class="str">"Phoneme"</span>
+<span class="kw">Index</span> = <span class="num">0</span>
+<span class="kw">TargetValue</span> = <span class="num">0.75</span>
+
+<span class="kw">[[FacialPreset.Effects]]</span>
+<span class="kw">Type</span> = <span class="str">"Phoneme"</span>
+<span class="kw">Index</span> = <span class="num">1</span>
+<span class="kw">TargetValue</span> = <span class="num">0.75</span>
+
+<span class="kw">[[FacialPreset.Effects]]</span>
+<span class="kw">Type</span> = <span class="str">"Phoneme"</span>
+<span class="kw">Index</span> = <span class="num">5</span>
+<span class="kw">TargetValue</span> = <span class="num">1.0</span></pre>
+        </div>
+    </section>
+
+    <section id="ex-context">
+        <h2>Example: Context Variant</h2>
+<pre><span class="kw">[[FacialPreset]]</span>
+<span class="kw">Targets</span> = [<span class="str">"Vagina"</span>]
+<span class="kw">Contexts</span> = [<span class="str">"Aggressive"</span>]
+<span class="kw">Priority</span> = <span class="num">25</span>
+<span class="kw">OverrideExpressions</span> = <span class="bool">true</span>
+<span class="kw">OverrideModifiers</span> = <span class="bool">true</span>
+
+<span class="kw">[[FacialPreset.Effects]]</span>
+<span class="kw">Type</span> = <span class="str">"Expression"</span>
+<span class="kw">Index</span> = <span class="num">15</span>
+<span class="kw">MinTargetValue</span> = <span class="num">0.2</span>
+<span class="kw">TargetValue</span> = <span class="num">1.0</span>
+<span class="kw">MinPenetrationDepth</span> = <span class="num">2.0</span>
+<span class="kw">MaxPenetrationDepth</span> = <span class="num">12.0</span></pre>
+    </section>
+
+    <section id="ex-override">
+        <h2>Example: Override File</h2>
+        <p>This override starts from a blank RaceConfig, defines its own race predicate, and adds only the facial presets shown here.</p>
+<pre><span class="kw">Inherits</span> = <span class="str">""</span>
+<span class="kw">Races</span> = [<span class="str">"SomeRaceMod.esp|001234"</span>]
+
+<span class="kw">[[FacialPreset]]</span>
+<span class="kw">Targets</span> = [<span class="str">"Mouth"</span>]
+<span class="kw">Priority</span> = <span class="num">10</span>
+
+<span class="kw">[[FacialPreset.Effects]]</span>
+<span class="kw">Type</span> = <span class="str">"MFEE"</span>
+<span class="kw">MorphCategory</span> = <span class="str">"Misc"</span>
+<span class="kw">MorphName</span> = <span class="str">"EXPR2_Mouth_Open_Wide"</span>
+<span class="kw">TargetValue</span> = <span class="num">90.0</span></pre>
+    </section>
+
+    <footer>Accurate Penetration facial expression documentation</footer>
+</main>
+</div>
+
+</body>
+</html>

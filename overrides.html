@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RaceConfig Overrides | Accurate Penetration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #11100f;
+            --bg-panel: #1b1a18;
+            --bg-code: #090908;
+            --text-main: #f2eee8;
+            --text-muted: #b8afa5;
+            --text-dim: #7d746b;
+            --accent: #2dd4bf;
+            --accent-dim: rgba(45, 212, 191, 0.10);
+            --purple: #c084fc;
+            --purple-dim: rgba(192, 132, 252, 0.10);
+            --warning: #f59e0b;
+            --warning-dim: rgba(245, 158, 11, 0.10);
+            --danger: #fb7185;
+            --danger-dim: rgba(251, 113, 133, 0.10);
+            --success: #84cc16;
+            --success-dim: rgba(132, 204, 22, 0.10);
+            --border: #2c2925;
+            --sidebar-width: 280px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.7;
+            display: flex;
+        }
+        nav {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #0c0b0a;
+            padding: 2rem 1.4rem;
+            position: fixed;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            z-index: 10;
+        }
+        nav .logo { font-size: 0.78rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; }
+        nav ul { list-style: none; }
+        nav li { margin-bottom: 0.2rem; }
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.84rem;
+            display: block;
+            padding: 0.36rem 0.65rem;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+        nav a:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
+        nav .nav-section { font-size: 0.68rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin: 1.35rem 0 0.45rem 0.65rem; }
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        main {
+            width: 100%;
+            max-width: 1540px;
+            padding: 3rem 4rem 6rem;
+        }
+        .hero { margin-bottom: 3.5rem; }
+        .hero h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: 0; margin-bottom: 0.75rem; }
+        .hero p { color: var(--text-muted); font-size: 1.04rem; max-width: 760px; }
+        h2 {
+            font-size: 1.35rem;
+            font-weight: 650;
+            margin: 3.2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        h3 { font-size: 1.02rem; font-weight: 650; margin: 1.8rem 0 0.75rem; }
+        h4 { font-size: 0.92rem; font-weight: 650; margin: 1.4rem 0 0.45rem; color: var(--accent); }
+        p { margin-bottom: 1rem; color: var(--text-muted); }
+        p strong, li strong { color: var(--text-main); }
+        a { color: var(--accent); }
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(255, 255, 255, 0.07);
+            padding: 0.12rem 0.35rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        pre {
+            background: var(--bg-code);
+            color: #d8d2ca;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.1rem 1.25rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.65;
+            margin: 1rem 0 1.4rem;
+        }
+        pre .cm { color: #7d746b; }
+        pre .kw { color: #2dd4bf; }
+        pre .str { color: #a7f3d0; }
+        pre .num { color: #fbbf24; }
+        pre .bool { color: #c084fc; }
+        .callout {
+            padding: 1rem 1.15rem;
+            border-radius: 8px;
+            margin: 1.4rem 0;
+            border-left: 3px solid;
+            background: var(--accent-dim);
+            border-color: var(--accent);
+        }
+        .callout p { margin: 0; }
+        .callout p + p { margin-top: 0.55rem; }
+        .callout-label { font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; color: var(--accent); }
+        .callout-warn { background: var(--warning-dim); border-color: var(--warning); }
+        .callout-warn .callout-label { color: var(--warning); }
+        .callout-danger { background: var(--danger-dim); border-color: var(--danger); }
+        .callout-danger .callout-label { color: var(--danger); }
+        .callout-purple { background: var(--purple-dim); border-color: var(--purple); }
+        .callout-purple .callout-label { color: var(--purple); }
+        .callout-success { background: var(--success-dim); border-color: var(--success); }
+        .callout-success .callout-label { color: var(--success); }
+        .prop-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0 1.5rem;
+            font-size: 0.88rem;
+        }
+        .prop-table th {
+            text-align: left;
+            padding: 0.58rem 0.85rem;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-dim);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+        .prop-table td {
+            padding: 0.62rem 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: top;
+            color: var(--text-muted);
+        }
+        .prop-table td:first-child { color: var(--accent); font-family: 'Fira Code', monospace; font-size: 0.82rem; white-space: nowrap; }
+        .prop-table td:nth-child(2) { color: var(--purple); font-family: 'Fira Code', monospace; font-size: 0.82rem; white-space: nowrap; }
+        .example-block { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; margin: 1.5rem 0; overflow: hidden; }
+        .example-header { padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.04); border-bottom: 1px solid var(--border); font-size: 0.86rem; font-weight: 650; }
+        .example-desc { padding: 1rem; }
+        .example-desc p { margin: 0; }
+        .example-block pre { margin: 0; border: none; border-radius: 0; border-top: 1px solid var(--border); }
+        .step { display: grid; grid-template-columns: 2rem 1fr; gap: 0.75rem; margin: 0.75rem 0; color: var(--text-muted); }
+        .step-number { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--accent-dim); color: var(--accent); font-size: 0.82rem; font-weight: 700; }
+        footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.8rem; }
+        @media (max-width: 960px) {
+            nav { display: none; }
+            .main-wrapper { margin-left: 0; }
+            main { padding: 2rem 1.25rem 4rem; }
+            .prop-table { display: block; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">RaceConfig Overrides</div>
+    <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#main-config">Main Config</a></li>
+        <li><a href="#files">Override Files</a></li>
+        <li><a href="#inheritance">Inheritance</a></li>
+        <li><a href="#resolution">Resolution</a></li>
+        <div class="nav-section">Matching</div>
+        <li><a href="#formids">FormIDs</a></li>
+        <li><a href="#predicates">Predicates</a></li>
+        <li><a href="#scope">Scope</a></li>
+        <div class="nav-section">RaceConfig Fields</div>
+        <li><a href="#orifice-position">Orifice Positions</a></li>
+        <li><a href="#opening">Opening Physics</a></li>
+        <li><a href="#penis">Penis</a></li>
+        <li><a href="#animation">Animation</a></li>
+        <li><a href="#hands">Hands</a></li>
+        <li><a href="#solver">Solver</a></li>
+        <li><a href="#facial">Facial Presets</a></li>
+        <div class="nav-section">Examples</div>
+        <li><a href="#ex-base">Named Base</a></li>
+        <li><a href="#ex-overlay">Any Overlay</a></li>
+        <li><a href="#debugging">Debugging</a></li>
+        <div class="nav-section">Other Docs</div>
+        <li><a href="expressions.html">Facial Expressions</a></li>
+        <li><a href="sound-effects.html">Sound Effects</a></li>
+    </ul>
+</nav>
+
+<div class="main-wrapper">
+<main>
+    <div class="hero">
+        <h1>RaceConfig Override System</h1>
+        <p>Configure per-race and conditional physics behavior through TOML. The current system supports load-time inheritance, named base configs, and runtime overlays with <code>Inherits = "any"</code>.</p>
+    </div>
+
+    <section id="overview">
+        <h2>Overview</h2>
+        <p><code>accurate-penetration.toml</code> supplies the default <code>RaceConfig</code>. Files in <code>ppa-override-configs</code> can then replace or layer fields for actors that match race and predicate rules.</p>
+        <p>Every override is evaluated as a predicate set. A race restriction is just a race predicate, and an override with no predicates matches every actor. Use that intentionally for fallback configs or broad overlays.</p>
+        <div class="callout callout-warn">
+            <div class="callout-label">Changed Behavior</div>
+            <p>The old model was effectively "one race override wins." The current model first resolves each override's <code>Inherits</code> base, then at runtime applies matching <code>any</code> overlays above the selected base. Multiple configs can contribute to the final snapshot.</p>
+        </div>
+    </section>
+
+    <section id="main-config">
+        <h2>Main Config</h2>
+        <p>The main file is loaded from:</p>
+<pre>Data/SKSE/Plugins/accurate-penetration.toml</pre>
+        <p>It can contain global behavior sections plus the same <code>RaceConfig</code> tables documented below. Those root-level <code>RaceConfig</code> fields become <code>Settings::Defaults</code>, which is the base for normal overrides.</p>
+
+        <h3>General</h3>
+        <table class="prop-table">
+            <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>HookPosition</td><td>int</td><td>Selects the update hook position used by the plugin.</td></tr>
+                <tr><td>HandleOpeningPhysics</td><td>bool</td><td>Enables or disables visual opening physics.</td></tr>
+                <tr><td>FutasUseAnus</td><td>bool</td><td>Routes futa penetrated actors to anal handling when applicable.</td></tr>
+                <tr><td>IgnoredSceneActorCount</td><td>int</td><td>Scene actor count limit used when deciding whether to ignore a scene.</td></tr>
+                <tr><td>IgnoreMaleActors</td><td>bool</td><td>Skips male penetrated actors for orifice handling.</td></tr>
+                <tr><td>EnableExpressionSystem</td><td>bool</td><td>Enables the facial preset system.</td></tr>
+                <tr><td>FreecamAudioFix</td><td>bool</td><td>Applies the free camera audio behavior fix.</td></tr>
+                <tr><td>UseSkyrimUI</td><td>bool</td><td>Uses Skyrim UI integration where supported by the menu code.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Hotkeys and Debug</h3>
+        <table class="prop-table">
+            <thead><tr><th>Property</th><th>Section</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>ConsoleOnly</td><td>[Hotkeys]</td><td>Only accept hotkeys while the console is open.</td></tr>
+                <tr><td>HotkeyWhileHoldingShiftOnly</td><td>[Hotkeys]</td><td>Require Shift while using configured hotkeys.</td></tr>
+                <tr><td>Pause</td><td>[Hotkeys]</td><td>Toggle physics on or off.</td></tr>
+                <tr><td>Reload</td><td>[Hotkeys]</td><td>Reload config files.</td></tr>
+                <tr><td>SelectActor</td><td>[Hotkeys]</td><td>Select an actor for editor actions.</td></tr>
+                <tr><td>SpeedUpAnimKey</td><td>[Hotkeys]</td><td>Speed up the current animation.</td></tr>
+                <tr><td>SlowDownAnimKey</td><td>[Hotkeys]</td><td>Slow down the current animation.</td></tr>
+                <tr><td>Logging</td><td>[Debug]</td><td>Verbose loader and resolver logging.</td></tr>
+                <tr><td>Bones</td><td>[Debug]</td><td>Visual bone debug output.</td></tr>
+                <tr><td>Collision</td><td>[Debug]</td><td>Visual collision/orifice debug output.</td></tr>
+                <tr><td>Penis</td><td>[Debug]</td><td>Visual penis chain debug output.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="files">
+        <h2>Override Files</h2>
+        <p>Race override files are loaded from:</p>
+<pre>Data/SKSE/Plugins/ppa-override-configs/</pre>
+        <p>Files are sorted by filename in reverse alphabetical order. The first loaded file receives the lowest priority, and priority increases as loading continues. In practice, a file such as <code>00_high_priority.toml</code> loads after <code>99_fallback.toml</code> and wins over it.</p>
+        <p>A file can be a single root-level override or can contain multiple <code>[[Override]]</code> tables.</p>
+
+<pre><span class="cm"># Single override file</span>
+<span class="kw">Races</span> = [<span class="str">"Skyrim.esm|013745"</span>]
+<span class="kw">Inherits</span> = <span class="str">"default"</span>
+
+<span class="kw">[Vagina]</span>
+<span class="kw">Scale</span> = <span class="num">2.5</span></pre>
+
+<pre><span class="cm"># Multiple overrides in one file</span>
+<span class="kw">[[Override]]</span>
+<span class="kw">Races</span> = [<span class="str">"Skyrim.esm|0131E8"</span>]
+
+<span class="kw">[Override.Penis]</span>
+<span class="kw">Bones</span> = [<span class="str">"BearD 4"</span>, <span class="str">"BearD 5"</span>, <span class="str">"BearD 6"</span>]
+<span class="kw">LocalForwardAxis</span> = [<span class="num">1</span>, <span class="num">0</span>, <span class="num">0</span>]
+
+<span class="kw">[[Override]]</span>
+<span class="kw">Races</span> = [<span class="str">"Skyrim.esm|0131E7"</span>]
+
+<span class="kw">[Override.Penis]</span>
+<span class="kw">Bones</span> = [<span class="str">"WolfPenis01"</span>, <span class="str">"WolfPenis02"</span>, <span class="str">"WolfPenis03"</span>]
+<span class="kw">LocalForwardAxis</span> = [<span class="num">1</span>, <span class="num">0</span>, <span class="num">0</span>]</pre>
+    </section>
+
+    <section id="inheritance">
+        <h2>Inheritance</h2>
+        <p><code>Inherits</code> controls how an override is initialized before its own fields are applied.</p>
+        <table class="prop-table">
+            <thead><tr><th>Value</th><th>Mode</th><th>Behavior</th></tr></thead>
+            <tbody>
+                <tr><td>missing</td><td>Default</td><td>Starts from <code>Settings::Defaults</code>, meaning the root <code>accurate-penetration.toml</code> RaceConfig.</td></tr>
+                <tr><td>"default"</td><td>Default</td><td>Same as missing. This is the legacy and safest behavior.</td></tr>
+                <tr><td>""</td><td>None</td><td>Starts from a blank <code>RaceConfig{}</code>. Only fields provided by the override are populated.</td></tr>
+                <tr><td>"any"</td><td>Any overlay</td><td>Does not become the base config. At runtime, matching fields are layered onto the next matching non-<code>any</code> base or onto defaults.</td></tr>
+                <tr><td>"some_file"</td><td>Named</td><td>Starts from the resolved override in <code>some_file.toml</code>. The name is the lowercase file stem.</td></tr>
+            </tbody>
+        </table>
+        <div class="callout callout-purple">
+            <div class="callout-label">Named Bases</div>
+            <p>Named inheritance references a file stem, not a display name. If a file contains multiple <code>[[Override]]</code> entries, only the first one is addressable by that stem. Put reusable base configs in their own file.</p>
+        </div>
+        <div class="callout callout-warn">
+            <div class="callout-label">Fallbacks</div>
+            <p>If a named base is missing, the override falls back to defaults. If a named base points at an <code>any</code> overlay, the loader uses a blank base and logs a warning. Cycles are detected and broken with a blank base.</p>
+        </div>
+    </section>
+
+    <section id="resolution">
+        <h2>Resolution</h2>
+        <p>When the plugin needs a config for an actor, it walks matching overrides in priority order.</p>
+        <div class="step"><span class="step-number">1</span><p>All overrides are sorted highest priority first.</p></div>
+        <div class="step"><span class="step-number">2</span><p>Matching <code>Inherits = "any"</code> overrides are collected as overlays while scanning.</p></div>
+        <div class="step"><span class="step-number">3</span><p>The first matching non-<code>any</code> override becomes the base. If no base matches, defaults are used.</p></div>
+        <div class="step"><span class="step-number">4</span><p>Collected overlays are applied lowest priority first, so the highest priority overlay wins field conflicts.</p></div>
+        <p>Only overlays above the selected base are applied. A lower-priority overlay below the chosen base is not considered for that actor.</p>
+    </section>
+
+    <section id="formids">
+        <h2>FormIDs</h2>
+        <p>Race restrictions can be written as <code>Races</code>, <code>Race</code>, <code>PenetratedRaces</code>, or <code>PenetratedRace</code>. Each accepts either a string or an array of strings.</p>
+<pre><span class="kw">Races</span> = [
+    <span class="str">"Skyrim.esm|013745"</span>,       <span class="cm"># plugin-local ID, recommended</span>
+    <span class="str">"Dawnguard.esm|00283A"</span>,
+    <span class="str">"0x0200C5F0"</span>,              <span class="cm"># full runtime FormID</span>
+]</pre>
+        <p>With <code>PluginName|LocalID</code>, the loader resolves normal and light plugins through Skyrim's data handler. Without a plugin name, strings with seven or more hex characters are treated as full runtime FormIDs; shorter strings default to <code>Skyrim.esm</code>.</p>
+    </section>
+
+    <section id="predicates">
+        <h2>Predicates</h2>
+        <p>Predicates can live directly on the override through race keys, or under a <code>[Predicates]</code> table. All predicates must pass.</p>
+        <table class="prop-table">
+            <thead><tr><th>Predicate</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>Races / Race</td><td>string or string[]</td><td>Matches the actor's race FormID.</td></tr>
+                <tr><td>PenetratedRaces / PenetratedRace</td><td>string or string[]</td><td>Alias for race matching, shared with sound effect config syntax.</td></tr>
+                <tr><td>IsSex</td><td>int[]</td><td>Matches actor sex. Skyrim values are <code>0</code> male and <code>1</code> female.</td></tr>
+                <tr><td>HasAllBones</td><td>string[]</td><td>Requires every listed skeleton node to exist on the actor's loaded 3D.</td></tr>
+                <tr><td>HasOneBone</td><td>string[]</td><td>Requires at least one listed skeleton node to exist.</td></tr>
+            </tbody>
+        </table>
+<pre><span class="kw">Races</span> = [<span class="str">"Skyrim.esm|013745"</span>]
+
+<span class="kw">[Predicates]</span>
+<span class="kw">IsSex</span> = [<span class="num">1</span>]
+<span class="kw">HasAllBones</span> = [<span class="str">"VaginaB1"</span>, <span class="str">"Clitoral1"</span>]
+
+<span class="kw">[Vagina]</span>
+<span class="kw">Scale</span> = <span class="num">2.0</span></pre>
+        <div class="callout callout-warn">
+            <div class="callout-label">Global Match</div>
+            <p>An override with no race keys and no <code>[Predicates]</code> entries matches every actor. That is useful for low-priority fallbacks and high-priority overlays, but it can hide more specific configs if the priority is wrong.</p>
+        </div>
+    </section>
+
+    <section id="scope">
+        <h2>Scope</h2>
+        <p>Use race keys for stable per-race configs, bone predicates for skeleton-family fallbacks, and <code>any</code> overlays for small cross-cutting changes.</p>
+<pre><span class="cm"># Skeleton-family fallback for actors with a known creature schlong chain</span>
+<span class="kw">Inherits</span> = <span class="str">"default"</span>
+
+<span class="kw">[Predicates]</span>
+<span class="kw">HasOneBone</span> = [<span class="str">"CreaturePenis01"</span>, <span class="str">"MonsterSchlong01"</span>]
+
+<span class="kw">[Penis]</span>
+<span class="kw">Bones</span> = [<span class="str">"CreaturePenis01"</span>, <span class="str">"CreaturePenis02"</span>, <span class="str">"CreaturePenis03"</span>]</pre>
+    </section>
+
+    <section id="orifice-position">
+        <h2>Orifice Positions</h2>
+        <p><code>[Vagina.Position]</code>, <code>[Anus.Position]</code>, and <code>[Mouth.Position]</code> share the same shape.</p>
+        <table class="prop-table">
+            <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>Anchor</td><td>string</td><td>Skeleton node used as the entry anchor.</td></tr>
+                <tr><td>Offset</td><td>float[3] or table</td><td>Entry offset from the anchor. Arrays use <code>[x, y, z]</code>; tables can use <code>x</code>, <code>y</code>, and <code>z</code>.</td></tr>
+                <tr><td>CollisionCylinderRadius</td><td>float</td><td>Width of the detection cylinder.</td></tr>
+                <tr><td>CollisionCylinderHeightModifier</td><td>float</td><td>Height multiplier for the detection cylinder.</td></tr>
+                <tr><td>DepthOffset</td><td>float[3] or table</td><td>Legacy single internal waypoint used when <code>DepthWaypoints</code> is omitted.</td></tr>
+                <tr><td>DepthWaypoints</td><td>array</td><td>Ordered internal path points. Each point can be an array offset or a table with <code>Anchor</code>, <code>Offset</code>, and <code>CornerSmoothing</code>.</td></tr>
+            </tbody>
+        </table>
+<pre><span class="kw">[Vagina.Position]</span>
+<span class="kw">Anchor</span> = <span class="str">"NPC Pelvis [Pelv]"</span>
+<span class="kw">Offset</span> = [<span class="num">0.0</span>, <span class="num">-1.0</span>, <span class="num">-4.32</span>]
+<span class="kw">CollisionCylinderRadius</span> = <span class="num">1.2</span>
+<span class="kw">CollisionCylinderHeightModifier</span> = <span class="num">1.0</span>
+
+<span class="kw">[[Vagina.Position.DepthWaypoints]]</span>
+<span class="kw">Offset</span> = [<span class="num">0.0</span>, <span class="num">0.7</span>, <span class="num">6.0</span>]
+<span class="kw">CornerSmoothing</span> = <span class="num">1.0</span>
+
+<span class="kw">[[Vagina.Position.DepthWaypoints]]</span>
+<span class="kw">Anchor</span> = <span class="str">"NPC Spine1 [Spn1]"</span>
+<span class="kw">Offset</span> = [<span class="num">0.0</span>, <span class="num">6.0</span>, <span class="num">0.0</span>]
+<span class="kw">CornerSmoothing</span> = <span class="num">0.5</span></pre>
+    </section>
+
+    <section id="opening">
+        <h2>Opening Physics</h2>
+        <p><code>[Vagina]</code> and <code>[Anus]</code> define opening bones and response strengths.</p>
+        <table class="prop-table">
+            <thead><tr><th>Property</th><th>Applies To</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>NodeL, NodeR, NodeBack, NodeTop</td><td>Vagina</td><td>Directional opening nodes.</td></tr>
+                <tr><td>NodeLB, NodeRB, NodeRT, NodeLT</td><td>Anus</td><td>Corner opening nodes.</td></tr>
+                <tr><td>Scale</td><td>Both</td><td>Base opening distance.</td></tr>
+                <tr><td>ScaleMax</td><td>Both</td><td>Maximum opening distance.</td></tr>
+                <tr><td>GripStrength</td><td>Both</td><td>How strongly the orifice follows penetrator movement.</td></tr>
+                <tr><td>RubIntensity</td><td>Both</td><td>Strength of rub/friction response.</td></tr>
+                <tr><td>GripClampForward</td><td>Both</td><td>Forward clamp for grip movement.</td></tr>
+                <tr><td>GripClampBackward</td><td>Both</td><td>Backward clamp for grip movement.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="penis">
+        <h2>Penis</h2>
+        <p><code>[Penis]</code> defines the penetrator chain, orientation, and solver-facing behavior.</p>
+        <table class="prop-table">
+            <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>Bones</td><td>string[]</td><td>Ordered bone chain from base to tip.</td></tr>
+                <tr><td>LocalForwardAxis</td><td>float[3]</td><td>Forward axis for the penis bones. Also initializes <code>BaseForwardAxis</code> if that field is omitted.</td></tr>
+                <tr><td>BaseForwardAxis</td><td>float[3]</td><td>Separate forward axis for base projection and rotation.</td></tr>
+                <tr><td>BaseOffset</td><td>float[3]</td><td>Offset used for base projection.</td></tr>
+                <tr><td>RotateBase</td><td>bool</td><td>Rotates the base bone with the rest of the chain.</td></tr>
+                <tr><td>PreserveHavokState</td><td>bool</td><td>Preserves animated Havok bone spacing.</td></tr>
+                <tr><td>ClipFix</td><td>bool</td><td>Applies depth-based hiding/shrinking to reduce clipping.</td></tr>
+                <tr><td>HideDepthOffset</td><td>float</td><td>Depth past the tunnel end before clip hiding starts.</td></tr>
+                <tr><td>ActivationRange</td><td>float</td><td>Distance from an orifice before tracking starts.</td></tr>
+                <tr><td>Girth</td><td>float</td><td>Penetrator girth used by physics, facial conditions, and sound predicates.</td></tr>
+                <tr><td>TipExtension</td><td>float</td><td>Virtual extension beyond the last bone.</td></tr>
+                <tr><td>MinProjectionDistance</td><td>float</td><td>Minimum distance from base projection to the orifice path.</td></tr>
+                <tr><td>TogglePenisSMPPhysics</td><td>bool</td><td>Enables the SMP schlong physics handling path for this config.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="animation">
+        <h2>Animation</h2>
+        <table class="prop-table">
+            <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>SpeedSensitivity</td><td>float</td><td>Multiplier for animation-speed-driven response.</td></tr>
+                <tr><td>SmoothStrength</td><td>float</td><td>Smoothing strength for speed calculations.</td></tr>
+                <tr><td>HipPhysics</td><td>bool</td><td>Enables hip physics response.</td></tr>
+                <tr><td>HeadPhysics</td><td>bool</td><td>Enables head physics response.</td></tr>
+                <tr><td>HipPhysicsSmoothTime</td><td>float</td><td>Smoothing time for hip response.</td></tr>
+                <tr><td>HeadPhysicsSmoothTime</td><td>float</td><td>Smoothing time for head response.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="hands">
+        <h2>Hands</h2>
+        <p><code>[Hands.Left]</code> and <code>[Hands.Right]</code> use the same fields.</p>
+        <table class="prop-table">
+            <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>Enabled</td><td>bool</td><td>Enables hand tracking for that side.</td></tr>
+                <tr><td>DetectionRadius</td><td>float</td><td>Distance from the penetrator required to activate hand tracking. Code default is <code>10.0</code>.</td></tr>
+                <tr><td>GripLength</td><td>float</td><td>Effective grip length. Code default is <code>2.0</code>.</td></tr>
+                <tr><td>GripOffsetAdjustment</td><td>float[3]</td><td>Manual offset for grip positioning. Code default is <code>[0, 0, 0]</code>.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="solver">
+        <h2>Solver</h2>
+        <p><code>[Solver]</code> controls the bend cone used by the penis spline solver.</p>
+        <table class="prop-table">
+            <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>BendConeBase</td><td>float</td><td>Base bend cone angle. Code default is <code>30.0</code>.</td></tr>
+                <tr><td>BendConeRange</td><td>float</td><td>Additional bend cone range. Code default is <code>40.0</code>.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="facial">
+        <h2>Facial Presets</h2>
+        <p>RaceConfig includes the facial preset list. Because the list is part of the inherited config, a default-inheriting override keeps inherited presets and appends any <code>[[FacialPreset]]</code> entries it defines. Use <code>Inherits = ""</code> when you need a completely blank facial preset list.</p>
+        <p>In an array-style override, use <code>[[Override.FacialPreset]]</code> and <code>[[Override.FacialPreset.Effects]]</code>. See <a href="expressions.html">Facial Expressions</a> for the full preset format.</p>
+    </section>
+
+    <section id="ex-base">
+        <h2>Example: Named Base</h2>
+        <div class="example-block">
+            <div class="example-header">80_canine_base.toml</div>
+            <div class="example-desc">
+                <p>This file defines a reusable canine chain. More specific race files can inherit it by file stem.</p>
+            </div>
+<pre><span class="kw">Inherits</span> = <span class="str">"default"</span>
+
+<span class="kw">[Penis]</span>
+<span class="kw">Bones</span> = [<span class="str">"CDPenis 1"</span>, <span class="str">"CDPenis 2"</span>, <span class="str">"CDPenis 3"</span>, <span class="str">"CDPenis 4"</span>]
+<span class="kw">LocalForwardAxis</span> = [<span class="num">1</span>, <span class="num">0</span>, <span class="num">0</span>]
+<span class="kw">BaseOffset</span> = [<span class="num">0</span>, <span class="num">0.5</span>, <span class="num">0</span>]
+<span class="kw">PreserveHavokState</span> = <span class="bool">true</span></pre>
+        </div>
+        <div class="example-block">
+            <div class="example-header">20_wolf_races.toml</div>
+            <div class="example-desc">
+                <p>This race-specific file inherits the base chain and only overrides matching plus a few size values.</p>
+            </div>
+<pre><span class="kw">Inherits</span> = <span class="str">"80_canine_base"</span>
+<span class="kw">Races</span> = [<span class="str">"Skyrim.esm|0131E7"</span>, <span class="str">"Skyrim.esm|0131E9"</span>]
+
+<span class="kw">[Penis]</span>
+<span class="kw">Girth</span> = <span class="num">0.55</span>
+<span class="kw">TipExtension</span> = <span class="num">0.25</span></pre>
+        </div>
+    </section>
+
+    <section id="ex-overlay">
+        <h2>Example: Any Overlay</h2>
+        <p>This high-priority overlay applies a small adjustment to any matching female actor after the base config is selected.</p>
+<pre><span class="kw">Inherits</span> = <span class="str">"any"</span>
+
+<span class="kw">[Predicates]</span>
+<span class="kw">IsSex</span> = [<span class="num">1</span>]
+
+<span class="kw">[Animation]</span>
+<span class="kw">HeadPhysics</span> = <span class="bool">true</span>
+<span class="kw">HeadPhysicsSmoothTime</span> = <span class="num">0.10</span>
+
+<span class="kw">[Vagina]</span>
+<span class="kw">GripStrength</span> = <span class="num">4.0</span></pre>
+    </section>
+
+    <section id="debugging">
+        <h2>Debugging</h2>
+        <p>Enable config logging while setting up inheritance chains and overlays.</p>
+<pre><span class="kw">[Debug]</span>
+<span class="kw">Logging</span> = <span class="bool">true</span>
+<span class="kw">Bones</span> = <span class="bool">true</span>
+<span class="kw">Collision</span> = <span class="bool">true</span>
+<span class="kw">Penis</span> = <span class="bool">true</span></pre>
+        <p>The log reports override loading, inheritance warnings, cycles, missing named bases, and loaded override counts.</p>
+    </section>
+
+    <footer>Accurate Penetration RaceConfig documentation</footer>
+</main>
+</div>
+
+</body>
+</html>
