@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Settings | Accurate Penetration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #11100f;
+            --bg-panel: #1b1a18;
+            --bg-code: #090908;
+            --text-main: #f2eee8;
+            --text-muted: #b8afa5;
+            --text-dim: #7d746b;
+            --accent: #2dd4bf;
+            --accent-dim: rgba(45, 212, 191, 0.10);
+            --purple: #c084fc;
+            --purple-dim: rgba(192, 132, 252, 0.10);
+            --warning: #f59e0b;
+            --warning-dim: rgba(245, 158, 11, 0.10);
+            --danger: #fb7185;
+            --danger-dim: rgba(251, 113, 133, 0.10);
+            --success: #84cc16;
+            --success-dim: rgba(132, 204, 22, 0.10);
+            --border: #2c2925;
+            --sidebar-width: 280px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.7;
+            display: flex;
+        }
+        nav {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #0c0b0a;
+            padding: 2rem 1.4rem;
+            position: fixed;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            z-index: 10;
+        }
+        nav .logo { font-size: 0.78rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; }
+        nav ul { list-style: none; }
+        nav li { margin-bottom: 0.2rem; }
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.84rem;
+            display: block;
+            padding: 0.36rem 0.65rem;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+        nav a:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
+        nav .nav-section { font-size: 0.68rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin: 1.35rem 0 0.45rem 0.65rem; }
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        main {
+            width: 100%;
+            max-width: 1540px;
+            padding: 3rem 4rem 6rem;
+        }
+        .hero { margin-bottom: 3.5rem; }
+        .hero h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: 0; margin-bottom: 0.75rem; }
+        .hero p { color: var(--text-muted); font-size: 1.04rem; max-width: 780px; }
+        h2 {
+            font-size: 1.35rem;
+            font-weight: 650;
+            margin: 3.2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        h3 { font-size: 1.02rem; font-weight: 650; margin: 1.8rem 0 0.75rem; }
+        p { margin-bottom: 1rem; color: var(--text-muted); }
+        p strong, li strong { color: var(--text-main); }
+        a { color: var(--accent); }
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(255, 255, 255, 0.07);
+            padding: 0.12rem 0.35rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        pre {
+            background: var(--bg-code);
+            color: #d8d2ca;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.1rem 1.25rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.65;
+            margin: 1rem 0 1.4rem;
+        }
+        pre .cm { color: #7d746b; }
+        pre .kw { color: #2dd4bf; }
+        pre .str { color: #a7f3d0; }
+        pre .num { color: #fbbf24; }
+        pre .bool { color: #c084fc; }
+        .callout {
+            padding: 1rem 1.15rem;
+            border-radius: 8px;
+            margin: 1.4rem 0;
+            border-left: 3px solid;
+            background: var(--accent-dim);
+            border-color: var(--accent);
+        }
+        .callout p { margin: 0; }
+        .callout p + p { margin-top: 0.55rem; }
+        .callout-label { font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; color: var(--accent); }
+        .callout-warn { background: var(--warning-dim); border-color: var(--warning); }
+        .callout-warn .callout-label { color: var(--warning); }
+        .callout-danger { background: var(--danger-dim); border-color: var(--danger); }
+        .callout-danger .callout-label { color: var(--danger); }
+        .callout-purple { background: var(--purple-dim); border-color: var(--purple); }
+        .callout-purple .callout-label { color: var(--purple); }
+        .callout-success { background: var(--success-dim); border-color: var(--success); }
+        .callout-success .callout-label { color: var(--success); }
+        .prop-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0 1.5rem;
+            font-size: 0.88rem;
+        }
+        .prop-table th {
+            text-align: left;
+            padding: 0.58rem 0.85rem;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-dim);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+        .prop-table td {
+            padding: 0.62rem 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: top;
+            color: var(--text-muted);
+        }
+        .prop-table td:first-child { color: var(--accent); font-family: 'Fira Code', monospace; font-size: 0.82rem; white-space: nowrap; }
+        .prop-table td:nth-child(2) { color: var(--purple); font-family: 'Fira Code', monospace; font-size: 0.82rem; white-space: nowrap; }
+        .example-block { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; margin: 1.5rem 0; overflow: hidden; }
+        .example-header { padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.04); border-bottom: 1px solid var(--border); font-size: 0.86rem; font-weight: 650; }
+        .example-desc { padding: 1rem; }
+        .example-desc p { margin: 0; }
+        .example-block pre { margin: 0; border: none; border-radius: 0; border-top: 1px solid var(--border); }
+        .step { display: grid; grid-template-columns: 2rem 1fr; gap: 0.75rem; margin: 0.75rem 0; color: var(--text-muted); }
+        .step-number { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--accent-dim); color: var(--accent); font-size: 0.82rem; font-weight: 700; }
+        footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.8rem; }
+        @media (max-width: 960px) {
+            nav { display: none; }
+            .main-wrapper { margin-left: 0; }
+            main { padding: 2rem 1.25rem 4rem; }
+            .prop-table { display: block; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">Voice Settings</div>
+    <ul>
+        <li><a href="index.html">Docs Home</a></li>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#files">Config Files</a></li>
+        <li><a href="#audio">Audio and Lip Files</a></li>
+        <li><a href="#quick-start">Quick Start</a></li>
+        <li><a href="#settings">Global Settings</a></li>
+        <li><a href="#presets">Voice Presets</a></li>
+        <li><a href="#predicates">Predicates</a></li>
+        <li><a href="#triggers">Triggers</a></li>
+        <li><a href="#selection">Runtime Selection</a></li>
+        <li><a href="#troubleshooting">Troubleshooting</a></li>
+        <div class="nav-section">Examples</div>
+        <li><a href="#ex-base">Base Voice Pack</a></li>
+        <li><a href="#ex-oral">Oral Thrust Lines</a></li>
+        <li><a href="#ex-actor">Actor Override</a></li>
+        <li><a href="#ex-globals">Global Tuning</a></li>
+        <div class="nav-section">Other Docs</div>
+        <li><a href="overrides.html">RaceConfig Overrides</a></li>
+        <li><a href="expressions.html">Facial Expressions</a></li>
+        <li><a href="sound-effects.html">Sound Effects</a></li>
+    </ul>
+</nav>
+
+<div class="main-wrapper">
+<main>
+    <div class="hero">
+        <h1>Voice Settings and Overrides</h1>
+        <p>Create voice packs that replace framework voice playback during PPA-tracked sex scenes. Voice presets can match actor sex, race, base actor, scene context, penetrated site, depth, speed, and girth, then play shuffled audio with optional lip sync.</p>
+    </div>
+
+    <section id="overview">
+        <h2>Overview</h2>
+        <p>Voice configs are independent TOML files. Each file can define global voice timing settings, one or more <code>[[VoicePreset]]</code> entries, or both.</p>
+        <p>At runtime, PPA evaluates the presets for each tracked actor in a sex scene. When a preset matches and one of its triggers fires, PPA plays one sound from that preset and disables the framework voice for that actor.</p>
+        <div class="callout">
+            <div class="callout-label">Mental Model</div>
+            <p>Use predicates to decide who and when a preset applies. Use triggers to decide how often matching presets can speak. Use priority to decide which matching preset wins when several triggers fire at once.</p>
+        </div>
+    </section>
+
+    <section id="files">
+        <h2>Config Files</h2>
+        <p>Place voice config files directly in:</p>
+<pre>Data/SKSE/Plugins/ppa-voice-configs/</pre>
+        <p>Every direct child with a <code>.toml</code> extension is loaded. Files are sorted by filename, then resolved in that order. A file can force other files to resolve first with a top-level <code>Inherits</code> array.</p>
+<pre><span class="kw">Inherits</span> = [<span class="str">"00_shared_voice_base.toml"</span>]</pre>
+        <table class="prop-table">
+            <thead><tr><th>File Field</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>Inherits</td><td>string[]</td><td>Optional top-level list of other voice config filenames. Parent paths are resolved relative to <code>ppa-voice-configs</code>.</td></tr>
+                <tr><td>[Settings]</td><td>table</td><td>Optional global voice tuning. These values are not per-preset.</td></tr>
+                <tr><td>[[VoicePreset]]</td><td>array</td><td>One or more voice presets to append to the global preset list.</td></tr>
+            </tbody>
+        </table>
+        <div class="callout callout-purple">
+            <div class="callout-label">Global Settings Load Order</div>
+            <p><code>[Settings]</code> is one global snapshot. Each resolved file replaces it with that file's settings or defaults, so keep global voice tuning in a late-loading file such as <code>zzz_voice_globals.toml</code> and avoid later voice files that omit <code>[Settings]</code>.</p>
+        </div>
+    </section>
+
+    <section id="audio">
+        <h2>Audio and Lip Files</h2>
+        <p><code>Sounds</code> entries are paths relative to the game's <code>Data</code> folder. Wildcards support one <code>*</code> per path and expand alphabetically at load time.</p>
+<pre><span class="kw">Sounds</span> = [
+    <span class="str">"Sound\\PPA\\Voices\\Female\\moan_*.wav"</span>,
+    <span class="str">"Sound\\PPA\\Voices\\Female\\single_line.wav"</span>,
+]</pre>
+        <p>For lip sync, place a matching <code>.lip</code> file next to the audio using the same relative stem. For <code>Sound\PPA\Voices\Female\moan_01.wav</code>, PPA looks for <code>Sound\PPA\Voices\Female\moan_01.lip</code>.</p>
+        <div class="callout callout-warn">
+            <div class="callout-label">Missing Files</div>
+            <p>Wildcard directories that do not exist expand to nothing. Non-wildcard sound paths are kept as written and can still fail later if the audio file cannot be opened by Skyrim.</p>
+        </div>
+    </section>
+
+    <section id="quick-start">
+        <h2>Quick Start</h2>
+        <p>This is the smallest useful voice preset: it matches female actors and plays one random sound every two seconds while no other PPA voice line is active.</p>
+<pre><span class="kw">[[VoicePreset]]</span>
+<span class="kw">Name</span> = <span class="str">"Female interval voice"</span>
+<span class="kw">Priority</span> = <span class="num">0</span>
+<span class="kw">Sounds</span> = [<span class="str">"Sound\\PPA\\Voices\\Female\\moan_*.wav"</span>]
+
+<span class="kw">[VoicePreset.Predicates]</span>
+<span class="kw">Sex</span> = [<span class="num">1</span>]
+
+<span class="kw">[[VoicePreset.Triggers]]</span>
+<span class="kw">Type</span> = <span class="str">"Interval"</span>
+<span class="kw">Interval</span> = <span class="num">2.0</span>
+<span class="kw">RandomChance</span> = <span class="num">70</span>
+<span class="kw">MinDelay</span> = <span class="num">1.0</span></pre>
+    </section>
+
+    <section id="settings">
+        <h2>Global Settings</h2>
+        <p>Global settings control volume and thrust detection for every voice preset.</p>
+        <table class="prop-table">
+            <thead><tr><th>Setting</th><th>Default</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>MasterVolume</td><td>1.0</td><td>Volume applied to every PPA voice sound handle.</td></tr>
+                <tr><td>VelocitySmoothFactor</td><td>0.3</td><td>Smoothing factor for depth velocity used by thrust detection.</td></tr>
+                <tr><td>ThrustStartVelocity</td><td>5.0</td><td>Smoothed forward velocity required before an <code>OnThrust</code> trigger can fire.</td></tr>
+                <tr><td>ThrustMinWithdrawalRatio</td><td>0.65</td><td>Required withdrawal depth as a ratio of the previous stroke peak before a new thrust can be detected.</td></tr>
+                <tr><td>ThrustMinPeakVelocity</td><td>8.0</td><td>Minimum peak velocity required during the current forward stroke.</td></tr>
+                <tr><td>ThrustMinDepth</td><td>0.5</td><td>Minimum penetration depth required before a thrust event can be accepted.</td></tr>
+            </tbody>
+        </table>
+<pre><span class="kw">[Settings]</span>
+<span class="kw">MasterVolume</span> = <span class="num">0.85</span>
+<span class="kw">VelocitySmoothFactor</span> = <span class="num">0.35</span>
+<span class="kw">ThrustStartVelocity</span> = <span class="num">5.0</span>
+<span class="kw">ThrustMinWithdrawalRatio</span> = <span class="num">0.65</span>
+<span class="kw">ThrustMinPeakVelocity</span> = <span class="num">8.0</span>
+<span class="kw">ThrustMinDepth</span> = <span class="num">0.5</span></pre>
+    </section>
+
+    <section id="presets">
+        <h2>Voice Presets</h2>
+        <p>A preset contains the audio pool, matching rules, trigger rules, and priority for one type of voice line.</p>
+        <table class="prop-table">
+            <thead><tr><th>Preset Field</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>Name</td><td>string</td><td>Optional label used for human organization.</td></tr>
+                <tr><td>Priority</td><td>int</td><td>Higher priority wins when multiple matching presets fire in the same frame. Default is <code>0</code>.</td></tr>
+                <tr><td>Sounds</td><td>string[]</td><td>Data-relative sound paths. Empty presets never play.</td></tr>
+                <tr><td>[VoicePreset.Predicates]</td><td>table</td><td>All configured predicate groups must pass.</td></tr>
+                <tr><td>[[VoicePreset.Triggers]]</td><td>array</td><td>One or more trigger rules. If omitted, the preset gets one default interval trigger at two seconds.</td></tr>
+            </tbody>
+        </table>
+        <p>Sounds inside a preset use a shuffle bag. PPA plays every sound once before reshuffling, and avoids immediately repeating the last sound when there is more than one choice.</p>
+    </section>
+
+    <section id="predicates">
+        <h2>Predicates</h2>
+        <p>Predicates are optional. If a preset has no predicates, it can match any tracked actor. When predicates are present, every predicate must pass before triggers are considered.</p>
+        <table class="prop-table">
+            <thead><tr><th>Predicate</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>Sex</td><td>int[]</td><td>Matches actor sex. Skyrim values are <code>0</code> male and <code>1</code> female.</td></tr>
+                <tr><td>Races</td><td>string[]</td><td>Matches the actor's race FormID.</td></tr>
+                <tr><td>BaseIDs</td><td>string[]</td><td>Matches the actor base FormID. Use this for a specific NPC voice override.</td></tr>
+                <tr><td>PenetrationDepthMin / Max</td><td>float</td><td>Requires max penetration depth to fall within the range. The predicate is only created when max is greater than min.</td></tr>
+                <tr><td>SpeedMin / Max</td><td>float</td><td>Requires tracked penetration speed. If <code>SpeedMax</code> is omitted or not greater than min, the check becomes minimum-only.</td></tr>
+                <tr><td>PenisGirthMin / Max</td><td>float</td><td>Requires max penetrator girth to fall within the range. Set both min and max.</td></tr>
+                <tr><td>PenetratedSites</td><td>string[]</td><td>Matches active penetrated sites. Values are <code>Vagina</code>, <code>Anus</code>, <code>Mouth</code>, <code>HandL</code>, and <code>HandR</code>.</td></tr>
+                <tr><td>PenetratingSites</td><td>string[]</td><td>Parsed by the loader, but the current voice runtime does not populate penetrating-site data. Prefer <code>PenetratedSites</code>.</td></tr>
+                <tr><td>Contexts</td><td>string[]</td><td>Requires scene context flags such as <code>Vaginal</code>, <code>Anal</code>, <code>Oral</code>, <code>Aggressive</code>, <code>FemDom</code>, <code>Loving</code>, <code>Dirty</code>, <code>Boobjob</code>, <code>Handjob</code>, <code>Footjob</code>, or <code>Masturbation</code>.</td></tr>
+            </tbody>
+        </table>
+        <p>String predicates for sites and contexts can be negated with <code>!</code>. Non-negated site values in the same array are ORed together, then negated values are applied as extra must-not-match checks.</p>
+<pre><span class="kw">[VoicePreset.Predicates]</span>
+<span class="kw">Sex</span> = [<span class="num">1</span>]
+<span class="kw">Races</span> = [<span class="str">"Skyrim.esm|013745"</span>]
+<span class="kw">PenetratedSites</span> = [<span class="str">"Mouth"</span>, <span class="str">"!Anus"</span>]
+<span class="kw">Contexts</span> = [<span class="str">"Oral"</span>, <span class="str">"!Aggressive"</span>]
+<span class="kw">PenetrationDepthMin</span> = <span class="num">0.4</span>
+<span class="kw">PenetrationDepthMax</span> = <span class="num">2.2</span>
+<span class="kw">PenisGirthMin</span> = <span class="num">0.8</span>
+<span class="kw">PenisGirthMax</span> = <span class="num">1.6</span></pre>
+        <div class="callout callout-warn">
+            <div class="callout-label">FormID Syntax</div>
+            <p>Use <code>PluginName|LocalID</code>, for example <code>Skyrim.esm|013745</code>. In voice configs, a FormID without a plugin name defaults to <code>Skyrim.esm</code>.</p>
+        </div>
+        <div class="callout callout-purple">
+            <div class="callout-label">Hand Sites</div>
+            <p>The parser accepts <code>Hands</code>, but active hand interactions are expanded to <code>HandL</code> and <code>HandR</code> for evaluation. Use both explicit hand values when you want either hand.</p>
+        </div>
+    </section>
+
+    <section id="triggers">
+        <h2>Triggers</h2>
+        <p>A preset can contain multiple triggers. If any trigger fires while the preset matches, the preset becomes a candidate to play.</p>
+        <table class="prop-table">
+            <thead><tr><th>Trigger Field</th><th>Default</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>Type</td><td>Interval</td><td><code>Interval</code>, <code>OnThrust</code>, or <code>Random</code>. Unknown values fall back to <code>Interval</code>.</td></tr>
+                <tr><td>Interval</td><td>2.0</td><td>Seconds between checks for <code>Interval</code> triggers.</td></tr>
+                <tr><td>RandomChance</td><td>100.0</td><td>For <code>Interval</code> and <code>OnThrust</code>, percent chance when the event happens. For <code>Random</code>, approximate percent chance per second.</td></tr>
+                <tr><td>MinDelay</td><td>0.0</td><td>Minimum seconds after this trigger successfully played before it can fire again.</td></tr>
+            </tbody>
+        </table>
+<pre><span class="kw">[[VoicePreset.Triggers]]</span>
+<span class="kw">Type</span> = <span class="str">"OnThrust"</span>
+<span class="kw">RandomChance</span> = <span class="num">55</span>
+<span class="kw">MinDelay</span> = <span class="num">1.25</span>
+
+<span class="kw">[[VoicePreset.Triggers]]</span>
+<span class="kw">Type</span> = <span class="str">"Interval"</span>
+<span class="kw">Interval</span> = <span class="num">4.0</span>
+<span class="kw">RandomChance</span> = <span class="num">30</span></pre>
+        <p><code>OnThrust</code> uses depth changes from active sites and the global thrust settings. The config loader does not currently parse a per-trigger site field, so an <code>OnThrust</code> trigger watches any detected thrust for the matching actor.</p>
+    </section>
+
+    <section id="selection">
+        <h2>Runtime Selection</h2>
+        <div class="step"><span class="step-number">1</span><p>PPA builds an evaluation context for each tracked actor in a sex scene.</p></div>
+        <div class="step"><span class="step-number">2</span><p>Presets are sorted highest priority first after all files load. Equal priorities keep file load order.</p></div>
+        <div class="step"><span class="step-number">3</span><p>When no PPA voice line is active, every matching preset's triggers are evaluated.</p></div>
+        <div class="step"><span class="step-number">4</span><p>If multiple presets fire in the same frame, the highest priority candidate plays.</p></div>
+        <div class="step"><span class="step-number">5</span><p>While a PPA voice line is active, trigger timers keep advancing but no new line starts until the current line ends.</p></div>
+        <p>Use higher priority for specific cases such as oral, aggressive, named NPC, or creature-race lines. Use lower priority for broad fallback moans.</p>
+    </section>
+
+    <section id="troubleshooting">
+        <h2>Troubleshooting</h2>
+        <table class="prop-table">
+            <thead><tr><th>Symptom</th><th>Likely Cause</th><th>Fix</th></tr></thead>
+            <tbody>
+                <tr><td>No voice system activity</td><td>No loaded preset contains sounds, or <code>ppa-voice-configs</code> does not exist.</td><td>Create the folder and add at least one <code>.toml</code> file with a non-empty <code>Sounds</code> array.</td></tr>
+                <tr><td>Preset never matches</td><td>Predicate is too strict, wrong FormID syntax, or context tags are not present for that animation.</td><td>Start with only <code>Sex</code> and <code>PenetratedSites</code>, then add constraints one at a time.</td></tr>
+                <tr><td>Wildcard finds nothing</td><td>The wildcard directory is missing under <code>Data</code> or the prefix/suffix does not match filenames.</td><td>Test with one explicit sound path before switching to wildcards.</td></tr>
+                <tr><td>Globals seem reset</td><td>A later-loaded file omitted <code>[Settings]</code>, replacing globals with defaults.</td><td>Move global tuning to a last-loading file and avoid later voice TOML files.</td></tr>
+                <tr><td>No lip sync</td><td>The matching <code>.lip</code> file is missing or has a different stem.</td><td>Place the <code>.lip</code> beside the audio path using the exact same filename stem.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="ex-base">
+        <h2>Example: Base Voice Pack</h2>
+        <div class="example-block">
+            <div class="example-header">00_female_base.toml</div>
+            <div class="example-desc">
+                <p>Broad female fallback lines with one interval trigger.</p>
+            </div>
+<pre><span class="kw">[[VoicePreset]]</span>
+<span class="kw">Name</span> = <span class="str">"Female fallback"</span>
+<span class="kw">Priority</span> = <span class="num">0</span>
+<span class="kw">Sounds</span> = [<span class="str">"Sound\\PPA\\Voices\\Female\\fallback_*.wav"</span>]
+
+<span class="kw">[VoicePreset.Predicates]</span>
+<span class="kw">Sex</span> = [<span class="num">1</span>]
+
+<span class="kw">[[VoicePreset.Triggers]]</span>
+<span class="kw">Type</span> = <span class="str">"Interval"</span>
+<span class="kw">Interval</span> = <span class="num">2.6</span>
+<span class="kw">RandomChance</span> = <span class="num">65</span>
+<span class="kw">MinDelay</span> = <span class="num">1.0</span></pre>
+        </div>
+    </section>
+
+    <section id="ex-oral">
+        <h2>Example: Oral Thrust Lines</h2>
+        <p>This higher-priority preset only applies during oral scenes where the actor's mouth is the penetrated site.</p>
+<pre><span class="kw">Inherits</span> = [<span class="str">"00_female_base.toml"</span>]
+
+<span class="kw">[[VoicePreset]]</span>
+<span class="kw">Name</span> = <span class="str">"Female oral thrusts"</span>
+<span class="kw">Priority</span> = <span class="num">50</span>
+<span class="kw">Sounds</span> = [<span class="str">"Sound\\PPA\\Voices\\Female\\oral_thrust_*.wav"</span>]
+
+<span class="kw">[VoicePreset.Predicates]</span>
+<span class="kw">Sex</span> = [<span class="num">1</span>]
+<span class="kw">PenetratedSites</span> = [<span class="str">"Mouth"</span>]
+<span class="kw">Contexts</span> = [<span class="str">"Oral"</span>]
+<span class="kw">PenetrationDepthMin</span> = <span class="num">0.45</span>
+<span class="kw">PenetrationDepthMax</span> = <span class="num">3.0</span>
+
+<span class="kw">[[VoicePreset.Triggers]]</span>
+<span class="kw">Type</span> = <span class="str">"OnThrust"</span>
+<span class="kw">RandomChance</span> = <span class="num">45</span>
+<span class="kw">MinDelay</span> = <span class="num">0.9</span></pre>
+    </section>
+
+    <section id="ex-actor">
+        <h2>Example: Actor Override</h2>
+        <p>Use <code>BaseIDs</code> for a specific NPC or mod-added actor. This preset wins over the broad fallback by priority.</p>
+<pre><span class="kw">[[VoicePreset]]</span>
+<span class="kw">Name</span> = <span class="str">"Specific NPC voice"</span>
+<span class="kw">Priority</span> = <span class="num">100</span>
+<span class="kw">Sounds</span> = [<span class="str">"Sound\\PPA\\Voices\\UniqueNPC\\line_*.wav"</span>]
+
+<span class="kw">[VoicePreset.Predicates]</span>
+<span class="kw">BaseIDs</span> = [<span class="str">"MyFollowerPlugin.esp|000D62"</span>]
+<span class="kw">PenetratedSites</span> = [<span class="str">"Vagina"</span>, <span class="str">"Anus"</span>]
+
+<span class="kw">[[VoicePreset.Triggers]]</span>
+<span class="kw">Type</span> = <span class="str">"Random"</span>
+<span class="kw">RandomChance</span> = <span class="num">18</span>
+<span class="kw">MinDelay</span> = <span class="num">3.0</span></pre>
+    </section>
+
+    <section id="ex-globals">
+        <h2>Example: Global Tuning</h2>
+        <p>Put global tuning in a file that loads after the preset files.</p>
+        <div class="example-block">
+            <div class="example-header">zzz_voice_globals.toml</div>
+            <div class="example-desc">
+                <p>This file contains only global settings. Because it loads last, later files do not reset the voice globals back to defaults.</p>
+            </div>
+<pre><span class="kw">[Settings]</span>
+<span class="kw">MasterVolume</span> = <span class="num">0.8</span>
+<span class="kw">VelocitySmoothFactor</span> = <span class="num">0.32</span>
+<span class="kw">ThrustStartVelocity</span> = <span class="num">5.5</span>
+<span class="kw">ThrustMinWithdrawalRatio</span> = <span class="num">0.65</span>
+<span class="kw">ThrustMinPeakVelocity</span> = <span class="num">8.5</span>
+<span class="kw">ThrustMinDepth</span> = <span class="num">0.5</span></pre>
+        </div>
+    </section>
+
+    <footer>Accurate Penetration voice configuration documentation</footer>
+</main>
+</div>
+
+</body>
+</html>

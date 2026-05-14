@@ -21,6 +21,8 @@
             --purple-dim: rgba(192, 132, 252, 0.10);
             --warning: #f59e0b;
             --warning-dim: rgba(245, 158, 11, 0.10);
+            --danger: #fb7185;
+            --danger-dim: rgba(251, 113, 133, 0.10);
             --border: #2c2925;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -62,7 +64,7 @@
         }
         .doc-grid {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 1rem;
             margin: 2rem 0;
         }
@@ -115,6 +117,7 @@
         .race .icon { color: var(--accent); background: var(--accent-dim); }
         .face .icon { color: var(--purple); background: var(--purple-dim); }
         .sound .icon { color: var(--warning); background: var(--warning-dim); }
+        .voice .icon { color: var(--danger); background: var(--danger-dim); }
         .quick-links {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -167,7 +170,7 @@
     <header>
         <div class="eyebrow">Accurate Penetration</div>
         <h1>Configuration Documentation</h1>
-        <p>Reference pages for the current TOML configuration systems: inherited RaceConfig overrides, facial expression presets, and sound effect overrides.</p>
+        <p>Reference pages for the current TOML configuration systems: inherited RaceConfig overrides, facial expression presets, sound effect overrides, and voice configs.</p>
     </header>
 
     <section class="doc-grid" aria-label="Documentation pages">
@@ -197,6 +200,15 @@
             </div>
             <div class="footer"><span>sound-effects.html</span><span>Open</span></div>
         </a>
+
+        <a class="doc-card voice" href="voice-settings.html">
+            <div>
+                <div class="icon">VO</div>
+                <h2>Voice Settings</h2>
+                <p>Voice preset files, actor predicates, scene contexts, depth and girth matching, interval or thrust triggers, wildcard audio paths, and lip sync pairing.</p>
+            </div>
+            <div class="footer"><span>voice-settings.html</span><span>Open</span></div>
+        </a>
     </section>
 
     <section class="quick-links">
@@ -206,11 +218,12 @@
                 <li><code>Data/SKSE/Plugins/accurate-penetration.toml</code></li>
                 <li><code>Data/SKSE/Plugins/ppa-override-configs/</code></li>
                 <li><code>Data/SKSE/Plugins/ppa-sound-effect-configs/</code></li>
+                <li><code>Data/SKSE/Plugins/ppa-voice-configs/</code></li>
             </ul>
         </div>
         <div class="panel">
             <h2>Current Scope</h2>
-            <p>These docs intentionally cover the non-voice settings path. Voice settings are not included here yet.</p>
+            <p>These docs cover RaceConfig inheritance, facial presets, sound effect overrides, and the standalone voice config loader.</p>
         </div>
     </section>
 
