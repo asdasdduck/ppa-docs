@@ -64,7 +64,7 @@
         }
         .doc-grid {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
             gap: 1rem;
             margin: 2rem 0;
         }
@@ -118,6 +118,8 @@
         .face .icon { color: var(--purple); background: var(--purple-dim); }
         .sound .icon { color: var(--warning); background: var(--warning-dim); }
         .voice .icon { color: var(--danger); background: var(--danger-dim); }
+        .tags .icon { color: #84cc16; background: rgba(132, 204, 22, 0.10); }
+        .api .icon { color: #38bdf8; background: rgba(56, 189, 248, 0.10); }
         .quick-links {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -160,7 +162,7 @@
         }
         @media (max-width: 900px) {
             main { padding-top: 2.5rem; }
-            .doc-grid, .quick-links { grid-template-columns: 1fr; }
+            .quick-links { grid-template-columns: 1fr; }
             .doc-card { min-height: 220px; }
         }
     </style>
@@ -170,7 +172,7 @@
     <header>
         <div class="eyebrow">Accurate Penetration</div>
         <h1>Configuration Documentation</h1>
-        <p>Reference pages for the current TOML configuration systems: inherited RaceConfig overrides, facial expression presets, sound effect overrides, and voice configs.</p>
+        <p>Reference pages for the current configuration and integration systems: inherited RaceConfig overrides, facial expression presets, animation action tags, sound effect overrides, voice configs, and the SKSE plugin API.</p>
     </header>
 
     <section class="doc-grid" aria-label="Documentation pages">
@@ -209,6 +211,24 @@
             </div>
             <div class="footer"><span>voice-settings.html</span><span>Open</span></div>
         </a>
+
+        <a class="doc-card tags" href="animation-tags.html">
+            <div>
+                <div class="icon">AT</div>
+                <h2>Animation Action Tags</h2>
+                <p>Per-animation JSON tags for forcing actor position targets by stage, disabling tracking, using hand targets, and overriding heuristic detection.</p>
+            </div>
+            <div class="footer"><span>animation-tags.html</span><span>Open</span></div>
+        </a>
+
+        <a class="doc-card api" href="skse-api.html">
+            <div>
+                <div class="icon">API</div>
+                <h2>SKSE Plugin API</h2>
+                <p>C++ listener interface for other SKSE plugins, including animation update events, main-thread lifetime rules, and a copyable <code>AccuratePenetrationAPI.h</code>.</p>
+            </div>
+            <div class="footer"><span>skse-api.html</span><span>Open</span></div>
+        </a>
     </section>
 
     <section class="quick-links">
@@ -219,11 +239,12 @@
                 <li><code>Data/SKSE/Plugins/ppa-override-configs/</code></li>
                 <li><code>Data/SKSE/Plugins/ppa-sound-effect-configs/</code></li>
                 <li><code>Data/SKSE/Plugins/ppa-voice-configs/</code></li>
+                <li><code>Data/SKSE/Plugins/ppa-animation-tagging/</code></li>
             </ul>
         </div>
         <div class="panel">
             <h2>Current Scope</h2>
-            <p>These docs cover RaceConfig inheritance, facial presets, sound effect overrides, and the standalone voice config loader.</p>
+            <p>These docs cover RaceConfig inheritance, facial presets, animation action tags, sound effect overrides, the standalone voice config loader, and the public SKSE integration API.</p>
         </div>
     </section>
 

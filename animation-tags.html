@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation Action Tags | Accurate Penetration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #11100f;
+            --bg-panel: #1b1a18;
+            --bg-code: #090908;
+            --text-main: #f2eee8;
+            --text-muted: #b8afa5;
+            --text-dim: #7d746b;
+            --accent: #2dd4bf;
+            --accent-dim: rgba(45, 212, 191, 0.10);
+            --purple: #c084fc;
+            --purple-dim: rgba(192, 132, 252, 0.10);
+            --warning: #f59e0b;
+            --warning-dim: rgba(245, 158, 11, 0.10);
+            --danger: #fb7185;
+            --danger-dim: rgba(251, 113, 133, 0.10);
+            --success: #84cc16;
+            --success-dim: rgba(132, 204, 22, 0.10);
+            --border: #2c2925;
+            --sidebar-width: 280px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.7;
+            display: flex;
+        }
+        nav {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #0c0b0a;
+            padding: 2rem 1.4rem;
+            position: fixed;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            z-index: 10;
+        }
+        nav .logo { font-size: 0.78rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; }
+        nav ul { list-style: none; }
+        nav li { margin-bottom: 0.2rem; }
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.84rem;
+            display: block;
+            padding: 0.36rem 0.65rem;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+        nav a:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
+        nav .nav-section { font-size: 0.68rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin: 1.35rem 0 0.45rem 0.65rem; }
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        main {
+            width: 100%;
+            max-width: 1540px;
+            padding: 3rem 4rem 6rem;
+        }
+        .hero { margin-bottom: 3.5rem; }
+        .hero h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: 0; margin-bottom: 0.75rem; }
+        .hero p { color: var(--text-muted); font-size: 1.04rem; max-width: 780px; }
+        h2 {
+            font-size: 1.35rem;
+            font-weight: 650;
+            margin: 3.2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        h3 { font-size: 1.02rem; font-weight: 650; margin: 1.8rem 0 0.75rem; }
+        p { margin-bottom: 1rem; color: var(--text-muted); }
+        p strong, li strong { color: var(--text-main); }
+        a { color: var(--accent); }
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(255, 255, 255, 0.07);
+            padding: 0.12rem 0.35rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        pre {
+            background: var(--bg-code);
+            color: #d8d2ca;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.1rem 1.25rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.65;
+            margin: 1rem 0 1.4rem;
+        }
+        .callout {
+            padding: 1rem 1.15rem;
+            border-radius: 8px;
+            margin: 1.4rem 0;
+            border-left: 3px solid;
+            background: var(--accent-dim);
+            border-color: var(--accent);
+        }
+        .callout p { margin: 0; }
+        .callout p + p { margin-top: 0.55rem; }
+        .callout-label { font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; color: var(--accent); }
+        .callout-warn { background: var(--warning-dim); border-color: var(--warning); }
+        .callout-warn .callout-label { color: var(--warning); }
+        .callout-purple { background: var(--purple-dim); border-color: var(--purple); }
+        .callout-purple .callout-label { color: var(--purple); }
+        .prop-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0 1.5rem;
+            font-size: 0.88rem;
+        }
+        .prop-table th {
+            text-align: left;
+            padding: 0.58rem 0.85rem;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-dim);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+        .prop-table td {
+            padding: 0.62rem 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: top;
+            color: var(--text-muted);
+        }
+        .prop-table td:first-child { color: var(--accent); font-family: 'Fira Code', monospace; font-size: 0.82rem; white-space: nowrap; }
+        .prop-table td:nth-child(2) { color: var(--purple); font-family: 'Fira Code', monospace; font-size: 0.82rem; white-space: nowrap; }
+        .example-block { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; margin: 1.5rem 0; overflow: hidden; }
+        .example-header { padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.04); border-bottom: 1px solid var(--border); font-size: 0.86rem; font-weight: 650; }
+        .example-desc { padding: 1rem; }
+        .example-desc p { margin: 0; }
+        .example-block pre { margin: 0; border: none; border-radius: 0; border-top: 1px solid var(--border); }
+        .content-list { margin: 0.4rem 0 1.2rem 1.2rem; color: var(--text-muted); }
+        .content-list li { margin-bottom: 0.4rem; }
+        .step { display: grid; grid-template-columns: 2rem 1fr; gap: 0.75rem; margin: 0.75rem 0; color: var(--text-muted); }
+        .step-number { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--accent-dim); color: var(--accent); font-size: 0.82rem; font-weight: 700; }
+        footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.8rem; }
+        @media (max-width: 960px) {
+            nav { display: none; }
+            .main-wrapper { margin-left: 0; }
+            main { padding: 2rem 1.25rem 4rem; }
+            .prop-table { display: block; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">Animation Tags</div>
+    <ul>
+        <li><a href="index.html">Docs Home</a></li>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#when">When To Use</a></li>
+        <li><a href="#targets">Target Values</a></li>
+        <li><a href="#positions">Actor Positions</a></li>
+        <li><a href="#files">JSON Files</a></li>
+        <li><a href="#basic-format">Basic Format</a></li>
+        <li><a href="#manual-format">Manual Format</a></li>
+        <li><a href="#ingame">In-Game Editing</a></li>
+        <li><a href="#manual-editing">Manual Editing</a></li>
+        <li><a href="#troubleshooting">Troubleshooting</a></li>
+        <div class="nav-section">Other Docs</div>
+        <li><a href="overrides.html">RaceConfig Overrides</a></li>
+        <li><a href="expressions.html">Facial Expressions</a></li>
+        <li><a href="sound-effects.html">Sound Effects</a></li>
+        <li><a href="voice-settings.html">Voice Settings</a></li>
+        <li><a href="skse-api.html">SKSE Plugin API</a></li>
+    </ul>
+</nav>
+
+<div class="main-wrapper">
+<main>
+    <div class="hero">
+        <h1>Animation Action Tags</h1>
+        <p>Tell Accurate Penetration exactly where each actor position should target during each animation stage. Action tags override the default scene-context heuristics when an animation needs explicit per-stage behavior.</p>
+    </div>
+
+    <section id="overview">
+        <h2>Overview</h2>
+        <p>By default, the mod guesses the active target from framework scene context and animation tags. That works for many scenes, but some animations need a direct target because the framework data is ambiguous or wrong.</p>
+        <p>Animation action tags are JSON entries keyed by animation ID. Each stage can set a target for actor positions <code>1</code> through <code>5</code>.</p>
+        <div class="callout">
+            <div class="callout-label">Important</div>
+            <p>The target assigned to an actor position defines where that actor's genitals go. It does not describe what happens to that actor. If actor position <code>2</code> has target <code>V</code>, actor 2's penis targets a vagina.</p>
+        </div>
+    </section>
+
+    <section id="when">
+        <h2>When To Use Action Tags</h2>
+        <ul class="content-list">
+            <li>The mod targets the wrong hole, such as vaginal when the stage should be anal.</li>
+            <li>An actor's genitals clip through air or the wrong body part.</li>
+            <li>You want to disable genital tracking for a specific actor in a scene.</li>
+            <li>Automatic detection is unreliable for a specific animation or stage.</li>
+        </ul>
+    </section>
+
+    <section id="targets">
+        <h2>Target Values</h2>
+        <table class="prop-table">
+            <thead>
+                <tr><th>Value</th><th>Target</th><th>Behavior</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>V</td><td>Vagina</td><td>Push this actor's genitals toward a vagina target.</td></tr>
+                <tr><td>A</td><td>Anus</td><td>Push this actor's genitals toward an anus target.</td></tr>
+                <tr><td>M</td><td>Mouth</td><td>Push this actor's genitals toward a mouth target.</td></tr>
+                <tr><td>H</td><td>Hand</td><td>Use hand tracking and choose the closest detected hand.</td></tr>
+                <tr><td>LH</td><td>Left Hand</td><td>Use hand tracking with the left hand.</td></tr>
+                <tr><td>RH</td><td>Right Hand</td><td>Use hand tracking with the right hand.</td></tr>
+                <tr><td>!</td><td>None</td><td>Disable tracking for this actor position in this stage.</td></tr>
+                <tr><td>omitted</td><td>Auto</td><td>Leave the actor key out of the stage object and the mod will fall back to its default heuristics. In manual mode, omitted positions become None.</td></tr>
+            </tbody>
+        </table>
+        <div class="callout callout-warn">
+            <div class="callout-label">Auto Values</div>
+            <p>Do not write <code>"b"</code> for Auto. The current loader treats unknown strings as None. To use Auto in manually edited JSON, omit that actor position key.</p>
+        </div>
+    </section>
+
+    <section id="positions">
+        <h2>Actor Positions</h2>
+        <p>Actor positions <code>1</code> through <code>5</code> correspond to the order reported by the animation framework, such as SexLab or OStim. Position <code>1</code> is usually the main actor, position <code>2</code> is usually the first partner, and higher positions are additional participants.</p>
+        <p>The in-game target menu shows the current actor, stage, and target, so it is usually the safest way to identify positions before writing JSON by hand.</p>
+    </section>
+
+    <section id="files">
+        <h2>JSON Files</h2>
+        <p>Animation tags are loaded from:</p>
+<pre>Data/SKSE/Plugins/ppa-animation-tagging/</pre>
+        <p>The loader reads every <code>.json</code> file in that folder and merges matching animation entries together.</p>
+
+        <h3>File Priority</h3>
+        <p>Files are sorted in reverse alphabetical order. Later-loaded files have higher priority, so names that sort earlier alphabetically win over names that sort later.</p>
+        <table class="prop-table">
+            <thead>
+                <tr><th>File</th><th>Priority</th><th>Notes</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>z_something.json</td><td>Lowest</td><td>Loaded first.</td></tr>
+                <tr><td>a_something.json</td><td>Higher</td><td>Loaded after <code>z_</code> files.</td></tr>
+                <tr><td>0_your_custom_tags.json</td><td>Highest</td><td>Loaded last and used by the in-game save menu.</td></tr>
+            </tbody>
+        </table>
+        <p>Put personal overrides in <code>0_your_custom_tags.json</code> when you want them to beat bundled defaults. If you want your hand-edited file separate from the in-game editor's output, use a filename that still sorts before the bundled defaults.</p>
+    </section>
+
+    <section id="basic-format">
+        <h2>Basic Format</h2>
+        <div class="example-block">
+            <div class="example-header">Stage array format</div>
+            <div class="example-desc">
+                <p>Use this compact format when you only need stage targets and do not need the manual flag.</p>
+            </div>
+<pre>{
+  "AnimationName": [
+    {
+      "s": 1,
+      "1": "V",
+      "2": "!"
+    },
+    {
+      "s": 2,
+      "1": "V",
+      "2": "!"
+    },
+    {
+      "s": 3,
+      "1": "A",
+      "2": "!"
+    }
+  ],
+  "AnotherAnimation": [
+    {
+      "s": 1,
+      "2": "M"
+    }
+  ]
+}</pre>
+        </div>
+        <table class="prop-table">
+            <thead>
+                <tr><th>Field</th><th>Type</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>AnimationName</td><td>string</td><td>The exact animation ID reported by the framework.</td></tr>
+                <tr><td>s</td><td>integer</td><td>The stage number.</td></tr>
+                <tr><td>1 through 5</td><td>string</td><td>The actor position target for that stage.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="manual-format">
+        <h2>Extended Format With Manual Flag</h2>
+        <div class="example-block">
+            <div class="example-header">Manual animation format</div>
+            <div class="example-desc">
+                <p>Use this object format when you want omitted actor positions to be disabled instead of falling back to heuristics.</p>
+            </div>
+<pre>{
+  "AnimationName": {
+    "manual": true,
+    "stg": [
+      {
+        "s": 1,
+        "1": "V",
+        "2": "!"
+      },
+      {
+        "s": 2,
+        "1": "A",
+        "2": "!"
+      }
+    ]
+  }
+}</pre>
+        </div>
+        <p>When <code>manual</code> is <code>true</code>, any actor position that is not explicitly defined resolves to None instead of Auto. Use this for animations where you want complete control and do not want the mod guessing.</p>
+    </section>
+
+    <section id="ingame">
+        <h2>Method 1: In-Game Editing</h2>
+        <p>The easiest way to tag animations is through the target menu during an active scene.</p>
+        <div class="step"><span class="step-number">1</span><p>Start the animation scene.</p></div>
+        <div class="step"><span class="step-number">2</span><p>Open the target menu with your configured select-actor key. The default key is <code>0</code>.</p></div>
+        <div class="step"><span class="step-number">3</span><p>Look at the actor position you want to modify.</p></div>
+        <div class="step"><span class="step-number">4</span><p>Select <code>Vagina</code>, <code>Anus</code>, <code>Mouth</code>, <code>LHand</code>, <code>RHand</code>, <code>None</code>, or <code>Auto</code>.</p></div>
+        <div class="step"><span class="step-number">5</span><p>Repeat for other actors and stages as needed.</p></div>
+        <div class="step"><span class="step-number">6</span><p>Select <code>Save</code> to write changes to <code>0_your_custom_tags.json</code>.</p></div>
+        <div class="callout callout-purple">
+            <div class="callout-label">Testing</div>
+            <p>Menu changes are applied immediately for the active session. They do not persist across game sessions until you save them.</p>
+        </div>
+    </section>
+
+    <section id="manual-editing">
+        <h2>Method 2: Manual JSON Editing</h2>
+        <p>Manual editing is useful for bulk changes or for animations you cannot test in-game.</p>
+
+        <h3>Step 1: Find The Animation Name</h3>
+        <p>Enable debug logging in the mod settings. The log can show entries that include the actor, context, and stage:</p>
+<pre>Status for ActorName: Context:[Anal] Stage:2 ...</pre>
+        <p>You can also use your animation framework's tools or documentation to find the exact animation ID.</p>
+
+        <h3>Step 2: Create Or Edit Your Custom File</h3>
+        <p>Open or create:</p>
+<pre>Data/SKSE/Plugins/ppa-animation-tagging/0_your_custom_tags.json</pre>
+
+        <h3>Step 3: Add Animation Entries</h3>
+<pre>{
+  "SexLabAnimation_Missionary_A1": [
+    {
+      "s": 1,
+      "1": "!",
+      "2": "V"
+    },
+    {
+      "s": 2,
+      "1": "!",
+      "2": "V"
+    },
+    {
+      "s": 3,
+      "1": "!",
+      "2": "V"
+    },
+    {
+      "s": 4,
+      "1": "!",
+      "2": "V"
+    },
+    {
+      "s": 5,
+      "1": "!",
+      "2": "V"
+    }
+  ]
+}</pre>
+        <p>This example disables actor position <code>1</code> and makes actor position <code>2</code> target a vagina in stages <code>1</code> through <code>5</code>.</p>
+    </section>
+
+    <section id="troubleshooting">
+        <h2>Troubleshooting</h2>
+        <ul class="content-list">
+            <li><strong>Nothing changes:</strong> confirm the animation ID exactly matches the framework ID and that the JSON file is inside <code>ppa-animation-tagging</code>.</li>
+            <li><strong>Your file loses priority:</strong> rename it so it sorts before the files you want to override, or use <code>0_your_custom_tags.json</code>.</li>
+            <li><strong>Auto behaves like disabled after manual edits:</strong> remove the actor key from that stage instead of writing an unknown value.</li>
+            <li><strong>Manual mode disables too much:</strong> set <code>manual</code> to <code>false</code> or remove the flag so omitted positions can use heuristics.</li>
+            <li><strong>Invalid JSON:</strong> one syntax error can prevent the whole file from loading. Check commas, quotes, and matching braces.</li>
+        </ul>
+    </section>
+
+    <footer>Accurate Penetration animation action tag documentation</footer>
+</main>
+</div>
+
+</body>
+</html>

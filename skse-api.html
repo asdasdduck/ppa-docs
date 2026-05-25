@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKSE API | Accurate Penetration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #11100f;
+            --bg-panel: #1b1a18;
+            --bg-code: #090908;
+            --text-main: #f2eee8;
+            --text-muted: #b8afa5;
+            --text-dim: #7d746b;
+            --accent: #2dd4bf;
+            --accent-dim: rgba(45, 212, 191, 0.10);
+            --purple: #c084fc;
+            --purple-dim: rgba(192, 132, 252, 0.10);
+            --warning: #f59e0b;
+            --warning-dim: rgba(245, 158, 11, 0.10);
+            --danger: #fb7185;
+            --danger-dim: rgba(251, 113, 133, 0.10);
+            --success: #84cc16;
+            --success-dim: rgba(132, 204, 22, 0.10);
+            --border: #2c2925;
+            --sidebar-width: 280px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.7;
+            display: flex;
+        }
+        nav {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #0c0b0a;
+            padding: 2rem 1.4rem;
+            position: fixed;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            z-index: 10;
+        }
+        nav .logo { font-size: 0.78rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; }
+        nav ul { list-style: none; }
+        nav li { margin-bottom: 0.2rem; }
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.84rem;
+            display: block;
+            padding: 0.36rem 0.65rem;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+        nav a:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
+        nav .nav-section { font-size: 0.68rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin: 1.35rem 0 0.45rem 0.65rem; }
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        main {
+            width: 100%;
+            max-width: 1540px;
+            padding: 3rem 4rem 6rem;
+        }
+        .hero { margin-bottom: 3.5rem; }
+        .hero h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: 0; margin-bottom: 0.75rem; }
+        .hero p { color: var(--text-muted); font-size: 1.04rem; max-width: 780px; }
+        h2 {
+            font-size: 1.35rem;
+            font-weight: 650;
+            margin: 3.2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        h3 { font-size: 1.02rem; font-weight: 650; margin: 1.8rem 0 0.75rem; }
+        p { margin-bottom: 1rem; color: var(--text-muted); }
+        p strong, li strong { color: var(--text-main); }
+        a { color: var(--accent); }
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(255, 255, 255, 0.07);
+            padding: 0.12rem 0.35rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        pre {
+            background: var(--bg-code);
+            color: #d8d2ca;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.1rem 1.25rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.65;
+            margin: 1rem 0 1.4rem;
+        }
+        .code-shell {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-panel);
+            margin: 1rem 0 1.5rem;
+            overflow: hidden;
+        }
+        .code-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.7rem 0.9rem;
+            background: rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid var(--border);
+        }
+        .code-title {
+            color: var(--text-main);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+        .copy-button {
+            appearance: none;
+            border: 1px solid rgba(45, 212, 191, 0.45);
+            border-radius: 6px;
+            background: var(--accent-dim);
+            color: var(--accent);
+            cursor: pointer;
+            font: 700 0.78rem 'Inter', system-ui, sans-serif;
+            padding: 0.42rem 0.72rem;
+            white-space: nowrap;
+        }
+        .copy-button:hover { background: rgba(45, 212, 191, 0.16); }
+        .code-shell pre {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+        }
+        .callout {
+            padding: 1rem 1.15rem;
+            border-radius: 8px;
+            margin: 1.4rem 0;
+            border-left: 3px solid;
+            background: var(--accent-dim);
+            border-color: var(--accent);
+        }
+        .callout p { margin: 0; }
+        .callout p + p { margin-top: 0.55rem; }
+        .callout-label { font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; color: var(--accent); }
+        .callout-warn { background: var(--warning-dim); border-color: var(--warning); }
+        .callout-warn .callout-label { color: var(--warning); }
+        .callout-purple { background: var(--purple-dim); border-color: var(--purple); }
+        .callout-purple .callout-label { color: var(--purple); }
+        .prop-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0 1.5rem;
+            font-size: 0.88rem;
+        }
+        .prop-table th {
+            text-align: left;
+            padding: 0.58rem 0.85rem;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-dim);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+        .prop-table td {
+            padding: 0.62rem 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: top;
+            color: var(--text-muted);
+        }
+        .prop-table td:first-child { color: var(--accent); font-family: 'Fira Code', monospace; font-size: 0.82rem; white-space: nowrap; }
+        .prop-table td:nth-child(2) { color: var(--purple); font-family: 'Fira Code', monospace; font-size: 0.82rem; white-space: nowrap; }
+        .content-list { margin: 0.4rem 0 1.2rem 1.2rem; color: var(--text-muted); }
+        .content-list li { margin-bottom: 0.4rem; }
+        footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.8rem; }
+        @media (max-width: 960px) {
+            nav { display: none; }
+            .main-wrapper { margin-left: 0; }
+            main { padding: 2rem 1.25rem 4rem; }
+            .prop-table { display: block; overflow-x: auto; }
+            .code-toolbar { align-items: flex-start; flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">SKSE API</div>
+    <ul>
+        <li><a href="index.html">Docs Home</a></li>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#getting-interface">Getting The Interface</a></li>
+        <li><a href="#events">Animation Events</a></li>
+        <li><a href="#threading">Threading And Lifetime</a></li>
+        <li><a href="#example">Example Listener</a></li>
+        <li><a href="#header">Copy Header</a></li>
+        <div class="nav-section">Other Docs</div>
+        <li><a href="overrides.html">RaceConfig Overrides</a></li>
+        <li><a href="expressions.html">Facial Expressions</a></li>
+        <li><a href="sound-effects.html">Sound Effects</a></li>
+        <li><a href="voice-settings.html">Voice Settings</a></li>
+        <li><a href="animation-tags.html">Animation Action Tags</a></li>
+    </ul>
+</nav>
+
+<div class="main-wrapper">
+<main>
+    <div class="hero">
+        <h1>SKSE Plugin API</h1>
+        <p>Register a C++ listener from another SKSE plugin and receive Accurate Penetration animation updates on Skyrim's main thread.</p>
+    </div>
+
+    <section id="overview">
+        <h2>Overview</h2>
+        <p>The API is exported from <code>AccuratePenetration.dll</code> as <code>AccuratePenetration_GetAPI_V1</code>. Version 1 exposes listener registration for per-receiver animation updates.</p>
+        <p>Consumers should include <code>AccuratePenetrationAPI.h</code>, look up the exported function at runtime, validate the returned interface, and unregister listeners before their plugin shuts down.</p>
+        <div class="callout">
+            <div class="callout-label">Current Version</div>
+            <p><code>AccuratePenetration::API::kVersion</code> is <code>1</code>. Check both <code>InterfaceV1::version</code> and <code>InterfaceV1::size</code> before using function pointers.</p>
+        </div>
+    </section>
+
+    <section id="getting-interface">
+        <h2>Getting The Interface</h2>
+        <p>Load the export after Accurate Penetration is present in the process. The header provides both the DLL name and exported function name.</p>
+<pre>#include "AccuratePenetrationAPI.h"
+
+#include &lt;Windows.h&gt;
+
+using GetAPIFn = const AccuratePenetration::API::InterfaceV1*(__cdecl*)();
+
+auto module = GetModuleHandleW(AccuratePenetration::API::kPluginDLL);
+auto getAPI = module ?
+    reinterpret_cast&lt;GetAPIFn&gt;(GetProcAddress(module, AccuratePenetration::API::kGetAPIFunctionNameV1)) :
+    nullptr;
+
+const auto* api = getAPI ? getAPI() : nullptr;
+if (!api ||
+    api-&gt;version != AccuratePenetration::API::kVersion ||
+    api-&gt;size &lt; sizeof(AccuratePenetration::API::InterfaceV1) ||
+    !api-&gt;RegisterAnimationUpdateListener ||
+    !api-&gt;UnregisterAnimationUpdateListener) {
+    return;
+}</pre>
+        <p>The exported interface is optional from the consumer's point of view. If the DLL or export is missing, skip integration and continue loading your plugin normally.</p>
+
+        <h3>Registration Results</h3>
+        <table class="prop-table">
+            <thead><tr><th>Call</th><th>Success</th><th>Failure</th></tr></thead>
+            <tbody>
+                <tr><td>RegisterAnimationUpdateListener</td><td>Returns a non-zero <code>ListenerHandle</code>.</td><td>Returns <code>0</code> when the callback pointer is null.</td></tr>
+                <tr><td>UnregisterAnimationUpdateListener</td><td>Returns <code>true</code> when the handle was found and removed.</td><td>Returns <code>false</code> for handle <code>0</code> or an unknown handle.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="events">
+        <h2>Animation Events</h2>
+        <p><code>AnimationUpdateEvent</code> describes one receiver actor and the currently known interaction partners for that receiver.</p>
+        <table class="prop-table">
+            <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+            <tbody>
+                <tr><td>apiVersion</td><td>uint32_t</td><td>Event API version. Version 1 events use <code>AccuratePenetration::API::kVersion</code>.</td></tr>
+                <tr><td>size</td><td>uint32_t</td><td>Size of the event struct for compatibility checks.</td></tr>
+                <tr><td>receiver</td><td>RE::ActorHandle</td><td>The actor this update is about.</td></tr>
+                <tr><td>position</td><td>uint8_t</td><td>The receiver's scene position as reported by the active animation framework.</td></tr>
+                <tr><td>context</td><td>SceneContext</td><td>Bit flags for scene classification, such as <code>Vaginal</code>, <code>Anal</code>, <code>Oral</code>, <code>Handjob</code>, or <code>Masturbation</code>.</td></tr>
+                <tr><td>selfInteraction</td><td>InteractionPartner*</td><td>Optional self interaction data for scenes where the receiver is interacting with themself.</td></tr>
+                <tr><td>actors</td><td>InteractionPartner*</td><td>Temporary array of partner interactions.</td></tr>
+                <tr><td>actorCount</td><td>uint32_t</td><td>Number of entries in <code>actors</code>.</td></tr>
+                <tr><td>anusOpening</td><td>float</td><td>Current normalized anus opening value for the receiver.</td></tr>
+                <tr><td>vaginalOpening</td><td>float</td><td>Current normalized vaginal opening value for the receiver.</td></tr>
+                <tr><td>ending</td><td>bool</td><td>True for the final cleanup notification for this receiver's scene.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Interaction Partner</h3>
+        <table class="prop-table">
+            <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+            <tbody>
+                <tr><td>actor</td><td>RE::ActorHandle</td><td>The partner actor handle.</td></tr>
+                <tr><td>site</td><td>PenetrationSite</td><td>Target site: <code>Mouth</code>, <code>Anus</code>, <code>Vagina</code>, <code>Both</code>, <code>HandL</code>, <code>HandR</code>, or <code>Hands</code>.</td></tr>
+                <tr><td>position</td><td>uint8_t</td><td>The partner's scene position.</td></tr>
+                <tr><td>penetrationDepth</td><td>float</td><td>Current depth reported by the physics solver.</td></tr>
+                <tr><td>penisSize</td><td>float</td><td>Measured partner penis length.</td></tr>
+                <tr><td>penisGirth</td><td>float</td><td>Measured partner penis girth.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="threading">
+        <h2>Threading And Lifetime</h2>
+        <ul class="content-list">
+            <li>Register and unregister listeners on Skyrim's main thread.</li>
+            <li>Callbacks run during Accurate Penetration's main-thread update and cleanup.</li>
+            <li><code>AnimationUpdateEvent</code>, <code>selfInteraction</code>, and <code>actors</code> are temporary. Copy any data you need before returning from the callback.</li>
+            <li>Store the returned <code>ListenerHandle</code> and pass it to <code>UnregisterAnimationUpdateListener</code> when your plugin no longer wants updates.</li>
+            <li>Do not assume the callback will receive resolved actor pointers. The API intentionally passes <code>RE::ActorHandle</code>.</li>
+        </ul>
+        <div class="callout callout-warn">
+            <div class="callout-label">Callback Work</div>
+            <p>Keep listener callbacks short. If your integration needs expensive work, copy the event data you need and process it later from your own update path.</p>
+        </div>
+    </section>
+
+    <section id="example">
+        <h2>Example Listener</h2>
+<pre>#include "AccuratePenetrationAPI.h"
+
+namespace {
+    const AccuratePenetration::API::InterfaceV1* g_api = nullptr;
+    AccuratePenetration::API::ListenerHandle g_listener = 0;
+
+    void __cdecl OnPPAUpdate(const AccuratePenetration::API::AnimationUpdateEvent* a_event, void* a_userData)
+    {
+        if (!a_event || a_event-&gt;apiVersion != AccuratePenetration::API::kVersion) {
+            return;
+        }
+
+        const bool isOral = AccuratePenetration::API::HasContext(
+            a_event-&gt;context,
+            AccuratePenetration::API::SceneContext::Oral);
+
+        if (a_event-&gt;ending) {
+            // Clear any state tracked for a_event-&gt;receiver.
+            return;
+        }
+
+        for (std::uint32_t i = 0; i &lt; a_event-&gt;actorCount; ++i) {
+            const auto& partner = a_event-&gt;actors[i];
+            // Copy values you need here. Do not keep pointers into a_event.
+        }
+    }
+}
+
+void RegisterPPAListener(const AccuratePenetration::API::InterfaceV1* a_api)
+{
+    if (!a_api || !a_api-&gt;RegisterAnimationUpdateListener) {
+        return;
+    }
+
+    g_api = a_api;
+    g_listener = g_api-&gt;RegisterAnimationUpdateListener(OnPPAUpdate, nullptr);
+}
+
+void UnregisterPPAListener()
+{
+    if (g_api && g_listener && g_api-&gt;UnregisterAnimationUpdateListener) {
+        g_api-&gt;UnregisterAnimationUpdateListener(g_listener);
+    }
+
+    g_listener = 0;
+    g_api = nullptr;
+}</pre>
+    </section>
+
+    <section id="header">
+        <h2>Copy AccuratePenetrationAPI.h</h2>
+        <p>Copy this header into your SKSE plugin project and include it from your integration code.</p>
+        <div class="code-shell">
+            <div class="code-toolbar">
+                <div class="code-title">AccuratePenetrationAPI.h</div>
+                <button class="copy-button" type="button" data-copy-target="api-header">Copy Header</button>
+            </div>
+<pre id="api-header">#pragma once
+
+#include &lt;cstdint&gt;
+
+#include "RE/B/BSPointerHandle.h"
+
+#ifndef ACCURATEPENETRATION_API
+#define ACCURATEPENETRATION_API
+#endif
+
+namespace AccuratePenetration::API {
+    inline constexpr auto kPluginDLL = L"AccuratePenetration.dll";
+    inline constexpr auto kGetAPIFunctionNameV1 = "AccuratePenetration_GetAPI_V1";
+    inline constexpr std::uint32_t kVersion = 1;
+
+    enum class SceneContext : std::uint32_t {
+        None = 0,
+        Vaginal = 1 &lt;&lt; 0,
+        Anal = 1 &lt;&lt; 1,
+        Oral = 1 &lt;&lt; 2,
+        Aggressive = 1 &lt;&lt; 3,
+        FemDom = 1 &lt;&lt; 4,
+        Loving = 1 &lt;&lt; 5,
+        Dirty = 1 &lt;&lt; 6,
+        Boobjob = 1 &lt;&lt; 7,
+        Handjob = 1 &lt;&lt; 8,
+        Footjob = 1 &lt;&lt; 9,
+        Masturbation = 1 &lt;&lt; 10,
+    };
+
+    [[nodiscard]] constexpr SceneContext operator|(SceneContext a_lhs, SceneContext a_rhs) noexcept { return static_cast&lt;SceneContext&gt;(static_cast&lt;std::uint32_t&gt;(a_lhs) | static_cast&lt;std::uint32_t&gt;(a_rhs)); }
+
+    [[nodiscard]] constexpr SceneContext operator&amp;(SceneContext a_lhs, SceneContext a_rhs) noexcept { return static_cast&lt;SceneContext&gt;(static_cast&lt;std::uint32_t&gt;(a_lhs) &amp; static_cast&lt;std::uint32_t&gt;(a_rhs)); }
+
+    [[nodiscard]] constexpr bool HasContext(SceneContext a_flags, SceneContext a_check) noexcept { return (a_flags &amp; a_check) == a_check; }
+
+    enum class PenetrationSite : std::uint8_t {
+        None = 0,
+        Mouth,
+        Anus,
+        Vagina,
+        Both,
+        HandL,
+        HandR,
+        Hands,
+    };
+
+    struct InteractionPartner {
+        RE::ActorHandle actor;
+        PenetrationSite site = PenetrationSite::None;
+        std::uint8_t position = 0;
+        float penetrationDepth = 0.0f;
+        float penisSize = 0.0f;
+        float penisGirth = 0.0f;
+    };
+
+    struct AnimationUpdateEvent {
+        std::uint32_t apiVersion = kVersion;
+        std::uint32_t size = sizeof(AnimationUpdateEvent);
+
+        RE::ActorHandle receiver;
+        std::uint8_t position = 1;
+        SceneContext context = SceneContext::None;
+
+        const InteractionPartner* selfInteraction = nullptr;
+        const InteractionPartner* actors = nullptr;
+        std::uint32_t actorCount = 0;
+
+        float anusOpening = 0.0f;
+        float vaginalOpening = 0.0f;
+        // True for the final cleanup notification for this receiver's scene.
+        bool ending = false;
+    };
+
+    using ListenerHandle = std::uint64_t;
+    using AnimationUpdateCallback = void(__cdecl*)(const AnimationUpdateEvent* a_event, void* a_userData);
+    using RegisterAnimationUpdateListenerFn = ListenerHandle(__cdecl*)(AnimationUpdateCallback a_callback, void* a_userData);
+    using UnregisterAnimationUpdateListenerFn = bool(__cdecl*)(ListenerHandle a_handle);
+
+    struct InterfaceV1 {
+        std::uint32_t version = kVersion;
+        std::uint32_t size = sizeof(InterfaceV1);
+
+        RegisterAnimationUpdateListenerFn RegisterAnimationUpdateListener = nullptr;
+        UnregisterAnimationUpdateListenerFn UnregisterAnimationUpdateListener = nullptr;
+    };
+
+    // Main-thread only. Register/unregister on Skyrim's main thread. Callbacks run during this plugin's main-thread update and cleanup.
+    // AnimationUpdateEvent and nested pointers are temporary; copy any data you need before returning from the callback.
+}  // namespace AccuratePenetration::API
+
+extern "C" ACCURATEPENETRATION_API const AccuratePenetration::API::InterfaceV1* __cdecl AccuratePenetration_GetAPI_V1();</pre>
+        </div>
+    </section>
+
+    <footer>Accurate Penetration SKSE API documentation</footer>
+</main>
+</div>
+
+<script>
+    for (const button of document.querySelectorAll('[data-copy-target]')) {
+        button.addEventListener('click', async () => {
+            const target = document.getElementById(button.dataset.copyTarget);
+            if (!target) {
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(target.textContent);
+                const original = button.textContent;
+                button.textContent = 'Copied';
+                setTimeout(() => { button.textContent = original; }, 1400);
+            } catch {
+                const range = document.createRange();
+                range.selectNodeContents(target);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                button.textContent = 'Selected';
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
