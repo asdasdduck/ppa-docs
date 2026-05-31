@@ -191,6 +191,7 @@
         <li><a href="#ex-target">Targeted Sounds</a></li>
         <li><a href="#ex-overlay">Any Overlay</a></li>
         <li><a href="#ex-impulse">Impulse Override</a></li>
+        <li><a href="#full-examples">Full Examples</a></li>
         <div class="nav-section">Other Docs</div>
         <li><a href="overrides.html">RaceConfig Overrides</a></li>
         <li><a href="expressions.html">Facial Expressions</a></li>
@@ -406,7 +407,8 @@
     <span class="str">"Sound\\PPA\\clap_light_*.wav"</span>,
     <span class="str">"Sound\\PPA\\single_extra.wav"</span>,
 ]</pre>
-        <p>If a wildcard directory does not exist, that entry expands to nothing. Non-wildcard entries are kept as written and checked later against <code>Data</code>.</p>
+        <p>The text before and after <code>*</code> is still part of the match. <code>thrust_*.wav</code> matches <code>thrust_01.wav</code>, but not <code>vagina_01.wav</code>, <code>my_thrust_01.wav</code>, or <code>thrust_01.WAV</code>.</p>
+        <p>If a wildcard directory does not exist or no filenames match, that entry expands to nothing. Non-wildcard entries are kept as written and checked later against <code>Data</code>.</p>
     </section>
 
     <section id="ex-target">
@@ -451,6 +453,204 @@
 <span class="kw">RotationScale</span> = <span class="num">0.45</span>
 <span class="kw">Variation</span> = <span class="num">0.25</span>
 <span class="kw">CheekDelay</span> = <span class="num">0.016</span></pre>
+    </section>
+
+    <section id="full-examples">
+        <h2>Full Examples</h2>
+        <p>Use these as complete snippets for the file paths shown. Sound effect override files go under <code>Data/SKSE/Plugins/ppa-sound-effect-configs/</code>. The paths inside <code>ClapSounds</code> and <code>WetSounds</code> are relative to the game's <code>Data</code> directory.</p>
+        <div class="callout callout-warn">
+            <div class="callout-label">Common Mixup</div>
+            <p><code>[[Override]]</code> files are not pasted under <code>[SoundEffects]</code> in <code>accurate-penetration.toml</code>. If you are editing the main TOML instead, use the root format shown in the second example.</p>
+            <p>For hand sounds, use the canonical target <code>Hands</code>. <code>Hand</code> is accepted as an alias, but <code>Hands</code> matches the root config name and menu label.</p>
+        </div>
+
+        <div class="example-block">
+            <div class="example-header">Data/SKSE/Plugins/ppa-sound-effect-configs/50_ppa_sound_pack.toml</div>
+            <div class="example-desc">
+                <p>One override file containing all four site configs. This is the correct multi-override shape when each site should use a different folder of sounds.</p>
+            </div>
+<pre><span class="kw">[[Override]]</span>
+<span class="kw">Target</span> = <span class="str">"Vagina"</span>
+
+<span class="kw">[Override.Config]</span>
+<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\vagina\\thrust_*.wav"</span>]
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\vagina\\wet_*.wav"</span>]
+<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span>
+
+<span class="kw">[[Override]]</span>
+<span class="kw">Target</span> = <span class="str">"Anus"</span>
+
+<span class="kw">[Override.Config]</span>
+<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\anus\\plap_*.wav"</span>]
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\anus\\wet_*.wav"</span>]
+<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span>
+
+<span class="kw">[[Override]]</span>
+<span class="kw">Target</span> = <span class="str">"Mouth"</span>
+
+<span class="kw">[Override.Config]</span>
+<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\mouth\\suck_*.wav"</span>]
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\mouth\\wet_*.wav"</span>]
+<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span>
+
+<span class="kw">[[Override]]</span>
+<span class="kw">Target</span> = <span class="str">"Hands"</span>
+
+<span class="kw">[Override.Config]</span>
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\hands\\fap_*.wav"</span>]
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.8</span></pre>
+        </div>
+
+        <div class="example-block">
+            <div class="example-header">Data/SKSE/Plugins/accurate-penetration.toml</div>
+            <div class="example-desc">
+                <p>The same sound lists as root defaults in the main settings file. Use this shape only when editing the main <code>accurate-penetration.toml</code>.</p>
+            </div>
+<pre><span class="kw">[SoundEffects]</span>
+<span class="kw">Enabled</span> = <span class="bool">true</span>
+
+<span class="kw">[SoundEffects.Vagina]</span>
+<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\vagina\\thrust_*.wav"</span>]
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\vagina\\wet_*.wav"</span>]
+<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span>
+
+<span class="kw">[SoundEffects.Anus]</span>
+<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\anus\\plap_*.wav"</span>]
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\anus\\wet_*.wav"</span>]
+<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span>
+
+<span class="kw">[SoundEffects.Mouth]</span>
+<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\mouth\\suck_*.wav"</span>]
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\mouth\\wet_*.wav"</span>]
+<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span>
+
+<span class="kw">[SoundEffects.Hands]</span>
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\hands\\fap_*.wav"</span>]
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.8</span></pre>
+        </div>
+
+        <div class="example-block">
+            <div class="example-header">Equivalent split override files</div>
+            <div class="example-desc">
+                <p>If each target gets its own file, do not use <code>[[Override]]</code> or <code>[Override.Config]</code>. A one-override file uses <code>Target</code> at the file root and puts sound fields under <code>[Config]</code>.</p>
+            </div>
+            <div class="example-desc">
+                <p><code>Data/SKSE/Plugins/ppa-sound-effect-configs/50_vagina.toml</code></p>
+            </div>
+<pre><span class="kw">Target</span> = <span class="str">"Vagina"</span>
+
+<span class="kw">[Config]</span>
+<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\vagina\\thrust_*.wav"</span>]
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\vagina\\wet_*.wav"</span>]
+<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span></pre>
+            <div class="example-desc">
+                <p><code>Data/SKSE/Plugins/ppa-sound-effect-configs/50_anus.toml</code></p>
+            </div>
+<pre><span class="kw">Target</span> = <span class="str">"Anus"</span>
+
+<span class="kw">[Config]</span>
+<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\anus\\plap_*.wav"</span>]
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\anus\\wet_*.wav"</span>]
+<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span></pre>
+            <div class="example-desc">
+                <p><code>Data/SKSE/Plugins/ppa-sound-effect-configs/50_mouth.toml</code></p>
+            </div>
+<pre><span class="kw">Target</span> = <span class="str">"Mouth"</span>
+
+<span class="kw">[Config]</span>
+<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\mouth\\suck_*.wav"</span>]
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\mouth\\wet_*.wav"</span>]
+<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span></pre>
+            <div class="example-desc">
+                <p><code>Data/SKSE/Plugins/ppa-sound-effect-configs/50_hands.toml</code></p>
+            </div>
+<pre><span class="kw">Target</span> = <span class="str">"Hands"</span>
+
+<span class="kw">[Config]</span>
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\hands\\fap_*.wav"</span>]
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.8</span></pre>
+        </div>
+
+        <div class="example-block">
+            <div class="example-header">Data/SKSE/Plugins/ppa-sound-effect-configs/50_mouth_with_large_girth_overlay.toml</div>
+            <div class="example-desc">
+                <p>Use <code>Inherits = "any"</code> when you want to change one or two fields on top of whatever config already matched. Here, the large-girth rule keeps the selected mouth sound lists and only raises wet volume.</p>
+                <p>Use default inheritance when the override should start from the root target config. Use <code>Inherits = ""</code> when the override should start blank. Use <code>any</code> when you do not want to duplicate or replace the selected sound lists.</p>
+            </div>
+<pre><span class="kw">[[Override]]</span>
+<span class="kw">Target</span> = <span class="str">"Mouth"</span>
+
+<span class="kw">[Override.Config]</span>
+<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\mouth\\suck_*.wav"</span>]
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\mouth\\wet_*.wav"</span>]
+<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span>
+
+<span class="kw">[[Override]]</span>
+<span class="kw">Target</span> = <span class="str">"Mouth"</span>
+<span class="kw">Inherits</span> = <span class="str">"any"</span>
+<span class="kw">PenisGirthMin</span> = <span class="num">1.4</span>
+
+<span class="kw">[Override.Config]</span>
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.9</span></pre>
+        </div>
+
+        <div class="example-block">
+            <div class="example-header">Data/SKSE/Plugins/ppa-sound-effect-configs/60_predicated_anal_sounds.toml</div>
+            <div class="example-desc">
+                <p>Predicates limit when an override can match. This example only uses these anal sounds when the penetrated actor is one of the listed races, has the required anus bones, and the penetrator is one of the listed races.</p>
+            </div>
+<pre><span class="kw">Target</span> = <span class="str">"Anus"</span>
+
+<span class="kw">[Predicates]</span>
+<span class="kw">Races</span> = [<span class="str">"Skyrim.esm|013745"</span>, <span class="str">"Skyrim.esm|013746"</span>]
+<span class="kw">PenetratorRaces</span> = [<span class="str">"Skyrim.esm|0131E7"</span>, <span class="str">"Skyrim.esm|0131E9"</span>]
+<span class="kw">HasAllBones</span> = [<span class="str">"NPC LB Anus2"</span>, <span class="str">"NPC RB Anus2"</span>]
+
+<span class="kw">[Config]</span>
+<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\anus\\canine_plap_*.wav"</span>]
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\anus\\canine_wet_*.wav"</span>]
+<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.9</span>
+<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.7</span></pre>
+        </div>
+
+        <div class="example-block">
+            <div class="example-header">Custom filenames must match the wildcard</div>
+            <div class="example-desc">
+                <p>If your files use different names than the example pack, change the wildcard too. The loader does not search for every <code>.wav</code> in the folder unless the pattern says to.</p>
+            </div>
+<pre><span class="cm"># These files:</span>
+<span class="cm"># Data/Sound/fx/ppa/vagina/custom_vag_01.wav</span>
+<span class="cm"># Data/Sound/fx/ppa/vagina/custom_vag_02.wav</span>
+<span class="cm"># Data/Sound/fx/ppa/vagina/slosh_01.wav</span>
+
+<span class="kw">Target</span> = <span class="str">"Vagina"</span>
+
+<span class="kw">[Config]</span>
+<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\vagina\\custom_vag_*.wav"</span>]
+<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\vagina\\slosh_*.wav"</span>]</pre>
+            <div class="example-desc">
+                <p>For a folder where every <code>.wav</code> should be eligible, use <code>*.wav</code>. This is broader and may mix clap and wet sounds together if both lists point at the same folder.</p>
+            </div>
+<pre><span class="kw">Target</span> = <span class="str">"Vagina"</span>
+
+<span class="kw">[Config]</span>
+<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\vagina\\*.wav"</span>]</pre>
+        </div>
+
+        <div class="callout">
+            <div class="callout-label">Sanity Check</div>
+            <p>At least one configured sound path must resolve to a real file under <code>Data</code>. For example, <code>Sound\\fx\\ppa\\vagina\\thrust_*.wav</code> must match files such as <code>Data/Sound/fx/ppa/vagina/thrust_01.wav</code>. If no configured clap or wet files exist anywhere, the sound system disables itself after loading configs.</p>
+        </div>
     </section>
 
     <footer>Accurate Penetration sound effect configuration documentation</footer>
