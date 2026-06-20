@@ -329,29 +329,33 @@
 
     <section id="formids">
         <h2>FormIDs</h2>
-        <p>Race restrictions can be written as <code>Races</code>, <code>Race</code>, <code>PenetratedRaces</code>, or <code>PenetratedRace</code>. Each accepts either a string or an array of strings.</p>
+        <p>Race and base actor restrictions use FormID strings. Use <code>Races</code> for race FormIDs and <code>BaseIDs</code> for actor base FormIDs. Each key accepts either a string or an array of strings.</p>
 <pre><span class="kw">Races</span> = [
     <span class="str">"Skyrim.esm|013745"</span>,       <span class="cm"># plugin-local ID, recommended</span>
     <span class="str">"Dawnguard.esm|00283A"</span>,
     <span class="str">"0x0200C5F0"</span>,              <span class="cm"># full runtime FormID</span>
-]</pre>
+]
+
+<span class="kw">BaseIDs</span> = [<span class="str">"Skyrim.esm|000A2C8E"</span>]</pre>
         <p>With <code>PluginName|LocalID</code>, the loader resolves normal and light plugins through Skyrim's data handler. Without a plugin name, strings with seven or more hex characters are treated as full runtime FormIDs; shorter strings default to <code>Skyrim.esm</code>.</p>
+        <p>FormID values must be strings. Numeric TOML values are ignored by the predicate loader.</p>
     </section>
 
     <section id="predicates">
         <h2>Predicates</h2>
-        <p>Predicates can live directly on the override through race keys, or under a <code>[Predicates]</code> table. All predicates must pass.</p>
+        <p>Predicates can live directly on the override through FormID keys, or under a <code>[Predicates]</code> table. All predicates must pass. Multiple values inside one race, base ID, or sex predicate are treated as alternatives.</p>
         <table class="prop-table">
             <thead><tr><th>Predicate</th><th>Type</th><th>Description</th></tr></thead>
             <tbody>
-                <tr><td>Races / Race</td><td>string or string[]</td><td>Matches the actor's race FormID.</td></tr>
-                <tr><td>PenetratedRaces / PenetratedRace</td><td>string or string[]</td><td>Alias for race matching, shared with sound effect config syntax.</td></tr>
-                <tr><td>IsSex</td><td>int[]</td><td>Matches actor sex. Skyrim values are <code>0</code> male and <code>1</code> female.</td></tr>
-                <tr><td>HasAllBones</td><td>string[]</td><td>Requires every listed skeleton node to exist on the actor's loaded 3D.</td></tr>
-                <tr><td>HasOneBone</td><td>string[]</td><td>Requires at least one listed skeleton node to exist.</td></tr>
+                <tr><td>Races</td><td>string or string[]</td><td>Matches the actor's race FormID. Valid top-level or inside <code>[Predicates]</code>.</td></tr>
+                <tr><td>BaseIDs</td><td>string or string[]</td><td>Matches the actor base FormID. Valid top-level or inside <code>[Predicates]</code>.</td></tr>
+                <tr><td>IsSex</td><td>int[]</td><td>Matches actor sex using <code>RE::SEX</code> enum values. Use inside <code>[Predicates]</code>; Skyrim values are normally <code>0</code> male and <code>1</code> female.</td></tr>
+                <tr><td>HasAllBones</td><td>string[]</td><td>Requires every listed skeleton node to exist on the actor's loaded 3D. Use inside <code>[Predicates]</code>.</td></tr>
+                <tr><td>HasOneBone</td><td>string[]</td><td>Requires at least one listed skeleton node to exist. Use inside <code>[Predicates]</code>.</td></tr>
             </tbody>
         </table>
 <pre><span class="kw">Races</span> = [<span class="str">"Skyrim.esm|013745"</span>]
+<span class="kw">BaseIDs</span> = [<span class="str">"Skyrim.esm|000A2C8E"</span>]
 
 <span class="kw">[Predicates]</span>
 <span class="kw">IsSex</span> = [<span class="num">1</span>]
@@ -359,6 +363,35 @@
 
 <span class="kw">[Vagina]</span>
 <span class="kw">Scale</span> = <span class="num">2.0</span></pre>
+        <p>An <code>any</code> override can target one actor base and only layer specific fields, such as mouth position offsets, onto whatever base config the actor already matched.</p>
+<pre><span class="kw">Inherits</span> = <span class="str">"any"</span>
+<span class="kw">BaseIDs</span> = [<span class="str">"RandomMod.esp|000A2C8E"</span>]
+
+<span class="kw">[Mouth.Position]</span>
+<span class="kw">Anchor</span> = <span class="str">"NPC Head [Head]"</span>
+<span class="kw">Offset</span> = [<span class="num">0.0</span>, <span class="num">1.0</span>, <span class="num">-1.15</span>]
+<span class="kw">CollisionCylinderRadius</span> = <span class="num">1.5</span>
+<span class="kw">CollisionCylinderHeightModifier</span> = <span class="num">1.2</span>
+
+<span class="kw">[[Mouth.Position.DepthWaypoints]]</span>
+<span class="kw">Offset</span> = [<span class="num">0.0</span>, <span class="num">-5.0</span>, <span class="num">2.0</span>]
+<span class="kw">CornerSmoothing</span> = <span class="num">1.0</span>
+
+<span class="kw">[[Mouth.Position.DepthWaypoints]]</span>
+<span class="kw">Anchor</span> = <span class="str">"NPC Neck [Neck]"</span>
+<span class="kw">Offset</span> = [<span class="num">0.0</span>, <span class="num">1.0</span>, <span class="num">1.0</span>]
+<span class="kw">CornerSmoothing</span> = <span class="num">0.5</span>
+
+<span class="kw">[[Mouth.Position.DepthWaypoints]]</span>
+<span class="kw">Anchor</span> = <span class="str">"NPC Spine2 [Spn2]"</span>
+<span class="kw">Offset</span> = [<span class="num">0.0</span>, <span class="num">4.0</span>, <span class="num">0.0</span>]
+<span class="kw">CornerSmoothing</span> = <span class="num">0.0</span></pre>
+        <p>To target the player actor base, use <code>Skyrim.esm|00000007</code>. Do not use the player reference FormID <code>Skyrim.esm|00000014</code> for <code>BaseIDs</code>.</p>
+<pre><span class="kw">Inherits</span> = <span class="str">"any"</span>
+<span class="kw">BaseIDs</span> = [<span class="str">"Skyrim.esm|00000007"</span>]
+
+<span class="kw">[Mouth.Position]</span>
+<span class="kw">Offset</span> = [<span class="num">0.0</span>, <span class="num">-1.0</span>, <span class="num">1.5</span>]</pre>
         <div class="callout callout-warn">
             <div class="callout-label">Global Match</div>
             <p>An override with no race keys and no <code>[Predicates]</code> entries matches every actor. That is useful for low-priority fallbacks and high-priority overlays, but it can hide more specific configs if the priority is wrong.</p>
