@@ -173,6 +173,7 @@
         <li><a href="#when">When To Use</a></li>
         <li><a href="#targets">Target Values</a></li>
         <li><a href="#positions">Actor Positions</a></li>
+        <li><a href="#target-actors">Target Actors</a></li>
         <li><a href="#files">JSON Files</a></li>
         <li><a href="#basic-format">Basic Format</a></li>
         <li><a href="#manual-format">Manual Format</a></li>
@@ -198,10 +199,10 @@
     <section id="overview">
         <h2>Overview</h2>
         <p>By default, the mod guesses the active target from framework scene context and animation tags. That works for many scenes, but some animations need a direct target because the framework data is ambiguous or wrong.</p>
-        <p>Animation action tags are JSON entries keyed by animation ID. Each stage can set a target for actor positions <code>1</code> through <code>5</code>.</p>
+        <p>Animation action tags are JSON entries keyed by animation ID. Each stage can set an action for actor positions <code>1</code> through <code>5</code>, and can optionally specify which other actor receives that action.</p>
         <div class="callout">
             <div class="callout-label">Important</div>
-            <p>The target assigned to an actor position defines where that actor's genitals go. It does not describe what happens to that actor. If actor position <code>2</code> has target <code>V</code>, actor 2's penis targets a vagina.</p>
+            <p>The action assigned to an actor position defines where that actor's genitals go. It does not describe what happens to that actor. If actor position <code>2</code> has action <code>V</code>, actor 2 is the performer whose penis targets a vagina.</p>
         </div>
     </section>
 
@@ -242,6 +243,39 @@
         <h2>Actor Positions</h2>
         <p>Actor positions <code>1</code> through <code>5</code> correspond to the order reported by the animation framework, such as SexLab or OStim. Position <code>1</code> is usually the main actor, position <code>2</code> is usually the first partner, and higher positions are additional participants.</p>
         <p>The in-game target menu shows the current actor, stage, and target, so it is usually the safest way to identify positions before writing JSON by hand.</p>
+    </section>
+
+    <section id="target-actors">
+        <h2>Explicit Target Actors</h2>
+        <p>A stage entry can use an object instead of a target string when a scene has multiple possible recipients. The actor-position key still identifies the <strong>performer</strong>; the object's <code>target</code> field identifies the actor who receives the action.</p>
+        <div class="example-block">
+            <div class="example-header">Actor 2 performs a vaginal action on actor 1</div>
+<pre>{
+  "AnimationName": [
+    {
+      "s": 1,
+      "2": {
+        "target": 1,
+        "action": "V"
+      }
+    }
+  ]
+}</pre>
+        </div>
+        <table class="prop-table">
+            <thead>
+                <tr><th>Field</th><th>Type</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>target</td><td>integer</td><td>The receiving actor position, from <code>1</code> through <code>5</code>.</td></tr>
+                <tr><td>action</td><td>string</td><td>One of the target values listed above: <code>V</code>, <code>A</code>, <code>M</code>, <code>H</code>, <code>LH</code>, <code>RH</code>, or <code>!</code>.</td></tr>
+            </tbody>
+        </table>
+        <p>The compact string form, such as <code>"2": "V"</code>, remains valid and lets the mod choose the receiving actor. Use the object form when the performer must interact with one specific actor.</p>
+        <div class="callout callout-warn">
+            <div class="callout-label">Self Interaction</div>
+            <p>A performer may target their own actor position only for <code>H</code>, <code>LH</code>, or <code>RH</code>. This explicitly configures masturbation with that actor's own hand. Self-targeted vagina, anus, and mouth actions are not supported.</p>
+        </div>
     </section>
 
     <section id="files">
@@ -305,7 +339,7 @@
             <tbody>
                 <tr><td>AnimationName</td><td>string</td><td>The exact animation ID reported by the framework.</td></tr>
                 <tr><td>s</td><td>integer</td><td>The stage number.</td></tr>
-                <tr><td>1 through 5</td><td>string</td><td>The actor position target for that stage.</td></tr>
+                <tr><td>1 through 5</td><td>string or object</td><td>The performer position's action, optionally paired with a specific target actor.</td></tr>
             </tbody>
         </table>
     </section>
@@ -343,10 +377,12 @@
         <p>The easiest way to tag animations is through the target menu during an active scene.</p>
         <div class="step"><span class="step-number">1</span><p>Start the animation scene.</p></div>
         <div class="step"><span class="step-number">2</span><p>Open the target menu with your configured select-actor key. The default key is <code>0</code>.</p></div>
-        <div class="step"><span class="step-number">3</span><p>Look at the actor position you want to modify.</p></div>
-        <div class="step"><span class="step-number">4</span><p>Select <code>Vagina</code>, <code>Anus</code>, <code>Mouth</code>, <code>LHand</code>, <code>RHand</code>, <code>None</code>, or <code>Auto</code>.</p></div>
-        <div class="step"><span class="step-number">5</span><p>Repeat for other actors and stages as needed.</p></div>
-        <div class="step"><span class="step-number">6</span><p>Select <code>Save</code> to write changes to <code>0_your_custom_tags.json</code>.</p></div>
+        <div class="step"><span class="step-number">3</span><p>Choose the <code>Performer</code>, or click the highlighted shaft on screen.</p></div>
+        <div class="step"><span class="step-number">4</span><p>Choose a <code>Target Actor</code>. Leave it on <code>Automatic</code> to use the compact action format, or select a specific actor to save an explicit pairing.</p></div>
+        <div class="step"><span class="step-number">5</span><p>Select the stage or stage range to update.</p></div>
+        <div class="step"><span class="step-number">6</span><p>Select <code>Vagina</code>, <code>Anus</code>, <code>Mouth</code>, <code>Hand</code>, <code>Left Hand</code>, <code>Right Hand</code>, <code>None</code>, or <code>Auto Detect</code>. You can also click a highlighted on-screen orifice or hand to choose its actor and action together.</p></div>
+        <div class="step"><span class="step-number">7</span><p>Repeat for other performers, targets, and stages as needed.</p></div>
+        <div class="step"><span class="step-number">8</span><p>Select <code>Save Changes</code> to write changes to <code>0_your_custom_tags.json</code>.</p></div>
         <div class="callout callout-purple">
             <div class="callout-label">Testing</div>
             <p>Menu changes are applied immediately for the active session. They do not persist across game sessions until you save them.</p>
@@ -406,6 +442,7 @@
             <li><strong>Your file loses priority:</strong> rename it so it sorts before the files you want to override, or use <code>0_your_custom_tags.json</code>.</li>
             <li><strong>Auto behaves like disabled after manual edits:</strong> remove the actor key from that stage instead of writing an unknown value.</li>
             <li><strong>Manual mode disables too much:</strong> set <code>manual</code> to <code>false</code> or remove the flag so omitted positions can use heuristics.</li>
+            <li><strong>An explicit pairing is ignored:</strong> confirm both <code>target</code> and <code>action</code> are present, the target is an integer from <code>1</code> through <code>5</code>, and the action is a string.</li>
             <li><strong>Invalid JSON:</strong> one syntax error can prevent the whole file from loading. Check commas, quotes, and matching braces.</li>
         </ul>
     </section>
