@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Version Migration | Accurate Penetration</title>
+    <meta name="description" content="Migrate Accurate Penetration configs from 0.0.38 to 0.0.39: removed keys, new defaults, detection, hands, and butt physics.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #11100f;
+            --bg-panel: #1b1a18;
+            --bg-code: #090908;
+            --text-main: #f2eee8;
+            --text-muted: #b8afa5;
+            --text-dim: #7d746b;
+            --accent: #2dd4bf;
+            --accent-dim: rgba(45, 212, 191, 0.10);
+            --border: #2c2925;
+            --sidebar-width: 280px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-body); color: var(--text-main); line-height: 1.7; display: flex; }
+        nav { width: var(--sidebar-width); height: 100vh; background: #0c0b0a; padding: 2rem 1.4rem; position: fixed; border-right: 1px solid var(--border); overflow-y: auto; z-index: 10; }
+        nav .logo { font-size: 0.78rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; }
+        nav ul { list-style: none; }
+        nav li { margin-bottom: 0.2rem; }
+        nav a { color: var(--text-dim); text-decoration: none; font-size: 0.84rem; display: block; padding: 0.36rem 0.65rem; border-radius: 6px; transition: all 0.15s; }
+        nav a:hover, nav a[aria-current] { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
+        .main-wrapper { margin-left: var(--sidebar-width); flex: 1; min-width: 0; display: flex; justify-content: center; }
+        main { width: 100%; max-width: 1540px; padding: 3rem 4rem 6rem; }
+        .hero { margin-bottom: 3.5rem; }
+        .hero h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.75rem; }
+        .hero p { font-size: 1.04rem; max-width: 760px; }
+        .version-badge { display: inline-block; color: var(--accent); background: var(--accent-dim); border-radius: 6px; padding: 0.2rem 0.65rem; font-size: 0.78rem; font-weight: 600; margin-bottom: 0.75rem; }
+        p { margin-bottom: 1rem; color: var(--text-muted); }
+        p strong, li strong { color: var(--text-main); }
+        a { color: var(--accent); }
+        code { font-family: 'Fira Code', monospace; background: rgba(255, 255, 255, 0.07); padding: 0.12rem 0.35rem; border-radius: 4px; font-size: 0.85em; overflow-wrap: anywhere; }
+        #config-changes { margin-top: 2rem; }
+        pre { background: var(--bg-code); padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.82rem; line-height: 1.65; }
+        pre code { background: none; padding: 0; font-size: inherit; overflow-wrap: normal; }
+        .diff-add { color: #a7f3d0; background: rgba(34, 197, 94, 0.12); text-decoration: none; }
+        .diff-remove { color: #fda4af; background: rgba(244, 63, 94, 0.12); text-decoration: line-through; }
+        .toml-comment { color: #9ca69f; }
+        .diff-remove .toml-comment { color: inherit; }
+        .removed-setting { text-decoration: line-through; }
+        footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.8rem; }
+        @media (max-width: 960px) {
+            nav { display: none; }
+            .main-wrapper { margin-left: 0; }
+            main { padding: 2rem 1.25rem 4rem; }
+            .hero h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav aria-label="Migration guide">
+    <div class="logo">Version Migration</div>
+    <ul>
+        <li><a href="index.html">Docs Home</a></li>
+        <li><a href="#v0-0-38-to-0-0-39" aria-current="page">0.0.38 → 0.0.39 (Current)</a></li>
+        <li><a href="#config-changes">Config Changes</a></li>
+        <li><a href="overrides.html">Body Profiles &amp; Overrides</a></li>
+        <li><a href="getting-started.html">Getting Started</a></li>
+    </ul>
+</nav>
+
+<div class="main-wrapper">
+<main>
+    <p><a href="index.html">Docs Home</a> · Version Migration</p>
+    <header class="hero" id="v0-0-38-to-0-0-39">
+        <span class="version-badge">0.0.39 · Current version</span>
+        <h1>0.0.38 → 0.0.39</h1>
+        <p><ins class="diff-add">Green: add/replace.</ins> <del class="diff-remove">Red: remove.</del> Merge into existing tables. Removed entries are commented out.</p>
+    </header>
+
+    <section id="config-changes" aria-label="Config changes">
+<pre><code><span id="menus">[General]</span>
+
+<ins class="diff-add"><span class="toml-comment"># Use PPA's own butt/rear-thigh impact physics instead of hooking CBPC.</span>
+<span class="toml-comment"># While a scene is active PPA fully owns the [ButtImpact] bones on the receiver, overriding CBPC/SMP for those bones.</span>
+<span class="toml-comment"># Set to false to use the CBPC [SoundEffects.ClapImpulse] path instead.</span>
+UsePPAImpactPhysics = true</ins>
+
+<ins class="diff-add"><span class="toml-comment"># Save menu edits automatically when the SKSE mod menu closes.</span>
+<span class="toml-comment"># When off, closing the menu applies them for this session without writing the files.</span>
+AutoSaveOnMenuClose = true</ins>
+
+<span id="detection">[Penis]</span>
+
+<del class="diff-remove"><span class="toml-comment"># Global detection range multiplier for collision cylinders.</span>
+<span class="toml-comment"># Example: 1.5 means 50% larger than the actual cylinder.</span>
+<span class="removed-setting"># ActivationRange = 3.5</span></del>
+
+<ins class="diff-add"><span class="toml-comment"># How far (degrees) a hole can be from the penis's resting direction and still be detected.</span>
+DetectionAngle = 100.0</ins>
+
+<ins class="diff-add"><span class="toml-comment"># How far (game units) past the tip of the penis a hole can be detected.</span>
+DetectionMargin = 4.0</ins>
+
+<ins class="diff-add"><span class="toml-comment"># How far (degrees) the penis, base to tip as animated, can point away from a hole to start using it.</span>
+AimAngle = 60.0</ins>
+
+<ins class="diff-add"><span class="toml-comment"># How far (degrees) it can point away from the hole it is already using before letting go. Keep this above AimAngle.</span>
+HoldAimAngle = 72.5</ins>
+
+<ins class="diff-add"><span class="toml-comment"># How strongly good aim beats being slightly closer when choosing between nearby holes. 0 picks purely by distance.</span>
+AimWeight = 10.0</ins>
+
+<span id="mesh"><ins class="diff-add"><span class="toml-comment"># Experimental: automatically measure penis length for more accurate penetration.</span>
+<span class="toml-comment"># Uses TipExtension if a measurement isn't available.</span>
+UseMeshLength = false</ins></span>
+
+<ins class="diff-add"><span class="toml-comment"># Experimental: automatically estimate penis girth near the tip, avoiding the thicker base.</span>
+<span class="toml-comment"># Uses Girth if a measurement isn't available.</span>
+<span class="toml-comment"># Note: You'll likely need to readjust the vagina and anus opening scales after enabling this.</span>
+UseMeshGirth = false</ins>
+
+[Vagina]
+
+<ins class="diff-add"><span class="toml-comment"># How far (degrees) off-center the penis base can be in front of the hole and still be detected.</span>
+ApproachAngle = 90.0</ins>
+
+<span id="removed">[Vagina.Position]</span>
+<del class="diff-remove"><span class="removed-setting"># CollisionCylinderRadius = 1.2</span></del>
+<del class="diff-remove"><span class="removed-setting"># CollisionCylinderHeightModifier = 1.0</span></del>
+
+<del class="diff-remove"><span class="toml-comment"># [[Vagina.Position.DepthWaypoints]] — waypoint 1</span></del>
+<del class="diff-remove"><span class="removed-setting"># CollisionRadius = 4.0</span></del>
+
+<del class="diff-remove"><span class="toml-comment"># [[Vagina.Position.DepthWaypoints]] — waypoint 2</span></del>
+<del class="diff-remove"><span class="removed-setting"># CollisionRadius = 1.0</span></del>
+
+[Anus]
+
+<ins class="diff-add"><span class="toml-comment"># How far (degrees) off-center the penis base can be in front of the hole and still be detected.</span>
+ApproachAngle = 90.0</ins>
+
+[Anus.Position]
+<del class="diff-remove"><span class="removed-setting"># CollisionCylinderRadius         = 1.2</span></del>
+<del class="diff-remove"><span class="removed-setting"># CollisionCylinderHeightModifier = 1.0</span></del>
+
+<span id="mouth"><ins class="diff-add">[Mouth]</ins></span>
+
+<ins class="diff-add"><span class="toml-comment"># How far (degrees) off-center the penis base can be in front of the hole and still be detected.</span>
+ApproachAngle = 70.0</ins>
+
+<ins class="diff-add"><span class="toml-comment"># How far (units) before the mouth entrance facial expressions treat the penis as inserted.</span>
+InsertionLead = 2.5</ins>
+
+[Mouth.Position]
+<del class="diff-remove"><span class="removed-setting"># CollisionCylinderRadius         = 1.5</span></del>
+<del class="diff-remove"><span class="removed-setting"># CollisionCylinderHeightModifier = 1.2</span></del>
+
+<span id="hands">[Hands.Left]</span>
+<ins class="diff-add">GripLength           = 2.0              <span class="toml-comment"># Length of shaft the hand holds straight</span></ins>
+<ins class="diff-add">ReleaseDistance      = 5.0              <span class="toml-comment"># How far past the tip the hand can slide before the shaft lets go</span></ins>
+<ins class="diff-add">Alignment            = 0.85             <span class="toml-comment"># How much the shaft conforms to the hand's grip direction (0 = pivots straight through the grip, 1 = fully follows the hand)</span></ins>
+<ins class="diff-add">StrokeEffects        = true             <span class="toml-comment"># Make the shaft react to being stroked (skin drag and follow-through below)</span></ins>
+<ins class="diff-add">StrokeDrag           = 2.0              <span class="toml-comment"># How much the skin is dragged along with the hand's strokes (0-4)</span></ins>
+<ins class="diff-add">StrokeFollowThrough  = 1.0              <span class="toml-comment"># How much the part past the hand trails behind when the hand moves (0-2)</span></ins>
+<del class="diff-remove"><span class="removed-setting"># GripOffsetAdjustment = [0.0, 0.0, 1.0]  </span><span class="toml-comment"># Fine-tune grip position (X, Y, Z)</span></del>
+<ins class="diff-add">GripOffsetAdjustment = [0.0, 0.0, 0.0]  <span class="toml-comment"># Nudge the grip position on top of the automatic placement (hand X, Y, Z)</span></ins>
+
+[Hands.Right]
+<ins class="diff-add">ReleaseDistance      = 5.0</ins>
+<ins class="diff-add">Alignment            = 0.85</ins>
+<ins class="diff-add">StrokeEffects        = true</ins>
+<ins class="diff-add">StrokeDrag           = 2.0</ins>
+<ins class="diff-add">StrokeFollowThrough  = 1.0</ins>
+<del class="diff-remove"><span class="removed-setting"># GripOffsetAdjustment = [0.0, 0.0, 1.0]</span></del>
+<ins class="diff-add">GripOffsetAdjustment = [0.0, 0.0, 0.0]</ins>
+
+<span id="butt"><ins class="diff-add"><span class="toml-comment"># ───────────────────────────────────────────────────────────────────────────────</span>
+<span class="toml-comment">#                             BUTT IMPACT PHYSICS</span>
+<span class="toml-comment"># ───────────────────────────────────────────────────────────────────────────────</span>
+<span class="toml-comment">#</span>
+<span class="toml-comment"># PPA's own butt and rear-thigh jiggle. Used when [General] UsePPAImpactPhysics = true.</span>
+<span class="toml-comment"># Every vaginal/anal clap (the same moment the clap sound plays) kicks the butt cheeks</span>
+<span class="toml-comment"># and rear thighs, which then bounce, swing, ripple and squash back to rest like springs.</span>
+<span class="toml-comment"># The receiver's own movement also makes them jiggle, so they stay alive between impacts.</span>
+<span class="toml-comment">#</span>
+<span class="toml-comment"># While a scene is running PPA fully owns these bones on the receiver, so any CBPC/SMP</span>
+<span class="toml-comment"># physics on them is overridden for the duration of the scene.</span>
+<span class="toml-comment">#</span>
+<span class="toml-comment"># Displacements are in bone units, not skin units. UBE weights the butt bones at ~0.2 and</span>
+<span class="toml-comment"># the rear thigh bones at ~0.12, so the visible skin motion is roughly 1/5 (butt) or 1/8</span>
+<span class="toml-comment"># (thigh) of these values. Other bodies may need different values.</span>
+<span class="toml-comment">#</span>
+<span class="toml-comment"># Every bounce, swing, ripple, squash and thigh motion is tuned with a Frequency and a Damping:</span>
+<span class="toml-comment">#   Frequency (Hz) - how fast it wobbles. Lower = heavier, softer, slower. Higher = firmer, quicker.</span>
+<span class="toml-comment">#   Damping        - how fast the wobble dies out. 1.0 = settles with no wobble at all.</span>
+<span class="toml-comment">#                    Lower values keep wobbling longer (0.1 = very jiggly, 0.5 = fairly firm).</span>
+<span class="toml-comment">#</span>
+[ButtImpact]
+<span class="toml-comment"># Turn PPA butt impact physics on or off for this body.</span>
+<span class="toml-comment"># Body/race overrides can set this to false to skip bodies that don't have these bones.</span>
+Enabled = true
+
+<span class="toml-comment"># Skeleton bones driven by this system. Their rest pose is read from the skeleton,</span>
+<span class="toml-comment"># so only change these if your body uses differently named butt/thigh bones.</span>
+LeftButtNode = "NPC L Butt"
+RightButtNode = "NPC R Butt"
+LeftThighNode = "NPC L RearThigh"
+RightThighNode = "NPC R RearThigh"
+
+<span class="toml-comment"># ─── IMPACT ───</span>
+
+<span class="toml-comment"># Master multiplier on every impact. Turn this up for more jiggle, down for subtlety.</span>
+<span class="toml-comment"># At 0 impacts do nothing, but movement-driven jiggle (the InertiaScale settings) still works.</span>
+<span class="toml-comment"># Range: 0.0 - 5.0 | Default: 1.0</span>
+Strength = 1.0
+
+<span class="toml-comment"># Controls how much thrust speed affects impact strength.</span>
+<span class="toml-comment"># Higher values mean even slow thrusts produce a noticeable bounce.</span>
+<span class="toml-comment"># Lower values mean only fast/rough thrusts cause a big bounce.</span>
+<span class="toml-comment"># Impact strength also scales with how deep the thrust is.</span>
+<span class="toml-comment"># Range: 0.1 - 10.0 | Default: 2.5</span>
+SpeedSensitivity = 2.5
+
+<span class="toml-comment"># Extra strength multiplier for anal impacts (vaginal impacts always use 1.0).</span>
+<span class="toml-comment"># Range: 0.0 - 3.0 | Default: 1.0</span>
+AnalMultiplier = 1.0
+
+<span class="toml-comment"># Random strength difference between the left and right cheek on each impact.</span>
+<span class="toml-comment"># At 0 both cheeks move identically (looks stiff/robotic).</span>
+<span class="toml-comment"># At 0.2 there is a natural subtle difference every stroke.</span>
+<span class="toml-comment"># Above 0.4 it starts looking unnatural.</span>
+<span class="toml-comment"># Range: 0.0 - 0.5 | Default: 0.2</span>
+Variation = 0.2
+
+<span class="toml-comment"># Seconds between the first and second cheek reacting. Which cheek goes first is random</span>
+<span class="toml-comment"># per impact. A small delay sells the ripple across the butt.</span>
+<span class="toml-comment"># Range: 0.0 - 0.15 | Default: 0.02</span>
+CheekDelay = 0.02
+
+<span class="toml-comment"># Seconds after a cheek is hit before its rear thigh reacts,</span>
+<span class="toml-comment"># so the wave looks like it travels down the leg.</span>
+<span class="toml-comment"># Range: 0.0 - 0.25 | Default: 0.045</span>
+ThighDelay = 0.045
+
+<span class="toml-comment"># ─── IMPACT DIRECTION ───</span>
+<span class="toml-comment"># These three are mixed together to decide which way the cheeks get pushed.</span>
+<span class="toml-comment"># Only their size relative to each other matters, not the absolute values.</span>
+
+<span class="toml-comment"># How much the cheeks are pushed along the direction of the thrust (into the body).</span>
+<span class="toml-comment"># Range: 0.0 - 2.0 | Default: 0.6</span>
+InwardWeight = 0.6
+
+<span class="toml-comment"># How much the cheeks are pushed up toward the spine.</span>
+<span class="toml-comment"># Range: 0.0 - 2.0 | Default: 0.45</span>
+UpWeight = 0.45
+
+<span class="toml-comment"># How much the cheeks are pushed sideways, away from each other.</span>
+<span class="toml-comment"># Thighs ignore this and only use the inward/up mix.</span>
+<span class="toml-comment"># Range: 0.0 - 2.0 | Default: 0.35</span>
+SpreadWeight = 0.35
+
+<span class="toml-comment"># ─── CHEEK BOUNCE ───</span>
+<span class="toml-comment"># The main back-and-forth movement of each cheek.</span>
+
+<span class="toml-comment"># How far the cheek moves on a full-strength impact (roughly the peak of the bounce).</span>
+<span class="toml-comment"># This is the main "how much jiggle" setting.</span>
+<span class="toml-comment"># Range: 0.0 - 40.0 | Default: 15.198</span>
+Displacement = 15.198
+
+<span class="toml-comment"># How fast the cheek bounces, in Hz. Lower = heavier, slower wobble. Higher = firmer, tighter.</span>
+<span class="toml-comment"># Range: 0.5 - 15.0 | Default: 3.8</span>
+Frequency = 3.8
+
+<span class="toml-comment"># How quickly the bounce settles. 1.0 = no overshoot. Lower values wobble longer.</span>
+<span class="toml-comment"># Range: 0.01 - 1.5 | Default: 0.16</span>
+Damping = 0.16
+
+<span class="toml-comment"># Soft limit on how far a cheek can move in total. Movement approaching this limit is</span>
+<span class="toml-comment"># smoothly compressed rather than cut off, which prevents stretched/torn meshes from</span>
+<span class="toml-comment"># stacked impacts. Keep it at or above Displacement or big hits will feel flattened.</span>
+<span class="toml-comment"># Range: 0.0 - 60.0 | Default: 16.0</span>
+MaxDisplacement = 16.0
+
+<span class="toml-comment"># Links the two cheeks so movement sloshes from one into the other.</span>
+<span class="toml-comment"># 0 = each cheek moves independently. Higher = they pull each other into sync.</span>
+<span class="toml-comment"># Range: 0.0 - 1.0 | Default: 0.25</span>
+CheekCoupling = 0.25
+
+<span class="toml-comment"># How strongly the receiver's own body movement (the animation moving the hips around)</span>
+<span class="toml-comment"># makes the cheeks lag behind and jiggle, even without impacts.</span>
+<span class="toml-comment"># 0 = cheeks only move on impacts.</span>
+<span class="toml-comment"># Range: 0.0 - 5.0 | Default: 1.0</span>
+InertiaScale = 1.0
+
+<span class="toml-comment"># ─── CHEEK SWING ───</span>
+<span class="toml-comment"># The butt bone sits above the bulk of the cheek, so rotating it swings the lower</span>
+<span class="toml-comment"># cheek like a pendulum. This adds a heavy "hanging" sway on top of the bounce.</span>
+
+<span class="toml-comment"># How far the cheek swings on a full-strength impact, in degrees.</span>
+<span class="toml-comment"># Range: 0 - 90 | Default: 26.0</span>
+SwingAngle = 26.0
+
+<span class="toml-comment"># How fast the cheek swings back and forth, in Hz. Lower = slower, heavier sway.</span>
+<span class="toml-comment"># Range: 0.5 - 15.0 | Default: 2.585</span>
+SwingFrequency = 2.585
+
+<span class="toml-comment"># How quickly the swing settles. 1.0 = no overshoot. Lower values sway longer.</span>
+<span class="toml-comment"># Range: 0.01 - 1.5 | Default: 0.101</span>
+SwingDamping = 0.101
+
+<span class="toml-comment"># Soft limit on the total swing angle, in degrees. Swings approaching this are</span>
+<span class="toml-comment"># smoothly compressed rather than cut off.</span>
+<span class="toml-comment"># Range: 0 - 90 | Default: 45.0</span>
+MaxSwingAngle = 45.0
+
+<span class="toml-comment"># How strongly the receiver's own body movement makes the cheeks swing, even without impacts.</span>
+<span class="toml-comment"># 0 = cheeks only swing on impacts.</span>
+<span class="toml-comment"># Range: 0.0 - 3.0 | Default: 0.35</span>
+SwingInertiaScale = 0.35
+
+<span class="toml-comment"># Where the "weight" of the left cheek sits relative to its butt bone. The swing pivots</span>
+<span class="toml-comment"># around the bone and this point is what hangs from it. X is mirrored for the right cheek.</span>
+<span class="toml-comment"># Don't change this unless you're tuning for a body with a very different butt shape.</span>
+<span class="toml-comment"># Default: { x = -2.3, y = 0.0, z = -4.8 }</span>
+MassOffset = { x = -2.3, y = 0.0, z = -4.8 }
+
+<span class="toml-comment"># ─── RIPPLE &amp; SQUASH ───</span>
+
+<span class="toml-comment"># Size of a small, faster jiggle layered over the main bounce. Gives the flesh</span>
+<span class="toml-comment"># a secondary "ripple" instead of moving as one solid piece.</span>
+<span class="toml-comment"># Range: 0.0 - 20.0 | Default: 3.0</span>
+RippleDisplacement = 3.0
+
+<span class="toml-comment"># How fast the ripple jiggles, in Hz. Usually higher than the main Frequency.</span>
+<span class="toml-comment"># Range: 1.0 - 25.0 | Default: 4.103</span>
+RippleFrequency = 4.103
+
+<span class="toml-comment"># How quickly the ripple fades. Lower values ripple longer.</span>
+<span class="toml-comment"># Range: 0.01 - 1.5 | Default: 0.12</span>
+RippleDamping = 0.12
+
+<span class="toml-comment"># How much the cheeks squash (shrink) on impact before springing back and briefly</span>
+<span class="toml-comment"># overshooting. Fraction of the bone's scale, so 0.07 = squashes about 7%.</span>
+<span class="toml-comment"># Range: 0.0 - 0.6 | Default: 0.07</span>
+Squash = 0.07
+
+<span class="toml-comment"># How fast the squash springs back, in Hz.</span>
+<span class="toml-comment"># Range: 0.5 - 20.0 | Default: 5.0</span>
+SquashFrequency = 5.0
+
+<span class="toml-comment"># How quickly the squash settles. Lower values pulse longer.</span>
+<span class="toml-comment"># Range: 0.01 - 1.5 | Default: 0.3</span>
+SquashDamping = 0.3
+
+<span class="toml-comment"># ─── REAR THIGH ───</span>
+<span class="toml-comment"># The upper back of the thighs bounce too, slightly after the cheeks (see ThighDelay).</span>
+
+<span class="toml-comment"># How far the rear thigh moves on a full-strength impact.</span>
+<span class="toml-comment"># Range: 0.0 - 30.0 | Default: 20.739</span>
+ThighDisplacement = 20.739
+
+<span class="toml-comment"># How fast the thigh bounces, in Hz. Lower = heavier, slower wobble.</span>
+<span class="toml-comment"># Range: 0.5 - 20.0 | Default: 3.896</span>
+ThighFrequency = 3.896
+
+<span class="toml-comment"># How quickly the thigh bounce settles. 1.0 = no overshoot. Lower values wobble longer.</span>
+<span class="toml-comment"># Range: 0.01 - 1.5 | Default: 0.2</span>
+ThighDamping = 0.2
+
+<span class="toml-comment"># Soft limit on how far a rear thigh can move in total. Movement approaching this is</span>
+<span class="toml-comment"># smoothly compressed rather than cut off. When it is lower than ThighDisplacement,</span>
+<span class="toml-comment"># hard hits all top out at about this distance.</span>
+<span class="toml-comment"># Range: 0.0 - 40.0 | Default: 10.0</span>
+ThighMaxDisplacement = 10.0
+
+<span class="toml-comment"># How strongly the receiver's own body movement makes the rear thighs jiggle, even without impacts.</span>
+<span class="toml-comment"># 0 = thighs only move on impacts.</span>
+<span class="toml-comment"># Range: 0.0 - 5.0 | Default: 0.5</span>
+ThighInertiaScale = 0.5</ins></span></code></pre>
+    </section>
+    <footer>Accurate Penetration version migration guide</footer>
+</main>
+</div>
+</body>
+</html>

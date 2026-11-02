@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Started | Accurate Penetration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #11100f;
+            --bg-panel: #1b1a18;
+            --bg-code: #090908;
+            --text-main: #f2eee8;
+            --text-muted: #b8afa5;
+            --text-dim: #7d746b;
+            --accent: #2dd4bf;
+            --accent-dim: rgba(45, 212, 191, 0.10);
+            --purple: #c084fc;
+            --purple-dim: rgba(192, 132, 252, 0.10);
+            --warning: #f59e0b;
+            --warning-dim: rgba(245, 158, 11, 0.10);
+            --danger: #fb7185;
+            --danger-dim: rgba(251, 113, 133, 0.10);
+            --success: #84cc16;
+            --success-dim: rgba(132, 204, 22, 0.10);
+            --border: #2c2925;
+            --sidebar-width: 280px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.7;
+            display: flex;
+        }
+        nav {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #0c0b0a;
+            padding: 2rem 1.4rem;
+            position: fixed;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            z-index: 10;
+        }
+        nav .logo { font-size: 0.78rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.5rem; }
+        nav ul { list-style: none; }
+        nav li { margin-bottom: 0.2rem; }
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.84rem;
+            display: block;
+            padding: 0.36rem 0.65rem;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+        nav a:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
+        nav .nav-section { font-size: 0.68rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin: 1.35rem 0 0.45rem 0.65rem; }
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        main {
+            width: 100%;
+            max-width: 1540px;
+            padding: 3rem 4rem 6rem;
+        }
+        .hero { margin-bottom: 3.5rem; }
+        .hero h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: 0; margin-bottom: 0.75rem; }
+        .hero p { color: var(--text-muted); font-size: 1.04rem; max-width: 760px; }
+        h2 {
+            font-size: 1.35rem;
+            font-weight: 650;
+            margin: 3.2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        h3 { font-size: 1.02rem; font-weight: 650; margin: 1.8rem 0 0.75rem; }
+        h4 { font-size: 0.92rem; font-weight: 650; margin: 1.4rem 0 0.45rem; color: var(--accent); }
+        p { margin-bottom: 1rem; color: var(--text-muted); }
+        p strong, li strong { color: var(--text-main); }
+        a { color: var(--accent); }
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(255, 255, 255, 0.07);
+            padding: 0.12rem 0.35rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        pre {
+            background: var(--bg-code);
+            color: #d8d2ca;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.1rem 1.25rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.65;
+            margin: 1rem 0 1.4rem;
+        }
+        pre .cm { color: #7d746b; }
+        pre .kw { color: #2dd4bf; }
+        pre .str { color: #a7f3d0; }
+        pre .num { color: #fbbf24; }
+        pre .bool { color: #c084fc; }
+        .callout {
+            padding: 1rem 1.15rem;
+            border-radius: 8px;
+            margin: 1.4rem 0;
+            border-left: 3px solid;
+            background: var(--accent-dim);
+            border-color: var(--accent);
+        }
+        .callout p { margin: 0; }
+        .callout p + p { margin-top: 0.55rem; }
+        .callout-label { font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; color: var(--accent); }
+        .callout-warn { background: var(--warning-dim); border-color: var(--warning); }
+        .callout-warn .callout-label { color: var(--warning); }
+        .callout-danger { background: var(--danger-dim); border-color: var(--danger); }
+        .callout-danger .callout-label { color: var(--danger); }
+        .callout-purple { background: var(--purple-dim); border-color: var(--purple); }
+        .callout-purple .callout-label { color: var(--purple); }
+        .callout-success { background: var(--success-dim); border-color: var(--success); }
+        .callout-success .callout-label { color: var(--success); }
+        .prop-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0 1.5rem;
+            font-size: 0.88rem;
+        }
+        .prop-table th {
+            text-align: left;
+            padding: 0.58rem 0.85rem;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-dim);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+        .prop-table td {
+            padding: 0.62rem 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: top;
+            color: var(--text-muted);
+        }
+        .prop-table td:first-child { color: var(--accent); font-family: 'Fira Code', monospace; font-size: 0.82rem; white-space: nowrap; }
+        .prop-table td:nth-child(2) { color: var(--purple); font-family: 'Fira Code', monospace; font-size: 0.82rem; white-space: nowrap; }
+        .example-block { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; margin: 1.5rem 0; overflow: hidden; }
+        .example-header { padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.04); border-bottom: 1px solid var(--border); font-size: 0.86rem; font-weight: 650; }
+        .example-desc { padding: 1rem; }
+        .example-desc p { margin: 0; }
+        .example-block pre { margin: 0; border: none; border-radius: 0; border-top: 1px solid var(--border); }
+        .step { display: grid; grid-template-columns: 2rem 1fr; gap: 0.75rem; margin: 0.75rem 0; color: var(--text-muted); }
+        .step-number { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--accent-dim); color: var(--accent); font-size: 0.82rem; font-weight: 700; }
+        footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.8rem; }
+        @media (max-width: 960px) {
+            nav { display: none; }
+            .main-wrapper { margin-left: 0; }
+            main { padding: 2rem 1.25rem 4rem; }
+            .prop-table { display: block; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">Getting Started</div>
+    <ul>
+        <li><a href="index.html">Docs Home</a></li>
+        <li><a href="migration.html">Version Migration</a></li>
+        <li><a href="#menus">Find the Menus</a></li>
+        <li><a href="#saving">Apply, Save &amp; Revert</a></li>
+        <li><a href="#hotkeys">Hotkeys</a></li>
+        <li><a href="#targets">Fix a Target</a></li>
+        <li><a href="#orifice-editor">Move an Opening</a></li>
+        <li><a href="#files">Edit Config Files</a></li>
+        <div class="nav-section">References</div>
+        <li><a href="overrides.html">Body Profiles &amp; Overrides</a></li>
+        <li><a href="expressions.html">Facial Expressions</a></li>
+        <li><a href="sound-effects.html">Sound Effects</a></li>
+        <li><a href="voice-settings.html">Voice Settings</a></li>
+        <li><a href="animation-tags.html">Animation Action Tags</a></li>
+        <li><a href="skse-api.html">SKSE Plugin API</a></li>
+    </ul>
+</nav>
+
+<div class="main-wrapper">
+<main>
+    <p><a href="index.html">Docs Home</a> · <a href="getting-started.html">Getting Started</a></p>
+    <div class="hero">
+        <h1>Getting Started</h1>
+        <p>Most tuning can be done in-game. Start with one change, apply it, and watch the result before adjusting more.</p>
+    </div>
+
+    <section id="menus">
+        <h2>Find the Menus</h2>
+        <p>With SKSE Menu Framework installed, open its menu and choose <strong>Procedural Penis Animations</strong>. PPA has four pages:</p>
+        <table class="prop-table">
+            <thead><tr><th>Page</th><th>What to change</th></tr></thead>
+            <tbody>
+                <tr><td>General</td><td>Opening physics, butt physics engine, actor filters, expressions, hotkeys, and debug views.</td></tr>
+                <tr><td>Sound Effects</td><td>Clap/wet timing, volume, pitch, rumble, and legacy CBPC impulses.</td></tr>
+                <tr><td>Body Profiles</td><td>Penis size and detection, openings, hands, belly bulge, and built-in butt physics. Pick a config at the top.</td></tr>
+                <tr><td>Expressions</td><td>Facial presets, conditions, and morph effects for the selected config.</td></tr>
+            </tbody>
+        </table>
+        <p>Dimmed body-profile fields match the inherited value. Changed fields show a dot. Hover a setting for a short explanation.</p>
+        <p>To change how an opening moves, go to <strong>Body Profiles → Orifices</strong> and adjust its opening offsets. To move the entrance or internal path, use the <a href="#orifice-editor">orifice editor</a>.</p>
+        <p>Body Profiles and Expressions can edit the default config and single-override files. A file marked <strong>read-only</strong> contains multiple overrides; edit its TOML directly.</p>
+    </section>
+
+    <section id="saving">
+        <h2>Apply, Save &amp; Revert</h2>
+        <p>Use the buttons at the top of a settings page:</p>
+        <table class="prop-table">
+            <thead><tr><th>Button</th><th>Result</th></tr></thead>
+            <tbody>
+                <tr><td>Apply</td><td>Try the edits for this game session without writing the file.</td></tr>
+                <tr><td>Save</td><td>Apply the edits and write them to the config file.</td></tr>
+                <tr><td>Revert</td><td>Return the selected file to its saved settings, including discarding session-only edits.</td></tr>
+            </tbody>
+        </table>
+        <p><strong>Auto-save</strong> is on by default. Closing the mod menu saves edits you have not applied yet. Turn it off to apply on close without saving. A change marked <strong>Applied, not saved</strong> still needs Save to keep it for your next game session.</p>
+        <p><strong>Example:</strong> lower butt <code>Strength</code>, click Apply, and watch a scene. Click Save if you like it, or Revert to restore the saved file.</p>
+        <p>Animation targets have their own <strong>Save Changes</strong> button. The orifice editor also has its own Save menu.</p>
+    </section>
+
+    <section id="hotkeys">
+        <h2>Hotkeys</h2>
+        <p>These are the shipped bindings. Existing configs may use different keys; check <strong>General → Hotkeys</strong>.</p>
+        <table class="prop-table">
+            <thead><tr><th>Action</th><th>Default</th></tr></thead>
+            <tbody>
+                <tr><td>Select actor / open target editor</td><td>Backspace (<code>SelectActor = 14</code>)</td></tr>
+                <tr><td>Reload settings</td><td>F5 (<code>Reload = 63</code>)</td></tr>
+                <tr><td>Toggle PPA physics</td><td>F2 (<code>Pause = 60</code>)</td></tr>
+                <tr><td>Speed up / slow down animation</td><td>Unbound; assign keys in the menu.</td></tr>
+            </tbody>
+        </table>
+        <p>If <code>HotkeyWhileHoldingShiftOnly</code> is enabled, hold Shift too. <code>ConsoleOnly</code> restricts Reload and Pause to a paused UI, such as the console.</p>
+    </section>
+
+    <section id="targets">
+        <h2>Fix an Animation’s Target</h2>
+        <ol class="content-list">
+            <li>Start a supported SexLab or OStim scene and look at an actor.</li>
+            <li>Press your Select Actor key to open the target editor.</li>
+            <li>Choose the <strong>Performer</strong> whose penis needs adjusting, then the <strong>Target Actor</strong>.</li>
+            <li>Choose the stage range and an action, such as Anus or Left Hand.</li>
+            <li>Watch the change, then click <strong>Save Changes</strong> to keep it.</li>
+        </ol>
+        <p>You can also click a highlighted shaft to choose the performer, then an opening or hand to choose its recipient and action. <strong>Auto Detect</strong> restores automatic selection; <strong>None</strong> disables that performer’s tracking for the chosen stages.</p>
+        <p><strong>Example:</strong> if actor 2 should target actor 1’s anus in stage 3, select performer 2, target actor 1, stage 3, then Anus. See <a href="animation-tags.html">Animation Action Tags</a> for JSON examples.</p>
+    </section>
+
+    <section id="orifice-editor">
+        <h2>Move an Opening or Internal Path</h2>
+        <p>Look at the actor, press Select Actor, and choose <strong>Edit Orifices</strong>. Pick Vagina, Anus, or Mouth. The editor enters free camera and lets you move the entrance or a waypoint along the internal path.</p>
+        <table class="prop-table">
+            <thead><tr><th>Control</th><th>Action</th></tr></thead>
+            <tbody>
+                <tr><td>Arrow keys</td><td>Move the selected point left/right and up/down.</td></tr>
+                <tr><td>Shift</td><td>Toggle up/down movement to forward/back.</td></tr>
+                <tr><td>− / +</td><td>Change the point-movement step.</td></tr>
+                <tr><td>Mouse wheel</td><td>Change free-camera speed.</td></tr>
+                <tr><td>Enter</td><td>Temporarily apply the path to the actor’s active scene.</td></tr>
+                <tr><td>Tab or Select Actor key</td><td>Open the editor menu to choose points, add/remove a waypoint, or save.</td></tr>
+                <tr><td>Escape</td><td>Exit the editor.</td></tr>
+            </tbody>
+        </table>
+        <p>When saving, choose <strong>Save to actor’s current config</strong> to update the selected source file, or <strong>Create new overlay config</strong> for an NPC-specific adjustment. Editing a shared source can affect other actors using it.</p>
+        <p>The NPC option writes <code>ppa-override-configs/000-ppa-npc-*.toml</code>. It matches the actor’s base ID, so it also affects other references of that NPC base. Delete the overlay and reload to remove it.</p>
+        <p>If the mouth entrance is correct but the lips open too late, adjust <a href="expressions.html#mouth-timing"><code>InsertionLead</code></a> instead.</p>
+    </section>
+
+    <section id="files">
+        <h2>Edit Config Files</h2>
+        <p>All folders below are under <code>Data/SKSE/Plugins/</code> in your Skyrim installation.</p>
+        <table class="prop-table">
+            <thead><tr><th>Path</th><th>Contents</th></tr></thead>
+            <tbody>
+                <tr><td>accurate-penetration.toml</td><td>Global settings and default body, expression, and sound settings.</td></tr>
+                <tr><td>ppa-override-configs/*.toml</td><td>Body/race/NPC settings and overlays.</td></tr>
+                <tr><td>ppa-animation-tagging/*.json</td><td>Animation targets by stage and actor position.</td></tr>
+                <tr><td>ppa-sound-effect-configs/*.toml</td><td>Sound lists and legacy CBPC impulse overrides.</td></tr>
+                <tr><td>ppa-voice-configs/*.toml</td><td>Voice packs, conditions, timing, and lip sync.</td></tr>
+            </tbody>
+        </table>
+        <p>Examples on the reference pages show either a complete override file or fields to edit in an existing table. In TOML, add a setting under its matching section; do not create a second copy of the same table. Keep decimal values as decimals, such as <code>1.0</code>.</p>
+        <p>After hand-editing body or sound settings, use Reload. For voice edits, reload during a tracked scene or restart Skyrim. For JSON edits, see the <a href="animation-tags.html#manual-editing">target reload notes</a>.</p>
+    </section>
+
+    <footer>Accurate Penetration quick guide</footer>
+</main>
+</div>
+
+</body>
+</html>

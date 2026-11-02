@@ -172,15 +172,31 @@
     <header>
         <div class="eyebrow">Accurate Penetration</div>
         <h1>Configuration Documentation</h1>
-        <p>Reference pages for the current configuration and integration systems: inherited RaceConfig overrides, facial expression presets, animation action tags, sound effect overrides, voice configs, and the SKSE plugin API.</p>
+        <p>Tune PPA in-game, fix an animation’s target, or make a config for your body. Start with the quick guide, then use the examples on each reference page.</p>
     </header>
 
     <section class="doc-grid" aria-label="Documentation pages">
+        <a class="doc-card race" href="getting-started.html">
+            <div>
+                <div class="icon">GO</div>
+                <h2>Getting Started</h2>
+                <p>Find the new menus, apply or save edits, and adjust a target or opening in-game.</p>
+            </div>
+            <div class="footer"><span>Start here</span><span>Open</span></div>
+        </a>
+        <a class="doc-card sound" href="migration.html">
+            <div>
+                <div class="icon">Δ</div>
+                <h2>Version Migration</h2>
+                <p>Upgrade from 0.0.38 to 0.0.39. Review removed keys, new defaults, and changes to detection, hands, and butt physics.</p>
+            </div>
+            <div class="footer"><span>0.0.39 · Current</span><span>Open</span></div>
+        </a>
         <a class="doc-card race" href="overrides.html">
             <div>
                 <div class="icon">RC</div>
-                <h2>RaceConfig Overrides</h2>
-                <p>Per-race and predicate-based physics configuration, including the current <code>Inherits</code> modes, named base configs, and runtime <code>any</code> overlays.</p>
+                <h2>Body Profiles &amp; Overrides</h2>
+                <p>Set detection angles, mesh measurements, openings, belly bulge, and butt physics for a body, race, or NPC.</p>
             </div>
             <div class="footer"><span>overrides.html</span><span>Open</span></div>
         </a>
@@ -189,7 +205,7 @@
             <div>
                 <div class="icon">FX</div>
                 <h2>Facial Expressions</h2>
-                <p>Facial presets, morph effects, depth scaling, scene context filters, MFEE usage, and how presets participate in RaceConfig inheritance.</p>
+                <p>Make expressions respond to depth and size. Includes mouth timing, blinking, and MFEE examples.</p>
             </div>
             <div class="footer"><span>expressions.html</span><span>Open</span></div>
         </a>
@@ -198,7 +214,7 @@
             <div>
                 <div class="icon">SE</div>
                 <h2>Sound Effects</h2>
-                <p>Targeted clap and wet sound lists, clap impulse overrides, penetrator predicates, girth matching, wildcard paths, and sound override inheritance.</p>
+                <p>Choose clap and wet sounds, adjust volume, and learn how sound impacts trigger butt physics.</p>
             </div>
             <div class="footer"><span>sound-effects.html</span><span>Open</span></div>
         </a>
@@ -207,7 +223,7 @@
             <div>
                 <div class="icon">VO</div>
                 <h2>Voice Settings</h2>
-                <p>Voice preset files, actor predicates, scene contexts, depth and girth matching, interval or thrust triggers, wildcard audio paths, and lip sync pairing.</p>
+                <p>Build a voice pack with timing rules, site-specific thrust triggers, and optional lip sync.</p>
             </div>
             <div class="footer"><span>voice-settings.html</span><span>Open</span></div>
         </a>
@@ -216,7 +232,7 @@
             <div>
                 <div class="icon">AT</div>
                 <h2>Animation Action Tags</h2>
-                <p>Per-animation JSON tags for forcing actor position targets by stage, disabling tracking, using hand targets, and overriding heuristic detection.</p>
+                <p>Fix who targets whom in each stage, use hand tracking, or turn an interaction off.</p>
             </div>
             <div class="footer"><span>animation-tags.html</span><span>Open</span></div>
         </a>
@@ -225,7 +241,7 @@
             <div>
                 <div class="icon">API</div>
                 <h2>SKSE Plugin API</h2>
-                <p>C++ listener interface for other SKSE plugins, including animation update events, main-thread lifetime rules, and a copyable <code>AccuratePenetrationAPI.h</code>.</p>
+                <p>Read confirmed interactions or set live targets from another SKSE plugin. Includes examples and the public header.</p>
             </div>
             <div class="footer"><span>skse-api.html</span><span>Open</span></div>
         </a>
@@ -243,12 +259,12 @@
             </ul>
         </div>
         <div class="panel">
-            <h2>Current Scope</h2>
-            <p>These docs cover RaceConfig inheritance, facial presets, animation action tags, sound effect overrides, the standalone voice config loader, and the public SKSE integration API.</p>
+            <h2>What changed?</h2>
+            <p>Moving from 0.0.38 to 0.0.39? Follow the <a href="migration.html#v0-0-38-to-0-0-39">migration guide</a> to update detection settings, retune hand grips, and choose your butt physics engine.</p>
         </div>
     </section>
 
-    <footer>Website-Docs index</footer>
+    <footer>Accurate Penetration documentation</footer>
 </main>
 </body>
 </html>

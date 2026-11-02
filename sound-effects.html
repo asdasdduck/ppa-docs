@@ -174,7 +174,10 @@
     <div class="logo">Sound Effects</div>
     <ul>
         <li><a href="index.html">Docs Home</a></li>
+        <li><a href="getting-started.html">Getting Started</a></li>
+        <li><a href="migration.html">Version Migration</a></li>
         <li><a href="#overview">Overview</a></li>
+        <li><a href="#impact-engines">Butt Physics Engines</a></li>
         <li><a href="#root">Root SoundEffects</a></li>
         <li><a href="#files">Override Files</a></li>
         <li><a href="#targets">Targets</a></li>
@@ -193,7 +196,7 @@
         <li><a href="#ex-impulse">Impulse Override</a></li>
         <li><a href="#full-examples">Full Examples</a></li>
         <div class="nav-section">Other Docs</div>
-        <li><a href="overrides.html">RaceConfig Overrides</a></li>
+        <li><a href="overrides.html">Body Profiles &amp; Overrides</a></li>
         <li><a href="expressions.html">Facial Expressions</a></li>
         <li><a href="voice-settings.html">Voice Settings</a></li>
         <li><a href="animation-tags.html">Animation Action Tags</a></li>
@@ -203,15 +206,31 @@
 
 <div class="main-wrapper">
 <main>
+    <p><a href="index.html">Docs Home</a> · <a href="getting-started.html">Getting Started</a></p>
     <div class="hero">
-        <h1>Sound Effect Override System</h1>
-        <p>Configure clap, wet, hand, mouth, and clap impulse behavior per target, race, penetrator race, skeleton predicates, and penetrator girth.</p>
+        <h1>Sound Effects</h1>
+        <p>Choose clap and wet sounds for each interaction, then tune their volume and timing. Use overrides for a particular race, partner, or thickness.</p>
     </div>
 
     <section id="overview">
         <h2>Overview</h2>
+        <p>Use <strong>Procedural Penis Animations → Sound Effects</strong> for timing and volume. Sound file lists and matching rules are edited in TOML.</p>
         <p>The main <code>[SoundEffects]</code> section defines global defaults. Files in <code>ppa-sound-effect-configs</code> can override or layer target-specific sound lists and clap impulse tuning at runtime.</p>
-        <p>Sound effect overrides use the same inheritance modes as RaceConfig overrides, but named sound overrides can use a <code>Name</code> field in addition to the file stem.</p>
+        <p>Sounds use confirmed interactions, not a nearby target alone. Sound overrides support the same inheritance modes as <a href="overrides.html#inheritance">body overrides</a>, plus an optional <code>Name</code> for reusable bases.</p>
+    </section>
+
+    <section id="impact-engines">
+        <h2>Butt Physics and Clap Impacts</h2>
+        <p>Choose the engine on the <strong>General</strong> page. Both use vaginal/anal clap impacts, but their tuning lives in different places:</p>
+        <table class="prop-table">
+            <thead><tr><th>Engine</th><th>Settings</th><th>Needs</th></tr></thead>
+            <tbody>
+                <tr><td>PPA built-in (default)</td><td><code>[General] UsePPAImpactPhysics = true</code>; tune <code>[ButtImpact]</code> in Body Profiles.</td><td>Compatible butt/rear-thigh bones. PPA owns their motion during the scene.</td></tr>
+                <tr><td>CBPC impulses (legacy)</td><td><code>[General] UsePPAImpactPhysics = false</code>; enable <code>[SoundEffects.ClapImpulse]</code>.</td><td>CBPC. Only this engine uses <code>Target = "ClapImpulse"</code> sound overrides.</td></tr>
+            </tbody>
+        </table>
+        <p>An impact is queued when a clap sound successfully starts. Keep sound effects enabled and provide a valid clap sound for the active site. Lower volume to quiet it; removing the clap list or disabling sounds also removes impact kicks. Built-in movement-driven jiggle can still run between impacts.</p>
+        <p><strong>No impact bounce?</strong> For PPA, check the body’s <code>ButtImpact.Enabled</code>; for CBPC, check <code>ClapImpulse.Enabled</code>. Then check the sound file, <code>ClapThrustVelocity</code>, and <code>ClapMinDepth</code>. See <a href="overrides.html#butt-physics">Butt Physics</a> for tuning.</p>
     </section>
 
     <section id="root">
@@ -294,7 +313,7 @@
                 <tr><td>Anus, Anal</td><td>OrificeSoundConfig</td><td>Also used for combined/both site resolution.</td></tr>
                 <tr><td>Mouth, Oral</td><td>OrificeSoundConfig</td><td>Used for oral penetration.</td></tr>
                 <tr><td>Hands, Hand, Handjob</td><td>OrificeSoundConfig</td><td>Used for left, right, and both hand sites.</td></tr>
-                <tr><td>ClapImpulse, clap_impulse, Impulse</td><td>ClapImpulseConfig</td><td>Controls cheek/body impulse response instead of sound file lists.</td></tr>
+                <tr><td>ClapImpulse, clap_impulse, Impulse</td><td>ClapImpulseConfig</td><td>Tunes legacy CBPC impulses. Ignored by PPA built-in physics.</td></tr>
             </tbody>
         </table>
     </section>
@@ -320,11 +339,11 @@
 
     <section id="resolution">
         <h2>Resolution</h2>
-        <p>At runtime, orifice sounds resolve within the active target bucket, while clap impulse resolves against the clap impulse list.</p>
+        <p>PPA resolves a sound config for the confirmed site. Legacy CBPC impulses use a separate override list.</p>
         <div class="step"><span class="step-number">1</span><p>The system scans matching overrides from highest priority to lowest.</p></div>
         <div class="step"><span class="step-number">2</span><p>The first matching non-<code>any</code> override becomes the base. If none matches, the root target config is used.</p></div>
         <div class="step"><span class="step-number">3</span><p>Matching <code>any</code> overlays with higher priority than the base are applied lowest priority first, so higher priority overlays win conflicts.</p></div>
-        <p>If there are no matching overlays, the resolver can return the root or base config directly. If overlays match, it returns a composed snapshot.</p>
+        <p>For example, a high-priority mouth overlay can raise wet volume while keeping the sound lists from the matching mouth base.</p>
     </section>
 
     <section id="predicates">
@@ -353,6 +372,7 @@
 
     <section id="girth">
         <h2>Girth Rules</h2>
+        <p>Girth uses the partner’s reported thickness, including <a href="overrides.html#mesh-measurements">mesh girth</a> when enabled. Recheck ranges if you switch measurement modes.</p>
         <p><code>PenisGirthMin</code> and <code>PenisGirthMax</code> can be placed at the override root or inside <code>[Predicates]</code>. If either is non-zero, girth matching is enabled.</p>
         <table class="prop-table">
             <thead><tr><th>Field</th><th>Behavior</th><th>Notes</th></tr></thead>
@@ -386,7 +406,7 @@
 
     <section id="clap-impulse">
         <h2>Clap Impulse</h2>
-        <p><code>Target = "ClapImpulse"</code> uses <code>ClapImpulseConfig</code>.</p>
+        <p><code>Target = "ClapImpulse"</code> changes legacy CBPC impulses only. Select the CBPC engine first. For built-in PPA physics, use <a href="overrides.html#butt-physics"><code>[ButtImpact]</code> in a body profile</a>.</p>
         <table class="prop-table">
             <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
             <tbody>
@@ -442,7 +462,7 @@
 
     <section id="ex-impulse">
         <h2>Example: Impulse Override</h2>
-        <p>This override changes clap impulse behavior when the penetrator race matches a canine race.</p>
+        <p>With the CBPC engine selected, this override changes impulses when the penetrator is one of these canine races. Save it in <code>ppa-sound-effect-configs</code>.</p>
 <pre><span class="kw">Target</span> = <span class="str">"ClapImpulse"</span>
 <span class="kw">PenetratorRaces</span> = [<span class="str">"Skyrim.esm|0131E7"</span>, <span class="str">"Skyrim.esm|0131E9"</span>]
 
@@ -457,10 +477,10 @@
 
     <section id="full-examples">
         <h2>Full Examples</h2>
-        <p>Use these as complete snippets for the file paths shown. Sound effect override files go under <code>Data/SKSE/Plugins/ppa-sound-effect-configs/</code>. The paths inside <code>ClapSounds</code> and <code>WetSounds</code> are relative to the game's <code>Data</code> directory.</p>
+        <p>These examples are complete override files. Save them under <code>Data/SKSE/Plugins/ppa-sound-effect-configs/</code> and change the sound paths to match files you have installed.</p>
         <div class="callout callout-warn">
             <div class="callout-label">Common Mixup</div>
-            <p><code>[[Override]]</code> files are not pasted under <code>[SoundEffects]</code> in <code>accurate-penetration.toml</code>. If you are editing the main TOML instead, use the root format shown in the second example.</p>
+            <p><code>[[Override]]</code> files are not pasted under <code>[SoundEffects]</code> in <code>accurate-penetration.toml</code>. For the main TOML, use <code>[SoundEffects.Vagina]</code> and the other site tables shown <a href="#root">above</a>.</p>
             <p>For hand sounds, use the canonical target <code>Hands</code>. <code>Hand</code> is accepted as an alias, but <code>Hands</code> matches the root config name and menu label.</p>
         </div>
 
@@ -505,86 +525,10 @@
         </div>
 
         <div class="example-block">
-            <div class="example-header">Data/SKSE/Plugins/accurate-penetration.toml</div>
-            <div class="example-desc">
-                <p>The same sound lists as root defaults in the main settings file. Use this shape only when editing the main <code>accurate-penetration.toml</code>.</p>
-            </div>
-<pre><span class="kw">[SoundEffects]</span>
-<span class="kw">Enabled</span> = <span class="bool">true</span>
-
-<span class="kw">[SoundEffects.Vagina]</span>
-<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\vagina\\thrust_*.wav"</span>]
-<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\vagina\\wet_*.wav"</span>]
-<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
-<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span>
-
-<span class="kw">[SoundEffects.Anus]</span>
-<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\anus\\plap_*.wav"</span>]
-<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\anus\\wet_*.wav"</span>]
-<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
-<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span>
-
-<span class="kw">[SoundEffects.Mouth]</span>
-<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\mouth\\suck_*.wav"</span>]
-<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\mouth\\wet_*.wav"</span>]
-<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
-<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span>
-
-<span class="kw">[SoundEffects.Hands]</span>
-<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\hands\\fap_*.wav"</span>]
-<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.8</span></pre>
-        </div>
-
-        <div class="example-block">
-            <div class="example-header">Equivalent split override files</div>
-            <div class="example-desc">
-                <p>If each target gets its own file, do not use <code>[[Override]]</code> or <code>[Override.Config]</code>. A one-override file uses <code>Target</code> at the file root and puts sound fields under <code>[Config]</code>.</p>
-            </div>
-            <div class="example-desc">
-                <p><code>Data/SKSE/Plugins/ppa-sound-effect-configs/50_vagina.toml</code></p>
-            </div>
-<pre><span class="kw">Target</span> = <span class="str">"Vagina"</span>
-
-<span class="kw">[Config]</span>
-<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\vagina\\thrust_*.wav"</span>]
-<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\vagina\\wet_*.wav"</span>]
-<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
-<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span></pre>
-            <div class="example-desc">
-                <p><code>Data/SKSE/Plugins/ppa-sound-effect-configs/50_anus.toml</code></p>
-            </div>
-<pre><span class="kw">Target</span> = <span class="str">"Anus"</span>
-
-<span class="kw">[Config]</span>
-<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\anus\\plap_*.wav"</span>]
-<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\anus\\wet_*.wav"</span>]
-<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
-<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span></pre>
-            <div class="example-desc">
-                <p><code>Data/SKSE/Plugins/ppa-sound-effect-configs/50_mouth.toml</code></p>
-            </div>
-<pre><span class="kw">Target</span> = <span class="str">"Mouth"</span>
-
-<span class="kw">[Config]</span>
-<span class="kw">ClapSounds</span> = [<span class="str">"Sound\\fx\\ppa\\mouth\\suck_*.wav"</span>]
-<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\mouth\\wet_*.wav"</span>]
-<span class="kw">ClapSoundVolumeScale</span> = <span class="num">0.8</span>
-<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.5</span></pre>
-            <div class="example-desc">
-                <p><code>Data/SKSE/Plugins/ppa-sound-effect-configs/50_hands.toml</code></p>
-            </div>
-<pre><span class="kw">Target</span> = <span class="str">"Hands"</span>
-
-<span class="kw">[Config]</span>
-<span class="kw">WetSounds</span> = [<span class="str">"Sound\\fx\\ppa\\hands\\fap_*.wav"</span>]
-<span class="kw">WetSoundVolumeScale</span> = <span class="num">0.8</span></pre>
-        </div>
-
-        <div class="example-block">
             <div class="example-header">Data/SKSE/Plugins/ppa-sound-effect-configs/50_mouth_with_large_girth_overlay.toml</div>
             <div class="example-desc">
                 <p>Use <code>Inherits = "any"</code> when you want to change one or two fields on top of whatever config already matched. Here, the large-girth rule keeps the selected mouth sound lists and only raises wet volume.</p>
-                <p>Use default inheritance when the override should start from the root target config. Use <code>Inherits = ""</code> when the override should start blank. Use <code>any</code> when you do not want to duplicate or replace the selected sound lists.</p>
+                <p>Here the base comes first and the overlay comes second, giving the overlay higher priority.</p>
             </div>
 <pre><span class="kw">[[Override]]</span>
 <span class="kw">Target</span> = <span class="str">"Mouth"</span>

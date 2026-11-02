@@ -203,14 +203,17 @@
     <div class="logo">SKSE API</div>
     <ul>
         <li><a href="index.html">Docs Home</a></li>
+        <li><a href="getting-started.html">Getting Started</a></li>
+        <li><a href="migration.html">Version Migration</a></li>
         <li><a href="#overview">Overview</a></li>
-        <li><a href="#getting-interface">Getting The Interface</a></li>
+        <li><a href="#getting-interface">Get the Interface</a></li>
+        <li><a href="#set-interaction">Set a Live Target</a></li>
         <li><a href="#events">Animation Events</a></li>
-        <li><a href="#threading">Threading And Lifetime</a></li>
+        <li><a href="#threading">Threading &amp; Lifetime</a></li>
         <li><a href="#example">Example Listener</a></li>
         <li><a href="#header">Copy Header</a></li>
         <div class="nav-section">Other Docs</div>
-        <li><a href="overrides.html">RaceConfig Overrides</a></li>
+        <li><a href="overrides.html">Body Profiles &amp; Overrides</a></li>
         <li><a href="expressions.html">Facial Expressions</a></li>
         <li><a href="sound-effects.html">Sound Effects</a></li>
         <li><a href="voice-settings.html">Voice Settings</a></li>
@@ -220,15 +223,15 @@
 
 <div class="main-wrapper">
 <main>
+    <p><a href="index.html">Docs Home</a> · <a href="getting-started.html">Getting Started</a></p>
     <div class="hero">
         <h1>SKSE Plugin API</h1>
-        <p>Register a C++ listener from another SKSE plugin and receive Accurate Penetration animation updates on Skyrim's main thread.</p>
+        <p>Read confirmed interactions or change an actor’s target from another SKSE plugin.</p>
     </div>
 
     <section id="overview">
         <h2>Overview</h2>
-        <p>The API is exported from <code>AccuratePenetration.dll</code> as <code>AccuratePenetration_GetAPI_V1</code>. Version 1 exposes listener registration for per-receiver animation updates.</p>
-        <p>Consumers should include <code>AccuratePenetrationAPI.h</code>, look up the exported function at runtime, validate the returned interface, and unregister listeners before their plugin shuts down.</p>
+        <p>Include <code>AccuratePenetrationAPI.h</code> and look up the exports in <code>AccuratePenetration.dll</code>. Use <code>AccuratePenetration_GetAPI_V1</code> for update listeners and <code>AccuratePenetration_SetActorInteraction</code> to change a live target.</p>
         <div class="callout">
             <div class="callout-label">Current Version</div>
             <p><code>AccuratePenetration::API::kVersion</code> is <code>1</code>. Check both <code>InterfaceV1::version</code> and <code>InterfaceV1::size</code> before using function pointers.</p>
@@ -236,8 +239,8 @@
     </section>
 
     <section id="getting-interface">
-        <h2>Getting The Interface</h2>
-        <p>Load the export after Accurate Penetration is present in the process. The header provides both the DLL name and exported function name.</p>
+        <h2>Get the Interface</h2>
+        <p>Once PPA is loaded, find its listener interface:</p>
 <pre>#include "AccuratePenetrationAPI.h"
 
 #include &lt;Windows.h&gt;
@@ -257,7 +260,7 @@ if (!api ||
     !api-&gt;UnregisterAnimationUpdateListener) {
     return;
 }</pre>
-        <p>The exported interface is optional from the consumer's point of view. If the DLL or export is missing, skip integration and continue loading your plugin normally.</p>
+        <p>If PPA or the export is missing, skip the integration and let your plugin load normally.</p>
 
         <h3>Registration Results</h3>
         <table class="prop-table">
@@ -269,19 +272,46 @@ if (!api ||
         </table>
     </section>
 
+    <section id="set-interaction">
+        <h2>Set a Live Target</h2>
+        <p><code>AccuratePenetration_SetActorInteraction</code> changes what a performer targets in the current stage. It is a separate export; <code>InterfaceV1</code> and its version stay unchanged.</p>
+<pre>#include "AccuratePenetrationAPI.h"
+#include &lt;Windows.h&gt;
+
+bool SetPPATarget(RE::ActorHandle performer,
+    AccuratePenetration::API::InteractionAction action,
+    RE::ActorHandle receiver = {})
+{
+    using namespace AccuratePenetration::API;
+    const auto module = GetModuleHandleW(kPluginDLL);
+    const auto setInteraction = module ?
+        reinterpret_cast&lt;SetActorInteractionFn&gt;(
+            GetProcAddress(module, kSetActorInteractionFunctionName)) : nullptr;
+
+    return setInteraction &amp;&amp; setInteraction(performer, action, receiver);
+}
+
+// Call on Skyrim’s main thread, with actors in a scene PPA is tracking.
+// SetPPATarget(performer, AccuratePenetration::API::InteractionAction::Anus, receiver);</pre>
+        <p>Actions are <code>Auto</code>, <code>None</code>, <code>Vagina</code>, <code>Anus</code>, <code>Mouth</code>, <code>Hands</code>, <code>HandL</code>, and <code>HandR</code>. <code>Auto</code> restores automatic selection; <code>None</code> disables tracking for that performer.</p>
+        <p>Pass a receiver to choose a specific actor, or <code>{}</code> to leave the recipient open. For self-hand interactions, pass the performer as the receiver and use a hand action.</p>
+        <p>The call returns <code>true</code> when a live state was updated, or <code>false</code> for an invalid performer/action or an untracked participant. A target still needs to make contact; check event <code>site</code> for the confirmed result.</p>
+        <p>Edits affect only the running scene’s current stage and are never saved. Config/tag reloads and animation changes replace them. To keep a target across scenes, use <a href="animation-tags.html">animation tags</a>.</p>
+    </section>
+
     <section id="events">
         <h2>Animation Events</h2>
-        <p><code>AnimationUpdateEvent</code> describes one receiver actor and the currently known interaction partners for that receiver.</p>
+        <p>A callback runs after each receiver’s physics update, plus one final callback with <code>ending = true</code> during cleanup. Each event describes that receiver and its partners.</p>
         <table class="prop-table">
             <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
             <tbody>
                 <tr><td>apiVersion</td><td>uint32_t</td><td>Event API version. Version 1 events use <code>AccuratePenetration::API::kVersion</code>.</td></tr>
                 <tr><td>size</td><td>uint32_t</td><td>Size of the event struct for compatibility checks.</td></tr>
                 <tr><td>receiver</td><td>RE::ActorHandle</td><td>The actor this update is about.</td></tr>
-                <tr><td>position</td><td>uint8_t</td><td>The receiver's scene position as reported by the active animation framework.</td></tr>
-                <tr><td>context</td><td>SceneContext</td><td>Bit flags for scene classification, such as <code>Vaginal</code>, <code>Anal</code>, <code>Oral</code>, <code>Handjob</code>, or <code>Masturbation</code>.</td></tr>
-                <tr><td>selfInteraction</td><td>InteractionPartner*</td><td>Optional self interaction data for scenes where the receiver is interacting with themself.</td></tr>
-                <tr><td>actors</td><td>InteractionPartner*</td><td>Temporary array of partner interactions.</td></tr>
+                <tr><td>position</td><td>uint8_t</td><td>The receiver’s framework position, from <code>1</code> through <code>5</code>.</td></tr>
+                <tr><td>context</td><td>SceneContext</td><td>Classification from the scene framework. These flags do not confirm insertion and do not come from target JSON.</td></tr>
+                <tr><td>selfInteraction</td><td>const InteractionPartner*</td><td>Optional data for the receiver’s self-interaction.</td></tr>
+                <tr><td>actors</td><td>const InteractionPartner*</td><td>Temporary array of partner interactions.</td></tr>
                 <tr><td>actorCount</td><td>uint32_t</td><td>Number of entries in <code>actors</code>.</td></tr>
                 <tr><td>anusOpening</td><td>float</td><td>Current normalized anus opening value for the receiver.</td></tr>
                 <tr><td>vaginalOpening</td><td>float</td><td>Current normalized vaginal opening value for the receiver.</td></tr>
@@ -289,28 +319,29 @@ if (!api ||
             </tbody>
         </table>
 
+        <p><strong>Example:</strong> a scene can have <code>context = Oral</code> while a partner has <code>site = None</code>. Use <code>site</code> and depth to react to actual insertion; use context for scene classification.</p>
+
         <h3>Interaction Partner</h3>
         <table class="prop-table">
             <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
             <tbody>
                 <tr><td>actor</td><td>RE::ActorHandle</td><td>The partner actor handle.</td></tr>
-                <tr><td>site</td><td>PenetrationSite</td><td>Target site: <code>Mouth</code>, <code>Anus</code>, <code>Vagina</code>, <code>Both</code>, <code>HandL</code>, <code>HandR</code>, or <code>Hands</code>.</td></tr>
-                <tr><td>position</td><td>uint8_t</td><td>The partner's scene position.</td></tr>
+                <tr><td>site</td><td>PenetrationSite</td><td>Confirmed interaction site, or <code>None</code>. An assigned target alone does not set this field.</td></tr>
+                <tr><td>position</td><td>uint8_t</td><td>The partner’s framework position, from <code>1</code> through <code>5</code>.</td></tr>
                 <tr><td>penetrationDepth</td><td>float</td><td>Current depth reported by the physics solver.</td></tr>
-                <tr><td>penisSize</td><td>float</td><td>Measured partner penis length.</td></tr>
-                <tr><td>penisGirth</td><td>float</td><td>Measured partner penis girth.</td></tr>
+                <tr><td>penisSize</td><td>float</td><td>Reported shaft length in game units. Bone-based without mesh length; includes the measured tip with mesh length.</td></tr>
+                <tr><td>penisGirth</td><td>float</td><td>Reported radius-style thickness, not circumference. Uses mesh girth when available and enabled; otherwise configured girth with bone scaling.</td></tr>
             </tbody>
         </table>
     </section>
 
     <section id="threading">
-        <h2>Threading And Lifetime</h2>
+        <h2>Threading &amp; Lifetime</h2>
         <ul class="content-list">
-            <li>Register and unregister listeners on Skyrim's main thread.</li>
-            <li>Callbacks run during Accurate Penetration's main-thread update and cleanup.</li>
+            <li>Register/unregister listeners and set targets on Skyrim’s main thread. Callbacks also run there.</li>
             <li><code>AnimationUpdateEvent</code>, <code>selfInteraction</code>, and <code>actors</code> are temporary. Copy any data you need before returning from the callback.</li>
-            <li>Store the returned <code>ListenerHandle</code> and pass it to <code>UnregisterAnimationUpdateListener</code> when your plugin no longer wants updates.</li>
-            <li>Do not assume the callback will receive resolved actor pointers. The API intentionally passes <code>RE::ActorHandle</code>.</li>
+            <li>Listeners may register or unregister during callbacks. Dispatch uses a copied listener list, so changes take effect on later dispatches.</li>
+            <li>Keep your <code>ListenerHandle</code> and unregister it when you no longer need updates.</li>
         </ul>
         <div class="callout callout-warn">
             <div class="callout-label">Callback Work</div>
@@ -328,13 +359,10 @@ namespace {
 
     void __cdecl OnPPAUpdate(const AccuratePenetration::API::AnimationUpdateEvent* a_event, void* a_userData)
     {
-        if (!a_event || a_event-&gt;apiVersion != AccuratePenetration::API::kVersion) {
+        if (!a_event || a_event-&gt;apiVersion != AccuratePenetration::API::kVersion ||
+            a_event-&gt;size &lt; sizeof(AccuratePenetration::API::AnimationUpdateEvent)) {
             return;
         }
-
-        const bool isOral = AccuratePenetration::API::HasContext(
-            a_event-&gt;context,
-            AccuratePenetration::API::SceneContext::Oral);
 
         if (a_event-&gt;ending) {
             // Clear any state tracked for a_event-&gt;receiver.
@@ -343,7 +371,11 @@ namespace {
 
         for (std::uint32_t i = 0; i &lt; a_event-&gt;actorCount; ++i) {
             const auto& partner = a_event-&gt;actors[i];
-            // Copy values you need here. Do not keep pointers into a_event.
+            if (partner.site == AccuratePenetration::API::PenetrationSite::None) {
+                continue;
+            }
+            // React to this confirmed interaction.
+            // Copy values you need; do not keep pointers into a_event.
         }
     }
 }
@@ -390,6 +422,7 @@ void UnregisterPPAListener()
 namespace AccuratePenetration::API {
     inline constexpr auto kPluginDLL = L"AccuratePenetration.dll";
     inline constexpr auto kGetAPIFunctionNameV1 = "AccuratePenetration_GetAPI_V1";
+    inline constexpr auto kSetActorInteractionFunctionName = "AccuratePenetration_SetActorInteraction";
     inline constexpr std::uint32_t kVersion = 1;
 
     enum class SceneContext : std::uint32_t {
@@ -424,6 +457,18 @@ namespace AccuratePenetration::API {
         Hands,
     };
 
+    // Auto = PPA's heuristic choice, None = explicitly disabled. Numeric values mirror SexScene::ActionTarget.
+    enum class InteractionAction : std::uint8_t {
+        Auto = 0,
+        None,
+        Vagina,
+        Anus,
+        Mouth,
+        Hands,
+        HandL,
+        HandR,
+    };
+
     struct InteractionPartner {
         RE::ActorHandle actor;
         PenetrationSite site = PenetrationSite::None;
@@ -455,6 +500,10 @@ namespace AccuratePenetration::API {
     using AnimationUpdateCallback = void(__cdecl*)(const AnimationUpdateEvent* a_event, void* a_userData);
     using RegisterAnimationUpdateListenerFn = ListenerHandle(__cdecl*)(AnimationUpdateCallback a_callback, void* a_userData);
     using UnregisterAnimationUpdateListenerFn = bool(__cdecl*)(ListenerHandle a_handle);
+    // Sets what a_performer does in its running scene for the current stage, like the target menu but not saved.
+    // Empty a_receiver = any receiver; a_performer == a_receiver = self-interaction. Overwritten by tag reloads and animation changes.
+    // Returns false if PPA is not tracking the performer's (and receiver's) scene yet.
+    using SetActorInteractionFn = bool(__cdecl*)(RE::ActorHandle a_performer, InteractionAction a_action, RE::ActorHandle a_receiver);
 
     struct InterfaceV1 {
         std::uint32_t version = kVersion;
@@ -468,7 +517,8 @@ namespace AccuratePenetration::API {
     // AnimationUpdateEvent and nested pointers are temporary; copy any data you need before returning from the callback.
 }  // namespace AccuratePenetration::API
 
-extern "C" ACCURATEPENETRATION_API const AccuratePenetration::API::InterfaceV1* __cdecl AccuratePenetration_GetAPI_V1();</pre>
+extern "C" ACCURATEPENETRATION_API const AccuratePenetration::API::InterfaceV1* __cdecl AccuratePenetration_GetAPI_V1();
+extern "C" ACCURATEPENETRATION_API bool __cdecl AccuratePenetration_SetActorInteraction(RE::ActorHandle a_performer, AccuratePenetration::API::InteractionAction a_action, RE::ActorHandle a_receiver);</pre>
         </div>
     </section>
 

@@ -176,8 +176,11 @@
     <div class="logo">Voice Settings</div>
     <ul>
         <li><a href="index.html">Docs Home</a></li>
+        <li><a href="getting-started.html">Getting Started</a></li>
+        <li><a href="migration.html">Version Migration</a></li>
         <li><a href="#overview">Overview</a></li>
         <li><a href="#files">Config Files</a></li>
+        <li><a href="#reload">Reloading Voices</a></li>
         <li><a href="#audio">Audio and Lip Files</a></li>
         <li><a href="#quick-start">Quick Start</a></li>
         <li><a href="#settings">Global Settings</a></li>
@@ -192,7 +195,7 @@
         <li><a href="#ex-actor">Actor Override</a></li>
         <li><a href="#ex-globals">Global Tuning</a></li>
         <div class="nav-section">Other Docs</div>
-        <li><a href="overrides.html">RaceConfig Overrides</a></li>
+        <li><a href="overrides.html">Body Profiles &amp; Overrides</a></li>
         <li><a href="expressions.html">Facial Expressions</a></li>
         <li><a href="sound-effects.html">Sound Effects</a></li>
         <li><a href="animation-tags.html">Animation Action Tags</a></li>
@@ -202,18 +205,20 @@
 
 <div class="main-wrapper">
 <main>
+    <p><a href="index.html">Docs Home</a> · <a href="getting-started.html">Getting Started</a></p>
     <div class="hero">
         <h1>Voice Settings and Overrides</h1>
-        <p>Create voice packs that replace framework voice playback during PPA-tracked sex scenes. Voice presets can match actor sex, race, base actor, scene context, penetrated site, depth, speed, and girth, then play shuffled audio with optional lip sync.</p>
+        <p>Build a voice pack for an actor or interaction. Pick sounds, decide when they can play, and add matching lip files if you want lip sync.</p>
     </div>
 
     <section id="overview">
         <h2>Overview</h2>
+        <p>Voice configs are edited in files; the Sound Effects menu controls clap and wet sounds separately.</p>
         <p>Voice configs are independent TOML files. Each file can define global voice timing settings, one or more <code>[[VoicePreset]]</code> entries, or both.</p>
-        <p>At runtime, PPA evaluates the presets for each tracked actor in a sex scene. When a preset matches and one of its triggers fires, PPA plays one sound from that preset and disables the framework voice for that actor.</p>
+        <p>When a preset matches and its trigger fires, PPA plays one of its sounds. PPA can suppress SexLab’s voice for actors using its presets. OStim’s own voices are not muted by this integration.</p>
         <div class="callout">
-            <div class="callout-label">Mental Model</div>
-            <p>Use predicates to decide who and when a preset applies. Use triggers to decide how often matching presets can speak. Use priority to decide which matching preset wins when several triggers fire at once.</p>
+            <div class="callout-label">Choosing a Voice</div>
+            <p>Predicates decide who and when. Triggers decide how often. Priority breaks ties when several presets want to play.</p>
         </div>
     </section>
 
@@ -233,8 +238,14 @@
         </table>
         <div class="callout callout-purple">
             <div class="callout-label">Global Settings Load Order</div>
-            <p><code>[Settings]</code> is one global snapshot. Each resolved file replaces it with that file's settings or defaults, so keep global voice tuning in a late-loading file such as <code>zzz_voice_globals.toml</code> and avoid later voice files that omit <code>[Settings]</code>.</p>
+            <p>Voice settings are global. Each loaded file replaces them with its own <code>[Settings]</code> or the defaults. Put your global tuning in the last file, such as <code>zzz_voice_globals.toml</code>, so later files do not reset it.</p>
         </div>
+    </section>
+
+    <section id="reload">
+        <h2>Reloading Voices</h2>
+        <p>After editing a voice file, use Reload (F5 by default) during a supported scene. Voice files only reload while PPA is tracking actors; restart Skyrim to load them before a scene starts.</p>
+        <p>If nothing plays, test one real audio path with just a sex predicate before adding depth, context, or thrust requirements.</p>
     </section>
 
     <section id="audio">
@@ -253,7 +264,7 @@
 
     <section id="quick-start">
         <h2>Quick Start</h2>
-        <p>This is the smallest useful voice preset: it matches female actors and plays one random sound every two seconds while no other PPA voice line is active.</p>
+        <p>Save this as <code>ppa-voice-configs/50_female_voice.toml</code> and point the wildcard at your audio. It checks every two seconds, with a 70% chance to play when no PPA voice line is active.</p>
 <pre><span class="kw">[[VoicePreset]]</span>
 <span class="kw">Name</span> = <span class="str">"Female interval voice"</span>
 <span class="kw">Priority</span> = <span class="num">0</span>
@@ -325,6 +336,8 @@
                 <tr><td>Contexts</td><td>string[]</td><td>Requires scene context flags such as <code>Vaginal</code>, <code>Anal</code>, <code>Oral</code>, <code>Aggressive</code>, <code>FemDom</code>, <code>Loving</code>, <code>Dirty</code>, <code>Boobjob</code>, <code>Handjob</code>, <code>Footjob</code>, or <code>Masturbation</code>.</td></tr>
             </tbody>
         </table>
+        <p>Sites mean confirmed interaction, not a target PPA is merely aiming toward. Depth and girth ranges use the maximum across active sites. Girth includes mesh measurements when enabled; recheck thresholds after changing measurement modes.</p>
+        <p>Contexts come from the scene framework, separately from animation target JSON. All positive context flags must be present.</p>
         <p>String predicates for sites and contexts can be negated with <code>!</code>. Non-negated site values in the same array are ORed together, then negated values are applied as extra must-not-match checks.</p>
 <pre><span class="kw">[VoicePreset.Predicates]</span>
 <span class="kw">Sex</span> = [<span class="num">1</span>]
@@ -355,6 +368,7 @@
                 <tr><td>Interval</td><td>2.0</td><td>Seconds between checks for <code>Interval</code> triggers.</td></tr>
                 <tr><td>RandomChance</td><td>100.0</td><td>For <code>Interval</code> and <code>OnThrust</code>, percent chance when the event happens. For <code>Random</code>, approximate percent chance per second.</td></tr>
                 <tr><td>MinDelay</td><td>0.0</td><td>Minimum seconds after this trigger successfully played before it can fire again.</td></tr>
+                <tr><td>Site</td><td>any</td><td>Optional site for <code>OnThrust</code>: <code>Vagina</code>, <code>Anus</code>, <code>Mouth</code>, <code>HandL</code>, or <code>HandR</code>.</td></tr>
             </tbody>
         </table>
 <pre><span class="kw">[[VoicePreset.Triggers]]</span>
@@ -366,7 +380,7 @@
 <span class="kw">Type</span> = <span class="str">"Interval"</span>
 <span class="kw">Interval</span> = <span class="num">4.0</span>
 <span class="kw">RandomChance</span> = <span class="num">30</span></pre>
-        <p><code>OnThrust</code> uses depth changes from active sites and the global thrust settings. The config loader does not currently parse a per-trigger site field, so an <code>OnThrust</code> trigger watches any detected thrust for the matching actor.</p>
+        <p><code>OnThrust</code> uses confirmed depth changes and the global thrust settings. Add <code>Site = "Mouth"</code> to react only to mouth thrusts; omit Site to react to any detected thrust. Use <code>HandL</code> or <code>HandR</code> for hand-specific triggers.</p>
     </section>
 
     <section id="selection">
@@ -376,7 +390,7 @@
         <div class="step"><span class="step-number">3</span><p>When no PPA voice line is active, every matching preset's triggers are evaluated.</p></div>
         <div class="step"><span class="step-number">4</span><p>If multiple presets fire in the same frame, the highest priority candidate plays.</p></div>
         <div class="step"><span class="step-number">5</span><p>While a PPA voice line is active, trigger timers keep advancing but no new line starts until the current line ends.</p></div>
-        <p>Use higher priority for specific cases such as oral, aggressive, named NPC, or creature-race lines. Use lower priority for broad fallback moans.</p>
+        <p>Use higher priority for specific cases and lower priority for fallback moans. A higher-priority NPC preset does not remove other presets: if its trigger does not fire, a fallback can still play.</p>
     </section>
 
     <section id="troubleshooting">
@@ -418,7 +432,7 @@
 
     <section id="ex-oral">
         <h2>Example: Oral Thrust Lines</h2>
-        <p>This higher-priority preset only applies during oral scenes where the actor's mouth is the penetrated site.</p>
+        <p>This higher-priority preset requires oral context and mouth insertion. Its trigger reacts only to mouth thrusts, even if another site is active.</p>
 <pre><span class="kw">Inherits</span> = [<span class="str">"00_female_base.toml"</span>]
 
 <span class="kw">[[VoicePreset]]</span>
@@ -435,13 +449,14 @@
 
 <span class="kw">[[VoicePreset.Triggers]]</span>
 <span class="kw">Type</span> = <span class="str">"OnThrust"</span>
+<span class="kw">Site</span> = <span class="str">"Mouth"</span>
 <span class="kw">RandomChance</span> = <span class="num">45</span>
 <span class="kw">MinDelay</span> = <span class="num">0.9</span></pre>
     </section>
 
     <section id="ex-actor">
         <h2>Example: Actor Override</h2>
-        <p>Use <code>BaseIDs</code> for a specific NPC or mod-added actor. This preset wins over the broad fallback by priority.</p>
+        <p>Use <code>BaseIDs</code> for a specific NPC or mod-added actor. When both triggers fire, this preset wins over the fallback by priority.</p>
 <pre><span class="kw">[[VoicePreset]]</span>
 <span class="kw">Name</span> = <span class="str">"Specific NPC voice"</span>
 <span class="kw">Priority</span> = <span class="num">100</span>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RaceConfig Overrides | Accurate Penetration</title>
+    <title>Body Profiles &amp; Overrides | Accurate Penetration</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
@@ -174,9 +174,11 @@
 <body>
 
 <nav>
-    <div class="logo">RaceConfig Overrides</div>
+    <div class="logo">Body Profiles &amp; Overrides</div>
     <ul>
         <li><a href="index.html">Docs Home</a></li>
+        <li><a href="getting-started.html">Getting Started</a></li>
+        <li><a href="migration.html">Version Migration</a></li>
         <li><a href="#overview">Overview</a></li>
         <li><a href="#main-config">Main Config</a></li>
         <li><a href="#files">Override Files</a></li>
@@ -189,12 +191,16 @@
         <li><a href="#bodyweight-predicate">Body Weight</a></li>
         <li><a href="#scope">Scope</a></li>
         <div class="nav-section">RaceConfig Fields</div>
+        <li><a href="#detection">Hole Detection</a></li>
         <li><a href="#orifice-position">Orifice Positions</a></li>
         <li><a href="#opening">Opening Physics</a></li>
         <li><a href="#penis">Penis</a></li>
+        <li><a href="#mesh-measurements">Mesh Measurements</a></li>
         <li><a href="#animation">Animation</a></li>
         <li><a href="#hands">Hands</a></li>
         <li><a href="#solver">Solver</a></li>
+        <li><a href="#belly">Belly Bulge</a></li>
+        <li><a href="#butt-physics">Butt Physics</a></li>
         <li><a href="#facial">Facial Presets</a></li>
         <div class="nav-section">Examples</div>
         <li><a href="#ex-base">Named Base</a></li>
@@ -211,39 +217,38 @@
 
 <div class="main-wrapper">
 <main>
+    <p><a href="index.html">Docs Home</a> · <a href="getting-started.html">Getting Started</a></p>
     <div class="hero">
-        <h1>RaceConfig Override System</h1>
-        <p>Configure per-race and conditional physics behavior through TOML. The current system supports load-time inheritance, named base configs, and runtime overlays with <code>Inherits = "any"</code>.</p>
+        <h1>Body Profiles &amp; Overrides</h1>
+        <p>Give a body, race, or NPC its own physics settings. Use the Body Profiles menu for everyday tuning, or edit TOML for custom bones and matching rules.</p>
     </div>
 
     <section id="overview">
         <h2>Overview</h2>
-        <p><code>accurate-penetration.toml</code> supplies the default <code>RaceConfig</code>. Files in <code>ppa-override-configs</code> can then replace or layer fields for actors that match race and predicate rules.</p>
-        <p>Every override is evaluated as a predicate set. A race restriction is just a race predicate, and an override with no predicates matches every actor. Use that intentionally for fallback configs or broad overlays.</p>
-        <div class="callout callout-warn">
-            <div class="callout-label">Changed Behavior</div>
-            <p>The old model was effectively "one race override wins." The current model first resolves each override's <code>Inherits</code> base, then at runtime applies matching <code>any</code> overlays above the selected base. Multiple configs can contribute to the final snapshot.</p>
-        </div>
+        <p>The main <code>accurate-penetration.toml</code> file supplies the defaults. Files in <code>ppa-override-configs</code> change those settings for matching actors.</p>
+        <p>For a small adjustment, use <code>Inherits = "any"</code>. It keeps the actor’s selected body config and changes only the fields you write. For example, you can soften butt physics for one NPC without copying their whole profile.</p>
+        <p>In-game, open <strong>Procedural Penis Animations → Body Profiles</strong> and pick a config. Files with several <code>[[Override]]</code> entries are read-only in the menu; edit those files directly. See <a href="getting-started.html#saving">Apply, Save, and Revert</a>.</p>
     </section>
 
     <section id="main-config">
         <h2>Main Config</h2>
         <p>The main file is loaded from:</p>
 <pre>Data/SKSE/Plugins/accurate-penetration.toml</pre>
-        <p>It can contain global behavior sections plus the same <code>RaceConfig</code> tables documented below. Those root-level <code>RaceConfig</code> fields become <code>Settings::Defaults</code>, which is the base for normal overrides.</p>
+        <p>Global switches live here, along with the default body settings listed below. Global switches cannot be changed by a body override.</p>
 
         <h3>General</h3>
         <table class="prop-table">
             <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
             <tbody>
-                <tr><td>HookPosition</td><td>int</td><td>Selects the update hook position used by the plugin.</td></tr>
                 <tr><td>HandleOpeningPhysics</td><td>bool</td><td>Enables or disables visual opening physics.</td></tr>
                 <tr><td>FutasUseAnus</td><td>bool</td><td>Routes futa penetrated actors to anal handling when applicable.</td></tr>
-                <tr><td>IgnoredSceneActorCount</td><td>int</td><td>Scene actor count limit used when deciding whether to ignore a scene.</td></tr>
+                <tr><td>IgnoredSceneActorCount</td><td>int</td><td>Skips scenes with this many actors or more.</td></tr>
                 <tr><td>IgnoreMaleActors</td><td>bool</td><td>Skips male penetrated actors for orifice handling.</td></tr>
                 <tr><td>EnableExpressionSystem</td><td>bool</td><td>Enables the facial preset system.</td></tr>
                 <tr><td>FreecamAudioFix</td><td>bool</td><td>Applies the free camera audio behavior fix.</td></tr>
-                <tr><td>UseSkyrimUI</td><td>bool</td><td>Uses Skyrim UI integration where supported by the menu code.</td></tr>
+                <tr><td>UseSkyrimUI</td><td>bool</td><td>Uses the Skyrim-style fallback target menus.</td></tr>
+                <tr><td>UsePPAImpactPhysics</td><td>bool</td><td>Uses PPA’s built-in butt physics. Set false for legacy CBPC impulses.</td></tr>
+                <tr><td>AutoSaveOnMenuClose</td><td>bool</td><td>Saves menu edits on close. If false, closing applies them for this session.</td></tr>
             </tbody>
         </table>
 
@@ -251,16 +256,16 @@
         <table class="prop-table">
             <thead><tr><th>Property</th><th>Section</th><th>Description</th></tr></thead>
             <tbody>
-                <tr><td>ConsoleOnly</td><td>[Hotkeys]</td><td>Only accept hotkeys while the console is open.</td></tr>
+                <tr><td>ConsoleOnly</td><td>[Hotkeys]</td><td>Restricts Reload and Pause to a paused UI, such as the console.</td></tr>
                 <tr><td>HotkeyWhileHoldingShiftOnly</td><td>[Hotkeys]</td><td>Require Shift while using configured hotkeys.</td></tr>
                 <tr><td>Pause</td><td>[Hotkeys]</td><td>Toggle physics on or off.</td></tr>
                 <tr><td>Reload</td><td>[Hotkeys]</td><td>Reload config files.</td></tr>
-                <tr><td>SelectActor</td><td>[Hotkeys]</td><td>Select an actor for editor actions.</td></tr>
+                <tr><td>SelectActor</td><td>[Hotkeys]</td><td>Opens target and orifice editing for the actor under the crosshair.</td></tr>
                 <tr><td>SpeedUpAnimKey</td><td>[Hotkeys]</td><td>Speed up the current animation.</td></tr>
                 <tr><td>SlowDownAnimKey</td><td>[Hotkeys]</td><td>Slow down the current animation.</td></tr>
                 <tr><td>Logging</td><td>[Debug]</td><td>Verbose loader and resolver logging.</td></tr>
                 <tr><td>Bones</td><td>[Debug]</td><td>Visual bone debug output.</td></tr>
-                <tr><td>Collision</td><td>[Debug]</td><td>Visual collision/orifice debug output.</td></tr>
+                <tr><td>Collision</td><td>[Debug]</td><td>Draws hole detection guides and candidate targets.</td></tr>
                 <tr><td>Penis</td><td>[Debug]</td><td>Visual penis chain debug output.</td></tr>
             </tbody>
         </table>
@@ -302,9 +307,9 @@
         <table class="prop-table">
             <thead><tr><th>Value</th><th>Mode</th><th>Behavior</th></tr></thead>
             <tbody>
-                <tr><td>missing</td><td>Default</td><td>Starts from <code>Settings::Defaults</code>, meaning the root <code>accurate-penetration.toml</code> RaceConfig.</td></tr>
-                <tr><td>"default"</td><td>Default</td><td>Same as missing. This is the legacy and safest behavior.</td></tr>
-                <tr><td>""</td><td>None</td><td>Starts from a blank <code>RaceConfig{}</code>. Only fields provided by the override are populated.</td></tr>
+                <tr><td>missing</td><td>Default</td><td>Starts from the body settings in <code>accurate-penetration.toml</code>.</td></tr>
+                <tr><td>"default"</td><td>Default</td><td>Same as missing. Starts from the main config defaults.</td></tr>
+                <tr><td>""</td><td>None</td><td>Starts from built-in struct defaults, without the main config’s bones, positions, or facial presets. Supply the body setup yourself.</td></tr>
                 <tr><td>"any"</td><td>Any overlay</td><td>Does not become the base config. At runtime, matching fields are layered onto the next matching non-<code>any</code> base or onto defaults.</td></tr>
                 <tr><td>"some_file"</td><td>Named</td><td>Starts from the resolved override in <code>some_file.toml</code>. The name is the lowercase file stem.</td></tr>
             </tbody>
@@ -391,16 +396,6 @@
 <span class="kw">Name</span> = <span class="str">"ButtMorph"</span>
 <span class="kw">GreaterOrEqual</span> = <span class="num">0.2</span>
 <span class="kw">LessOrEqual</span> = <span class="num">0.5</span></pre>
-            <p>The same morph can appear more than once when you prefer separate comparisons. These two entries create the same closed range as the compact example above.</p>
-<pre><span class="kw">[Predicates]</span>
-
-<span class="kw">[[Predicates.BodyMorphs]]</span>
-<span class="kw">Name</span> = <span class="str">"ButtMorph"</span>
-<span class="kw">GreaterOrEqual</span> = <span class="num">0.2</span>
-
-<span class="kw">[[Predicates.BodyMorphs]]</span>
-<span class="kw">Name</span> = <span class="str">"ButtMorph"</span>
-<span class="kw">LessOrEqual</span> = <span class="num">0.5</span></pre>
             <p>Because missing values read as zero, strict <code>GreaterThan</code> is useful for overlays that should only apply when a morph is actually positive.</p>
 <pre><span class="kw">Inherits</span> = <span class="str">"any"</span>
 
@@ -444,8 +439,6 @@
 <span class="kw">[Mouth.Position]</span>
 <span class="kw">Anchor</span> = <span class="str">"NPC Head [Head]"</span>
 <span class="kw">Offset</span> = [<span class="num">0.0</span>, <span class="num">1.0</span>, <span class="num">-1.15</span>]
-<span class="kw">CollisionCylinderRadius</span> = <span class="num">1.5</span>
-<span class="kw">CollisionCylinderHeightModifier</span> = <span class="num">1.2</span>
 
 <span class="kw">[[Mouth.Position.DepthWaypoints]]</span>
 <span class="kw">Offset</span> = [<span class="num">0.0</span>, <span class="num">-5.0</span>, <span class="num">2.0</span>]
@@ -479,22 +472,47 @@
 <span class="kw">Inherits</span> = <span class="str">"default"</span>
 
 <span class="kw">[Predicates]</span>
-<span class="kw">HasOneBone</span> = [<span class="str">"CreaturePenis01"</span>, <span class="str">"MonsterSchlong01"</span>]
+<span class="kw">HasAllBones</span> = [<span class="str">"CreaturePenis01"</span>, <span class="str">"CreaturePenis02"</span>, <span class="str">"CreaturePenis03"</span>]
 
 <span class="kw">[Penis]</span>
 <span class="kw">Bones</span> = [<span class="str">"CreaturePenis01"</span>, <span class="str">"CreaturePenis02"</span>, <span class="str">"CreaturePenis03"</span>]</pre>
     </section>
 
+    <section id="detection">
+        <h2>Hole Detection</h2>
+        <p>PPA checks whether an opening is within reach and can be approached from a sensible direction. It then chooses among nearby paths using the animated shaft position, the scene’s context, and the previous target to reduce switching.</p>
+        <table class="prop-table">
+            <thead><tr><th>Setting</th><th>Where</th><th>What it does</th></tr></thead>
+            <tbody>
+                <tr><td>DetectionMargin</td><td>[Penis]</td><td>Extra reach in game units beyond shaft length. Default <code>4.0</code>; maximum base-to-entrance distance is shaft length plus this margin.</td></tr>
+                <tr><td>DetectionAngle</td><td>[Penis]</td><td>Half-angle from the shaft’s resting direction. Default <code>100.0</code> degrees; larger values allow targets farther to the side.</td></tr>
+                <tr><td>AimAngle, HoldAimAngle</td><td>[Penis]</td><td>Animated shaft-to-canal aim limits for automatically choosing a new hole (<code>60.0</code> degrees) and keeping the previous one (<code>72.5</code> degrees). Keep the hold limit above the new-target limit.</td></tr>
+                <tr><td>AimWeight</td><td>[Penis]</td><td>How strongly better aim outweighs a slightly shorter distance. Default <code>10.0</code>; <code>0.0</code> removes the aim penalty while retaining context/previous-target preferences.</td></tr>
+                <tr><td>ApproachAngle</td><td>[Vagina], [Anus], [Mouth]</td><td>Half-angle outward from the opening. Defaults: vagina/anus <code>90.0</code>, mouth <code>70.0</code> degrees. Smaller values require a straighter approach.</td></tr>
+            </tbody>
+        </table>
+        <p>Angles use degrees from <code>0.0</code> to <code>180.0</code>. Set shaft values on the <strong>penetrator’s</strong> profile and approach angles on the <strong>receiver’s</strong> profile. Explicit vagina, anus, and mouth tags bypass automatic aim limits and ranking, but still need to pass reach and approach checks.</p>
+        <h3>Example: allow a wider approach</h3>
+        <p>Edit these existing tables in the main config, or add them to the appropriate body override:</p>
+<pre>[Penis]
+DetectionMargin = 6.0
+DetectionAngle = 110.0
+
+[Mouth]
+ApproachAngle = 100.0</pre>
+        <p>If tracking chooses the wrong opening, try an <a href="animation-tags.html#ingame">animation target edit</a> first. If the right target never activates, check the entrance position, length, reach, and angles. The old <code>ActivationRange</code>, <code>CollisionCylinderRadius</code>, and <code>CollisionCylinderHeightModifier</code> keys are no longer used.</p>
+    </section>
+
     <section id="orifice-position">
         <h2>Orifice Positions</h2>
-        <p><code>[Vagina.Position]</code>, <code>[Anus.Position]</code>, and <code>[Mouth.Position]</code> share the same shape.</p>
+        <p><code>[Vagina.Position]</code>, <code>[Anus.Position]</code>, and <code>[Mouth.Position]</code> set the entrance and the path inside the body. The <a href="getting-started.html#orifice-editor">in-game editor</a> lets you move these points while watching the scene.</p>
+        <p>The entrance and first internal waypoint also define which way the opening faces. Check both if detection accepts approaches from the wrong side.</p>
+        <p>For mouth-opening timing, adjust <a href="expressions.html#mouth-timing"><code>[Mouth] InsertionLead</code></a>. The shipped value is <code>2.5</code>; moving the entrance changes the actual penetration path.</p>
         <table class="prop-table">
             <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
             <tbody>
                 <tr><td>Anchor</td><td>string</td><td>Skeleton node used as the entry anchor.</td></tr>
                 <tr><td>Offset</td><td>float[3] or table</td><td>Entry offset from the anchor. Arrays use <code>[x, y, z]</code>; tables can use <code>x</code>, <code>y</code>, and <code>z</code>.</td></tr>
-                <tr><td>CollisionCylinderRadius</td><td>float</td><td>Width of the detection cylinder.</td></tr>
-                <tr><td>CollisionCylinderHeightModifier</td><td>float</td><td>Height multiplier for the detection cylinder.</td></tr>
                 <tr><td>DepthOffset</td><td>float[3] or table</td><td>Legacy single internal waypoint used when <code>DepthWaypoints</code> is omitted.</td></tr>
                 <tr><td>DepthWaypoints</td><td>array</td><td>Ordered internal path points. Each point can be an array offset or a table with <code>Anchor</code>, <code>Offset</code>, and <code>CornerSmoothing</code>.</td></tr>
             </tbody>
@@ -502,8 +520,6 @@
 <pre><span class="kw">[Vagina.Position]</span>
 <span class="kw">Anchor</span> = <span class="str">"NPC Pelvis [Pelv]"</span>
 <span class="kw">Offset</span> = [<span class="num">0.0</span>, <span class="num">-1.0</span>, <span class="num">-4.32</span>]
-<span class="kw">CollisionCylinderRadius</span> = <span class="num">1.2</span>
-<span class="kw">CollisionCylinderHeightModifier</span> = <span class="num">1.0</span>
 
 <span class="kw">[[Vagina.Position.DepthWaypoints]]</span>
 <span class="kw">Offset</span> = [<span class="num">0.0</span>, <span class="num">0.7</span>, <span class="num">6.0</span>]
@@ -518,17 +534,21 @@
     <section id="opening">
         <h2>Opening Physics</h2>
         <p><code>[Vagina]</code> and <code>[Anus]</code> define opening bones and response strengths.</p>
+        <p>Under <strong>Body Profiles → Orifices</strong>, each opening offset has X/Y/Z controls. Drag slowly to adjust in <code>0.05</code> steps within <code>−2.0</code> to <code>2.0</code>. These move the opening’s mesh nodes; use the orifice editor for entrance and path positions.</p>
         <table class="prop-table">
             <thead><tr><th>Property</th><th>Applies To</th><th>Description</th></tr></thead>
             <tbody>
                 <tr><td>NodeL, NodeR, NodeBack, NodeTop</td><td>Vagina</td><td>Directional opening nodes.</td></tr>
                 <tr><td>NodeLB, NodeRB, NodeRT, NodeLT</td><td>Anus</td><td>Corner opening nodes.</td></tr>
-                <tr><td>Scale</td><td>Both</td><td>Base opening distance.</td></tr>
+                <tr><td>OpeningOffsetL, OpeningOffsetR, OpeningOffsetBack, OpeningOffsetTop</td><td>Vagina</td><td>Direction each opening node moves as it opens.</td></tr>
+                <tr><td>OpeningOffsetLB, OpeningOffsetRB, OpeningOffsetRT, OpeningOffsetLT</td><td>Anus</td><td>Direction each corner node moves as it opens.</td></tr>
+                <tr><td>Scale</td><td>Both</td><td>Opening size multiplier applied to the partner’s reported girth.</td></tr>
                 <tr><td>ScaleMax</td><td>Both</td><td>Maximum opening distance.</td></tr>
                 <tr><td>GripStrength</td><td>Both</td><td>How strongly the orifice follows penetrator movement.</td></tr>
                 <tr><td>RubIntensity</td><td>Both</td><td>Strength of rub/friction response.</td></tr>
                 <tr><td>GripClampForward</td><td>Both</td><td>Forward clamp for grip movement.</td></tr>
                 <tr><td>GripClampBackward</td><td>Both</td><td>Backward clamp for grip movement.</td></tr>
+                <tr><td>ToggleVaginaSMP, ToggleAnusSMP</td><td>Respective site</td><td>Lets PPA disable SMP while the opening is active. Physics is reset when the scene ends.</td></tr>
             </tbody>
         </table>
     </section>
@@ -540,6 +560,7 @@
             <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
             <tbody>
                 <tr><td>Bones</td><td>string[]</td><td>Ordered bone chain from base to tip.</td></tr>
+                <tr><td>IgnoredBones</td><td>string[]</td><td>Intermediate helper bones excluded from length measurement.</td></tr>
                 <tr><td>LocalForwardAxis</td><td>float[3]</td><td>Forward axis for the penis bones. Also initializes <code>BaseForwardAxis</code> if that field is omitted.</td></tr>
                 <tr><td>BaseForwardAxis</td><td>float[3]</td><td>Separate forward axis for base projection and rotation.</td></tr>
                 <tr><td>BaseOffset</td><td>float[3]</td><td>Offset used for base projection.</td></tr>
@@ -547,13 +568,26 @@
                 <tr><td>PreserveHavokState</td><td>bool</td><td>Preserves animated Havok bone spacing.</td></tr>
                 <tr><td>ClipFix</td><td>bool</td><td>Applies depth-based hiding/shrinking to reduce clipping.</td></tr>
                 <tr><td>HideDepthOffset</td><td>float</td><td>Depth past the tunnel end before clip hiding starts.</td></tr>
-                <tr><td>ActivationRange</td><td>float</td><td>Distance from an orifice before tracking starts.</td></tr>
-                <tr><td>Girth</td><td>float</td><td>Penetrator girth used by physics, facial conditions, and sound predicates.</td></tr>
-                <tr><td>TipExtension</td><td>float</td><td>Virtual extension beyond the last bone.</td></tr>
+                <tr><td>DetectionAngle, DetectionMargin, AimAngle, HoldAimAngle, AimWeight</td><td>float</td><td>Reach, angle limits, and aim ranking; see <a href="#detection">Hole Detection</a>.</td></tr>
+                <tr><td>Girth</td><td>float</td><td>Fallback thickness used when mesh girth is off or unavailable. This is a radius-style value, not circumference.</td></tr>
+                <tr><td>UseMeshLength, UseMeshGirth</td><td>bool</td><td>Experimental mesh measurements. Both are off by default; see below.</td></tr>
+                <tr><td>TipExtension</td><td>float</td><td>Fallback length beyond the last bone when mesh length is off or unavailable.</td></tr>
                 <tr><td>MinProjectionDistance</td><td>float</td><td>Minimum distance from base projection to the orifice path.</td></tr>
                 <tr><td>TogglePenisSMPPhysics</td><td>bool</td><td>Enables the SMP schlong physics handling path for this config.</td></tr>
             </tbody>
         </table>
+    </section>
+
+    <section id="mesh-measurements">
+        <h2>Mesh Measurements</h2>
+        <p><code>UseMeshLength</code> measures the visible tip beyond the last bone. <code>UseMeshGirth</code> estimates thickness near the tip rather than at the wider base. You can enable either independently.</p>
+        <p>If the mesh cannot be measured, PPA keeps using <code>TipExtension</code> and <code>Girth</code>. Keep those values as fallbacks.</p>
+<pre>[Penis]
+UseMeshLength = true
+UseMeshGirth = true
+TipExtension = 2.9
+Girth = 0.9</pre>
+        <p>These options are experimental. After enabling mesh girth, check vaginal and anal opening scales, facial girth filters, and sound/voice girth ranges: they now receive the measured thickness.</p>
     </section>
 
     <section id="animation">
@@ -573,14 +607,18 @@
 
     <section id="hands">
         <h2>Hands</h2>
-        <p><code>[Hands.Left]</code> and <code>[Hands.Right]</code> use the same fields.</p>
+        <p>PPA finds the grip between the hand’s finger bones, then pivots the shaft through it. <code>[Hands.Left]</code> and <code>[Hands.Right]</code> use the same fields.</p>
         <table class="prop-table">
             <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
             <tbody>
                 <tr><td>Enabled</td><td>bool</td><td>Enables hand tracking for that side.</td></tr>
                 <tr><td>DetectionRadius</td><td>float</td><td>Distance from the penetrator required to activate hand tracking. Code default is <code>10.0</code>.</td></tr>
-                <tr><td>GripLength</td><td>float</td><td>Effective grip length. Code default is <code>2.0</code>.</td></tr>
-                <tr><td>GripOffsetAdjustment</td><td>float[3]</td><td>Manual offset for grip positioning. Code default is <code>[0, 0, 0]</code>.</td></tr>
+                <tr><td>GripLength</td><td>float</td><td>Length of shaft held straight by the hand. Default <code>2.0</code>.</td></tr>
+                <tr><td>ReleaseDistance</td><td>float</td><td>Distance past the tip where the grip starts letting go. Default <code>5.0</code> game units.</td></tr>
+                <tr><td>Alignment</td><td>float</td><td>Conformity to the hand’s grip direction: <code>0.0</code> pivots straight through the grip, <code>1.0</code> fully follows the hand. Default <code>0.85</code>.</td></tr>
+                <tr><td>StrokeEffects</td><td>bool</td><td>Enables skin drag and follow-through while stroking. Default <code>true</code>.</td></tr>
+                <tr><td>StrokeDrag, StrokeFollowThrough</td><td>float</td><td>Strength of skin drag (<code>2.0</code>, intended range 0–4) and trailing motion past the hand (<code>1.0</code>, intended range 0–2).</td></tr>
+                <tr><td>GripOffsetAdjustment</td><td>float[3]</td><td>Hand-local nudge on top of automatic grip placement. Default <code>[0, 0, 0]</code>; retune old nonzero offsets when <a href="migration.html#hands">migrating from 0.0.38</a>.</td></tr>
             </tbody>
         </table>
     </section>
@@ -591,10 +629,69 @@
         <table class="prop-table">
             <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
             <tbody>
-                <tr><td>BendConeBase</td><td>float</td><td>Base bend cone angle. Code default is <code>30.0</code>.</td></tr>
-                <tr><td>BendConeRange</td><td>float</td><td>Additional bend cone range. Code default is <code>40.0</code>.</td></tr>
+                <tr><td>BendConeBase</td><td>float</td><td>Base bend limit in degrees. Large values leave bending unrestricted.</td></tr>
+                <tr><td>BendConeRange</td><td>float</td><td>Extra bend allowed toward the tip. Restricting bends may reduce alignment accuracy.</td></tr>
             </tbody>
         </table>
+    </section>
+
+    <section id="belly">
+        <h2>Belly Bulge</h2>
+        <p><code>[BellyBulge]</code> moves a belly bone in response to confirmed vaginal or anal depth. It is off by default and needs a compatible belly node.</p>
+        <table class="prop-table">
+            <thead><tr><th>Settings</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td>Enabled, Node</td><td>Turn it on and choose the belly bone, usually <code>NPC Belly</code>.</td></tr>
+                <tr><td>MinDepth, DepthFull</td><td>Depth where the effect starts and reaches full strength.</td></tr>
+                <tr><td>DisplacementStrength, RotationStrength</td><td>How far the belly moves and turns.</td></tr>
+                <tr><td>ScaleFactor, GirthReference, GirthCap</td><td>A small thickness-based scale effect and its limits.</td></tr>
+                <tr><td>AnalMultiplier</td><td>How much anal penetration contributes.</td></tr>
+                <tr><td>NoiseStrength, NoiseSpeed, NoiseFrequency</td><td>Extra movement layered over the bulge.</td></tr>
+                <tr><td>ScaleNoiseStrength, SmoothStrength</td><td>Scale noise and response speed. Higher smoothing strength responds faster.</td></tr>
+            </tbody>
+        </table>
+        <h3>Example: a gentler bulge for the player</h3>
+        <p>Save as <code>ppa-override-configs/000_player_belly.toml</code>:</p>
+<pre>Inherits = "any"
+BaseIDs = ["Skyrim.esm|00000007"]
+
+[BellyBulge]
+Enabled = true
+DisplacementStrength = 8.0
+NoiseStrength = 0.3</pre>
+    </section>
+
+    <section id="butt-physics">
+        <h2>Butt &amp; Rear-Thigh Physics</h2>
+        <p>PPA can make the receiver’s butt and rear thighs bounce on impacts and react to body movement. Select <strong>PPA built-in</strong> under <strong>General → Butt physics engine</strong>, then tune the body’s <strong>Butt Physics</strong> tab.</p>
+        <p>The global switch is <code>[General] UsePPAImpactPhysics = true</code>. Per-body settings belong in <code>[ButtImpact]</code>. Both default to enabled. During a scene, PPA overrides CBPC/SMP motion on those bones. Set <code>ButtImpact.Enabled = false</code> to skip a body.</p>
+        <table class="prop-table">
+            <thead><tr><th>Settings</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td>Strength, SpeedSensitivity, AnalMultiplier</td><td>Impact strength, how easily slow thrusts cause bounce, and the extra anal multiplier.</td></tr>
+                <tr><td>Displacement, Frequency, Damping</td><td>Cheek travel, wobble speed in Hz, and how quickly it settles. Lower frequency feels heavier; lower damping keeps wobbling longer.</td></tr>
+                <tr><td>MaxDisplacement, CheekCoupling, InertiaScale</td><td>Travel limit, how much cheeks pull on each other, and movement-driven jiggle.</td></tr>
+                <tr><td>SwingAngle, SwingFrequency, SwingDamping</td><td>The cheek’s rotating, pendulum-like sway.</td></tr>
+                <tr><td>MaxSwingAngle, SwingInertiaScale, MassOffset</td><td>Swing limit, movement-driven sway, and the left cheek’s mass position; X mirrors for the right.</td></tr>
+                <tr><td>RippleDisplacement, RippleFrequency, RippleDamping</td><td>A smaller wobble layered over the main bounce.</td></tr>
+                <tr><td>Squash, SquashFrequency, SquashDamping</td><td>Impact compression and recovery. <code>Squash = 0.07</code> means about 7% bone-scale compression.</td></tr>
+                <tr><td>ThighDisplacement, ThighFrequency, ThighDamping</td><td>Rear-thigh travel, wobble speed, and settling.</td></tr>
+                <tr><td>ThighMaxDisplacement, ThighInertiaScale</td><td>Thigh travel limit and movement-driven jiggle.</td></tr>
+                <tr><td>Variation, CheekDelay, ThighDelay</td><td>Left/right strength variation and stagger times in seconds.</td></tr>
+                <tr><td>InwardWeight, UpWeight, SpreadWeight</td><td>Mix of inward, upward, and sideways impact directions.</td></tr>
+                <tr><td>LeftButtNode, RightButtNode, LeftThighNode, RightThighNode</td><td>Bone names. Defaults use <code>NPC L/R Butt</code> and <code>NPC L/R RearThigh</code>.</td></tr>
+            </tbody>
+        </table>
+        <h3>Example: smaller, firmer movement</h3>
+        <p>These fields can go in the main config or an existing body override:</p>
+<pre>[ButtImpact]
+Strength = 0.6
+Displacement = 8.0
+Damping = 0.4
+SwingAngle = 12.0
+SwingDamping = 0.35
+ThighDisplacement = 5.0</pre>
+        <p>Bone travel does not equal visible skin travel; bodies weight these bones differently. Impacts also depend on the <a href="sound-effects.html#impact-engines">clap sound trigger</a>. Setting <code>Strength = 0.0</code> removes impacts but keeps movement-driven jiggle.</p>
     </section>
 
     <section id="facial">
@@ -608,9 +705,12 @@
         <div class="example-block">
             <div class="example-header">80_canine_base.toml</div>
             <div class="example-desc">
-                <p>This file defines a reusable canine chain. More specific race files can inherit it by file stem.</p>
+                <p>This file supplies a canine chain and only matches actors with those bones. More specific files can inherit it by filename.</p>
             </div>
 <pre><span class="kw">Inherits</span> = <span class="str">"default"</span>
+
+<span class="kw">[Predicates]</span>
+<span class="kw">HasAllBones</span> = [<span class="str">"CDPenis 1"</span>, <span class="str">"CDPenis 4"</span>]
 
 <span class="kw">[Penis]</span>
 <span class="kw">Bones</span> = [<span class="str">"CDPenis 1"</span>, <span class="str">"CDPenis 2"</span>, <span class="str">"CDPenis 3"</span>, <span class="str">"CDPenis 4"</span>]

@@ -169,6 +169,8 @@
     <div class="logo">Animation Tags</div>
     <ul>
         <li><a href="index.html">Docs Home</a></li>
+        <li><a href="getting-started.html">Getting Started</a></li>
+        <li><a href="migration.html">Version Migration</a></li>
         <li><a href="#overview">Overview</a></li>
         <li><a href="#when">When To Use</a></li>
         <li><a href="#targets">Target Values</a></li>
@@ -181,7 +183,7 @@
         <li><a href="#manual-editing">Manual Editing</a></li>
         <li><a href="#troubleshooting">Troubleshooting</a></li>
         <div class="nav-section">Other Docs</div>
-        <li><a href="overrides.html">RaceConfig Overrides</a></li>
+        <li><a href="overrides.html">Body Profiles &amp; Overrides</a></li>
         <li><a href="expressions.html">Facial Expressions</a></li>
         <li><a href="sound-effects.html">Sound Effects</a></li>
         <li><a href="voice-settings.html">Voice Settings</a></li>
@@ -191,15 +193,17 @@
 
 <div class="main-wrapper">
 <main>
+    <p><a href="index.html">Docs Home</a> · <a href="getting-started.html">Getting Started</a></p>
     <div class="hero">
         <h1>Animation Action Tags</h1>
-        <p>Tell Accurate Penetration exactly where each actor position should target during each animation stage. Action tags override the default scene-context heuristics when an animation needs explicit per-stage behavior.</p>
+        <p>Choose who targets whom at each stage. Use the in-game editor for a quick fix, or JSON to share changes across animations.</p>
     </div>
 
     <section id="overview">
         <h2>Overview</h2>
-        <p>By default, the mod guesses the active target from framework scene context and animation tags. That works for many scenes, but some animations need a direct target because the framework data is ambiguous or wrong.</p>
+        <p>Without an explicit target, PPA checks nearby openings using reach, approach angles, and the animated shaft’s position and aim. SexLab tags or OStim actions provide scene context that helps it choose. JSON action tags let you choose the target yourself.</p>
         <p>Animation action tags are JSON entries keyed by animation ID. Each stage can set an action for actor positions <code>1</code> through <code>5</code>, and can optionally specify which other actor receives that action.</p>
+        <p>SKSE plugins can also <a href="skse-api.html#set-interaction">set a live target</a> without changing these files.</p>
         <div class="callout">
             <div class="callout-label">Important</div>
             <p>The action assigned to an actor position defines where that actor's genitals go. It does not describe what happens to that actor. If actor position <code>2</code> has action <code>V</code>, actor 2 is the performer whose penis targets a vagina.</p>
@@ -230,12 +234,12 @@
                 <tr><td>LH</td><td>Left Hand</td><td>Use hand tracking with the left hand.</td></tr>
                 <tr><td>RH</td><td>Right Hand</td><td>Use hand tracking with the right hand.</td></tr>
                 <tr><td>!</td><td>None</td><td>Disable tracking for this actor position in this stage.</td></tr>
-                <tr><td>omitted</td><td>Auto</td><td>Leave the actor key out of the stage object and the mod will fall back to its default heuristics. In manual mode, omitted positions become None.</td></tr>
+                <tr><td>omitted</td><td>Auto</td><td>Omit the key for automatic selection unless another file defines it. An empty string <code>""</code> explicitly restores Auto.</td></tr>
             </tbody>
         </table>
         <div class="callout callout-warn">
             <div class="callout-label">Auto Values</div>
-            <p>Do not write <code>"b"</code> for Auto. The current loader treats unknown strings as None. To use Auto in manually edited JSON, omit that actor position key.</p>
+            <p>Use <code>""</code> for Auto when overriding an existing entry. Omitting a key does not erase a target supplied by another file. Unknown strings such as <code>"b"</code> become None.</p>
         </div>
     </section>
 
@@ -271,7 +275,7 @@
                 <tr><td>action</td><td>string</td><td>One of the target values listed above: <code>V</code>, <code>A</code>, <code>M</code>, <code>H</code>, <code>LH</code>, <code>RH</code>, or <code>!</code>.</td></tr>
             </tbody>
         </table>
-        <p>The compact string form, such as <code>"2": "V"</code>, remains valid and lets the mod choose the receiving actor. Use the object form when the performer must interact with one specific actor.</p>
+        <p>The compact string form, such as <code>"2": "V"</code>, leaves the recipient unspecified. Use the object form when the performer must interact with one specific actor.</p>
         <div class="callout callout-warn">
             <div class="callout-label">Self Interaction</div>
             <p>A performer may target their own actor position only for <code>H</code>, <code>LH</code>, or <code>RH</code>. This explicitly configures masturbation with that actor's own hand. Self-targeted vagina, anus, and mouth actions are not supported.</p>
@@ -282,7 +286,7 @@
         <h2>JSON Files</h2>
         <p>Animation tags are loaded from:</p>
 <pre>Data/SKSE/Plugins/ppa-animation-tagging/</pre>
-        <p>The loader reads every <code>.json</code> file in that folder and merges matching animation entries together.</p>
+        <p>The loader reads every <code>.json</code> file in that folder. Entries merge by stage and performer, so a small override can change one interaction without replacing the rest of the animation.</p>
 
         <h3>File Priority</h3>
         <p>Files are sorted in reverse alphabetical order. Later-loaded files have higher priority, so names that sort earlier alphabetically win over names that sort later.</p>
@@ -293,7 +297,7 @@
             <tbody>
                 <tr><td>z_something.json</td><td>Lowest</td><td>Loaded first.</td></tr>
                 <tr><td>a_something.json</td><td>Higher</td><td>Loaded after <code>z_</code> files.</td></tr>
-                <tr><td>0_your_custom_tags.json</td><td>Highest</td><td>Loaded last and used by the in-game save menu.</td></tr>
+                <tr><td>0_your_custom_tags.json</td><td>Higher</td><td>Used by the in-game save menu; wins over files named <code>a_</code> or <code>z_</code>.</td></tr>
             </tbody>
         </table>
         <p>Put personal overrides in <code>0_your_custom_tags.json</code> when you want them to beat bundled defaults. If you want your hand-edited file separate from the in-game editor's output, use a filename that still sorts before the bundled defaults.</p>
@@ -349,7 +353,7 @@
         <div class="example-block">
             <div class="example-header">Manual animation format</div>
             <div class="example-desc">
-                <p>Use this object format when you want omitted actor positions to be disabled instead of falling back to heuristics.</p>
+                <p>The manual flag disables automatic selection outside the stored stage range. Use explicit <code>"!"</code> entries to disable performers within a stage.</p>
             </div>
 <pre>{
   "AnimationName": {
@@ -369,14 +373,14 @@
   }
 }</pre>
         </div>
-        <p>When <code>manual</code> is <code>true</code>, any actor position that is not explicitly defined resolves to None instead of Auto. Use this for animations where you want complete control and do not want the mod guessing.</p>
+        <p>In the current loader, <code>manual = true</code> makes stages outside the stored range resolve to None. Omitted performer positions inside that range still use Auto. Write <code>"!"</code> for every position you want disabled, and list each stage you want to control.</p>
     </section>
 
     <section id="ingame">
         <h2>Method 1: In-Game Editing</h2>
-        <p>The easiest way to tag animations is through the target menu during an active scene.</p>
+        <p>Look at an actor in an active scene to use the target menu. These steps describe the custom target window; <code>UseSkyrimUI = true</code> uses fallback panels.</p>
         <div class="step"><span class="step-number">1</span><p>Start the animation scene.</p></div>
-        <div class="step"><span class="step-number">2</span><p>Open the target menu with your configured select-actor key. The default key is <code>0</code>.</p></div>
+        <div class="step"><span class="step-number">2</span><p>Look at a scene actor and press Select Actor. The shipped binding is <strong>Backspace</strong> (<code>SelectActor = 14</code>); older configs may differ.</p></div>
         <div class="step"><span class="step-number">3</span><p>Choose the <code>Performer</code>, or click the highlighted shaft on screen.</p></div>
         <div class="step"><span class="step-number">4</span><p>Choose a <code>Target Actor</code>. Leave it on <code>Automatic</code> to use the compact action format, or select a specific actor to save an explicit pairing.</p></div>
         <div class="step"><span class="step-number">5</span><p>Select the stage or stage range to update.</p></div>
@@ -385,7 +389,7 @@
         <div class="step"><span class="step-number">8</span><p>Select <code>Save Changes</code> to write changes to <code>0_your_custom_tags.json</code>.</p></div>
         <div class="callout callout-purple">
             <div class="callout-label">Testing</div>
-            <p>Menu changes are applied immediately for the active session. They do not persist across game sessions until you save them.</p>
+            <p>Target edits update active scenes immediately. Use this window’s <strong>Save Changes</strong> button before reloading; reload clears unsaved target edits. The settings menu’s auto-save does not save animation tags.</p>
         </div>
     </section>
 
@@ -394,9 +398,7 @@
         <p>Manual editing is useful for bulk changes or for animations you cannot test in-game.</p>
 
         <h3>Step 1: Find The Animation Name</h3>
-        <p>Enable debug logging in the mod settings. The log can show entries that include the actor, context, and stage:</p>
-<pre>Status for ActorName: Context:[Anal] Stage:2 ...</pre>
-        <p>You can also use your animation framework's tools or documentation to find the exact animation ID.</p>
+        <p>Open the target window during the animation and copy its displayed animation ID. You can also find the ID with your animation framework’s tools.</p>
 
         <h3>Step 2: Create Or Edit Your Custom File</h3>
         <p>Open or create:</p>
@@ -414,34 +416,22 @@
       "s": 2,
       "1": "!",
       "2": "V"
-    },
-    {
-      "s": 3,
-      "1": "!",
-      "2": "V"
-    },
-    {
-      "s": 4,
-      "1": "!",
-      "2": "V"
-    },
-    {
-      "s": 5,
-      "1": "!",
-      "2": "V"
     }
   ]
 }</pre>
-        <p>This example disables actor position <code>1</code> and makes actor position <code>2</code> target a vagina in stages <code>1</code> through <code>5</code>.</p>
+        <p>This example disables actor position <code>1</code> and makes actor position <code>2</code> target a vagina in stages <code>1</code> and <code>2</code>. Add more stage objects as needed. OStim uses its scene ID and stage <code>1</code>.</p>
+        <h3>Step 4: Reload and Check</h3>
+        <p>Save pending in-game target edits first, then use Reload (F5 by default) to load your JSON. The load runs in the background. If the current scene still shows an old target, restart that scene after loading finishes; active scenes cache their tag data.</p>
     </section>
 
     <section id="troubleshooting">
         <h2>Troubleshooting</h2>
         <ul class="content-list">
+            <li><strong>A tagged hole never activates:</strong> explicit tags bypass automatic aim limits, but still need to pass <a href="overrides.html#detection">reach and approach checks</a>. Check the entrance path too.</li>
             <li><strong>Nothing changes:</strong> confirm the animation ID exactly matches the framework ID and that the JSON file is inside <code>ppa-animation-tagging</code>.</li>
             <li><strong>Your file loses priority:</strong> rename it so it sorts before the files you want to override, or use <code>0_your_custom_tags.json</code>.</li>
-            <li><strong>Auto behaves like disabled after manual edits:</strong> remove the actor key from that stage instead of writing an unknown value.</li>
-            <li><strong>Manual mode disables too much:</strong> set <code>manual</code> to <code>false</code> or remove the flag so omitted positions can use heuristics.</li>
+            <li><strong>Auto behaves like disabled after manual edits:</strong> use an empty string <code>""</code> instead of an unknown value.</li>
+            <li><strong>A disabled performer still tracks:</strong> put <code>"!"</code> on that performer in each relevant stage. The manual flag alone does not disable omitted positions inside the stored stage range.</li>
             <li><strong>An explicit pairing is ignored:</strong> confirm both <code>target</code> and <code>action</code> are present, the target is an integer from <code>1</code> through <code>5</code>, and the action is a string.</li>
             <li><strong>Invalid JSON:</strong> one syntax error can prevent the whole file from loading. Check commas, quotes, and matching braces.</li>
         </ul>

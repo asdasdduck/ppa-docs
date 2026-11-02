@@ -179,12 +179,15 @@
     <div class="logo">Facial Expressions</div>
     <ul>
         <li><a href="index.html">Docs Home</a></li>
+        <li><a href="getting-started.html">Getting Started</a></li>
+        <li><a href="migration.html">Version Migration</a></li>
         <li><a href="#overview">Overview</a></li>
         <li><a href="#placement">Placement</a></li>
         <li><a href="#structure">Structure</a></li>
         <li><a href="#preset-fields">Preset Fields</a></li>
         <li><a href="#effect-fields">Effect Fields</a></li>
         <li><a href="#depth">Depth Scaling</a></li>
+        <li><a href="#mouth-timing">Mouth Timing</a></li>
         <li><a href="#contexts">Scene Contexts</a></li>
         <li><a href="#selection">Selection</a></li>
         <li><a href="#mfee">MFEE</a></li>
@@ -194,7 +197,7 @@
         <li><a href="#ex-context">Context Variant</a></li>
         <li><a href="#ex-override">Override File</a></li>
         <div class="nav-section">Other Docs</div>
-        <li><a href="overrides.html">RaceConfig Overrides</a></li>
+        <li><a href="overrides.html">Body Profiles &amp; Overrides</a></li>
         <li><a href="sound-effects.html">Sound Effects</a></li>
         <li><a href="voice-settings.html">Voice Settings</a></li>
         <li><a href="animation-tags.html">Animation Action Tags</a></li>
@@ -204,13 +207,15 @@
 
 <div class="main-wrapper">
 <main>
+    <p><a href="index.html">Docs Home</a> · <a href="getting-started.html">Getting Started</a></p>
     <div class="hero">
         <h1>Facial Expression System</h1>
-        <p>Define facial presets that react to active penetration targets, scene contexts, penetrator size and girth, and penetration depth.</p>
+        <p>Make facial expressions respond to the interaction, depth, and partner’s size. Edit presets in-game or use the TOML examples below.</p>
     </div>
 
     <section id="overview">
         <h2>Overview</h2>
+        <p>Open <strong>Procedural Penis Animations → Expressions</strong>, choose a config, then add or edit a preset and its effects. Use <a href="getting-started.html#saving">Apply</a> to try it and Save to keep it. Multi-override files are read-only here.</p>
         <p>A facial preset is a group of morph effects. The resolver chooses one winning preset per actor, then applies its effects to phonemes, expressions, modifiers, and optional MFEE morphs.</p>
         <p>Presets are part of <code>RaceConfig</code>. That means default-inheriting override files keep inherited presets and append their own. The list is sorted by priority after loading.</p>
     </section>
@@ -231,7 +236,7 @@
 <span class="kw">Priority</span> = <span class="num">10</span></pre>
         <div class="callout callout-purple">
             <div class="callout-label">Inheritance</div>
-            <p>Because presets are appended to the inherited list, use <code>Inherits = ""</code> on a RaceConfig override when you need the actor to start with no inherited facial presets.</p>
+            <p>New presets append to inherited ones. Usually, give your custom preset a higher priority. <code>Inherits = ""</code> removes the inherited body setup as well as its presets, so it needs a complete body config.</p>
         </div>
     </section>
 
@@ -269,7 +274,8 @@
                 <tr><td>Smoothing</td><td>float</td><td>How quickly morph values approach the target. Default is <code>8.0</code>.</td></tr>
                 <tr><td>OverridePhonemes</td><td>bool</td><td>Zeros phonemes not driven by the winning preset. Legacy alias <code>OverridePhoneme</code> is still accepted.</td></tr>
                 <tr><td>OverrideExpressions</td><td>bool</td><td>Zeros expressions not driven by the winning preset.</td></tr>
-                <tr><td>OverrideModifiers</td><td>bool</td><td>Zeros modifiers not driven by the winning preset.</td></tr>
+                <tr><td>OverrideModifiers</td><td>bool</td><td>Zeros non-blink modifiers not driven by the winning preset.</td></tr>
+                <tr><td>OverrideBlinking</td><td>bool</td><td>Overrides automatic blinking. Enable this to drive eyelids with Modifier 0 or 1. Off by default.</td></tr>
             </tbody>
         </table>
         <div class="callout callout-warn">
@@ -308,9 +314,17 @@
 <span class="kw">MaxPenetrationDepth</span> = <span class="num">10.0</span></pre>
     </section>
 
+    <section id="mouth-timing">
+        <h2>Start Mouth Expressions Earlier</h2>
+        <p><code>[Mouth] InsertionLead</code> lets the mouth open before the tip reaches its entrance. The shipped value is <code>2.5</code> game units. This changes facial timing and expression depth only; sounds, voices, belly physics, and API depth are unaffected.</p>
+<pre>[Mouth]
+InsertionLead = 2.5</pre>
+        <p>Set it to <code>0.0</code> to wait until the tip reaches the entrance. Old configs without this key also use <code>0.0</code>. Keep the entrance in its proper position and use the lead to adjust timing.</p>
+    </section>
+
     <section id="contexts">
         <h2>Scene Contexts</h2>
-        <p>These strings are accepted by the settings loader. A preset with multiple contexts requires all of them.</p>
+        <p>Contexts come from SexLab tags or OStim actions, separately from the JSON target database. A preset with multiple contexts requires all of them.</p>
         <table class="prop-table">
             <thead><tr><th>Context</th><th>Description</th><th>Notes</th></tr></thead>
             <tbody>
@@ -335,7 +349,7 @@
 
     <section id="selection">
         <h2>Selection</h2>
-        <p>The update loop chooses one active preset per actor.</p>
+        <p>PPA chooses one active preset per actor. Presets use confirmed interactions, with an optional head start for <a href="#mouth-timing">mouth expressions</a>.</p>
         <div class="step"><span class="step-number">1</span><p>The preset must match at least one active target, or have no targets.</p></div>
         <div class="step"><span class="step-number">2</span><p>Context, size, and girth conditions must pass.</p></div>
         <div class="step"><span class="step-number">3</span><p>The highest priority matching preset wins.</p></div>
@@ -474,13 +488,13 @@
 
     <section id="ex-override">
         <h2>Example: Override File</h2>
-        <p>This override starts from a blank RaceConfig, defines its own race predicate, and adds only the facial presets shown here.</p>
-<pre><span class="kw">Inherits</span> = <span class="str">""</span>
+        <p>Save this as a high-priority file such as <code>ppa-override-configs/000_custom_face.toml</code>. It keeps the matched body setup and adds a high-priority mouth preset. Replace the sample plugin ID and use a morph provided by your MFEE setup.</p>
+<pre><span class="kw">Inherits</span> = <span class="str">"any"</span>
 <span class="kw">Races</span> = [<span class="str">"SomeRaceMod.esp|001234"</span>]
 
 <span class="kw">[[FacialPreset]]</span>
 <span class="kw">Targets</span> = [<span class="str">"Mouth"</span>]
-<span class="kw">Priority</span> = <span class="num">10</span>
+<span class="kw">Priority</span> = <span class="num">100000</span>
 
 <span class="kw">[[FacialPreset.Effects]]</span>
 <span class="kw">Type</span> = <span class="str">"MFEE"</span>
