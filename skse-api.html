@@ -208,6 +208,7 @@
         <li><a href="#overview">Overview</a></li>
         <li><a href="#getting-interface">Get the Interface</a></li>
         <li><a href="#set-interaction">Set a Live Target</a></li>
+        <li><a href="#get-interaction">Read a Live Target</a></li>
         <li><a href="#events">Animation Events</a></li>
         <li><a href="#threading">Threading &amp; Lifetime</a></li>
         <li><a href="#example">Example Listener</a></li>
@@ -226,12 +227,12 @@
     <p><a href="index.html">Docs Home</a> · <a href="getting-started.html">Getting Started</a></p>
     <div class="hero">
         <h1>SKSE Plugin API</h1>
-        <p>Read confirmed interactions or change an actor’s target from another SKSE plugin.</p>
+        <p>Read confirmed interactions, get or set an actor’s target from another SKSE plugin.</p>
     </div>
 
     <section id="overview">
         <h2>Overview</h2>
-        <p>Include <code>AccuratePenetrationAPI.h</code> and look up the exports in <code>AccuratePenetration.dll</code>. Use <code>AccuratePenetration_GetAPI_V1</code> for update listeners and <code>AccuratePenetration_SetActorInteraction</code> to change a live target.</p>
+        <p>Include <code>AccuratePenetrationAPI.h</code> and look up the exports in <code>AccuratePenetration.dll</code>. Use <code>AccuratePenetration_GetAPI_V1</code> for update listeners, <code>AccuratePenetration_SetActorInteraction</code> to change a live target, and <code>AccuratePenetration_GetActorInteraction</code> to read it.</p>
         <div class="callout">
             <div class="callout-label">Current Version</div>
             <p><code>AccuratePenetration::API::kVersion</code> is <code>1</code>. Check both <code>InterfaceV1::version</code> and <code>InterfaceV1::size</code> before using function pointers.</p>
@@ -299,6 +300,29 @@ bool SetPPATarget(RE::ActorHandle performer,
         <p>Edits affect only the running scene’s current stage and are never saved. Config/tag reloads and animation changes replace them. To keep a target across scenes, use <a href="animation-tags.html">animation tags</a>.</p>
     </section>
 
+    <section id="get-interaction">
+        <h2>Read a Live Target</h2>
+        <p><code>AccuratePenetration_GetActorInteraction</code> reads the performer’s tagged action and receiver for the current stage, including live edits. Like the setter, it is a separate export; the listener interface stays at version 1.</p>
+<pre>#include "AccuratePenetrationAPI.h"
+#include &lt;Windows.h&gt;
+
+bool GetPPATarget(RE::ActorHandle performer,
+    AccuratePenetration::API::InteractionAction&amp; action,
+    RE::ActorHandle&amp; receiver)
+{
+    using namespace AccuratePenetration::API;
+    const auto module = GetModuleHandleW(kPluginDLL);
+    const auto getInteraction = module ?
+        reinterpret_cast&lt;GetActorInteractionFn&gt;(
+            GetProcAddress(module, kGetActorInteractionFunctionName)) : nullptr;
+
+    return getInteraction &amp;&amp; getInteraction(performer, &amp;action, &amp;receiver);
+}</pre>
+        <p>Call on Skyrim’s main thread. It returns <code>false</code> if the performer is invalid or PPA is not tracking its scene, leaving outputs unchanged. Either output pointer may be <code>nullptr</code> if you only need the other value.</p>
+        <p>An empty receiver means any receiver; the performer’s own handle means self-interaction. Untagged actions return <code>Auto</code>, or <code>None</code> when the animation’s manual mode disables them.</p>
+        <p>This reads the target, not detected penetration. For example, <code>Mouth</code> means the performer is assigned to oral tracking; the event’s <code>site</code> can still be <code>None</code> until contact is confirmed.</p>
+    </section>
+
     <section id="events">
         <h2>Animation Events</h2>
         <p>A callback runs after each receiver’s physics update, plus one final callback with <code>ending = true</code> during cleanup. Each event describes that receiver and its partners.</p>
@@ -338,7 +362,7 @@ bool SetPPATarget(RE::ActorHandle performer,
     <section id="threading">
         <h2>Threading &amp; Lifetime</h2>
         <ul class="content-list">
-            <li>Register/unregister listeners and set targets on Skyrim’s main thread. Callbacks also run there.</li>
+            <li>Register/unregister listeners and get or set targets on Skyrim’s main thread. Callbacks also run there.</li>
             <li><code>AnimationUpdateEvent</code>, <code>selfInteraction</code>, and <code>actors</code> are temporary. Copy any data you need before returning from the callback.</li>
             <li>Listeners may register or unregister during callbacks. Dispatch uses a copied listener list, so changes take effect on later dispatches.</li>
             <li>Keep your <code>ListenerHandle</code> and unregister it when you no longer need updates.</li>
@@ -423,6 +447,7 @@ namespace AccuratePenetration::API {
     inline constexpr auto kPluginDLL = L"AccuratePenetration.dll";
     inline constexpr auto kGetAPIFunctionNameV1 = "AccuratePenetration_GetAPI_V1";
     inline constexpr auto kSetActorInteractionFunctionName = "AccuratePenetration_SetActorInteraction";
+    inline constexpr auto kGetActorInteractionFunctionName = "AccuratePenetration_GetActorInteraction";
     inline constexpr std::uint32_t kVersion = 1;
 
     enum class SceneContext : std::uint32_t {
@@ -504,6 +529,10 @@ namespace AccuratePenetration::API {
     // Empty a_receiver = any receiver; a_performer == a_receiver = self-interaction. Overwritten by tag reloads and animation changes.
     // Returns false if PPA is not tracking the performer's (and receiver's) scene yet.
     using SetActorInteractionFn = bool(__cdecl*)(RE::ActorHandle a_performer, InteractionAction a_action, RE::ActorHandle a_receiver);
+    // Reads what a_performer is tagged to do in its running scene for the current stage (the target, not the confirmed penetration site).
+    // a_receiver is set to the tagged receiver, empty for any receiver, or a_performer for self-interaction. Either out pointer may be null.
+    // Returns false if PPA is not tracking the performer's scene.
+    using GetActorInteractionFn = bool(__cdecl*)(RE::ActorHandle a_performer, InteractionAction* a_action, RE::ActorHandle* a_receiver);
 
     struct InterfaceV1 {
         std::uint32_t version = kVersion;
@@ -518,7 +547,8 @@ namespace AccuratePenetration::API {
 }  // namespace AccuratePenetration::API
 
 extern "C" ACCURATEPENETRATION_API const AccuratePenetration::API::InterfaceV1* __cdecl AccuratePenetration_GetAPI_V1();
-extern "C" ACCURATEPENETRATION_API bool __cdecl AccuratePenetration_SetActorInteraction(RE::ActorHandle a_performer, AccuratePenetration::API::InteractionAction a_action, RE::ActorHandle a_receiver);</pre>
+extern "C" ACCURATEPENETRATION_API bool __cdecl AccuratePenetration_SetActorInteraction(RE::ActorHandle a_performer, AccuratePenetration::API::InteractionAction a_action, RE::ActorHandle a_receiver);
+extern "C" ACCURATEPENETRATION_API bool __cdecl AccuratePenetration_GetActorInteraction(RE::ActorHandle a_performer, AccuratePenetration::API::InteractionAction* a_action, RE::ActorHandle* a_receiver);</pre>
         </div>
     </section>
 

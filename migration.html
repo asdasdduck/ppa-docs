@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Version Migration | Accurate Penetration</title>
-    <meta name="description" content="Migrate Accurate Penetration configs from 0.0.38 to 0.0.39: removed keys, new defaults, detection, hands, and butt physics.">
+    <meta name="description" content="Migrate Accurate Penetration configs from 0.0.38 to 0.0.39: new defaults, detection, hands, belly and butt physics, language, and voice timing.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
@@ -40,7 +40,7 @@
         p strong, li strong { color: var(--text-main); }
         a { color: var(--accent); }
         code { font-family: 'Fira Code', monospace; background: rgba(255, 255, 255, 0.07); padding: 0.12rem 0.35rem; border-radius: 4px; font-size: 0.85em; overflow-wrap: anywhere; }
-        #config-changes { margin-top: 2rem; }
+        #config-changes, #voice-changes { margin-top: 2rem; }
         pre { background: var(--bg-code); padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.82rem; line-height: 1.65; }
         pre code { background: none; padding: 0; font-size: inherit; overflow-wrap: normal; }
         .diff-add { color: #a7f3d0; background: rgba(34, 197, 94, 0.12); text-decoration: none; }
@@ -65,6 +65,7 @@
         <li><a href="index.html">Docs Home</a></li>
         <li><a href="#v0-0-38-to-0-0-39" aria-current="page">0.0.38 → 0.0.39 (Current)</a></li>
         <li><a href="#config-changes">Config Changes</a></li>
+        <li><a href="#voice-changes">Voice Packs</a></li>
         <li><a href="overrides.html">Body Profiles &amp; Overrides</a></li>
         <li><a href="getting-started.html">Getting Started</a></li>
     </ul>
@@ -90,6 +91,10 @@ UsePPAImpactPhysics = true</ins>
 <ins class="diff-add"><span class="toml-comment"># Save menu edits automatically when the SKSE mod menu closes.</span>
 <span class="toml-comment"># When off, closing the menu applies them for this session without writing the files.</span>
 AutoSaveOnMenuClose = true</ins>
+
+<ins class="diff-add"><span class="toml-comment"># UI translation filename without .json. Save, then restart Skyrim.</span>
+<span class="toml-comment"># See Getting Started → Language to make a translation.</span>
+Language = "english"</ins>
 
 <span id="detection">[Penis]</span>
 
@@ -165,7 +170,7 @@ InsertionLead = 2.5</ins>
 <ins class="diff-add">StrokeDrag           = 2.0              <span class="toml-comment"># How much the skin is dragged along with the hand's strokes (0-4)</span></ins>
 <ins class="diff-add">StrokeFollowThrough  = 1.0              <span class="toml-comment"># How much the part past the hand trails behind when the hand moves (0-2)</span></ins>
 <del class="diff-remove"><span class="removed-setting"># GripOffsetAdjustment = [0.0, 0.0, 1.0]  </span><span class="toml-comment"># Fine-tune grip position (X, Y, Z)</span></del>
-<ins class="diff-add">GripOffsetAdjustment = [0.0, 0.0, 0.0]  <span class="toml-comment"># Nudge the grip position on top of the automatic placement (hand X, Y, Z)</span></ins>
+<ins class="diff-add">GripOffsetAdjustment = [0.0, 0.0, -0.5] <span class="toml-comment"># Nudge the grip position on top of the automatic placement (hand X, Y, Z)</span></ins>
 
 [Hands.Right]
 <ins class="diff-add">ReleaseDistance      = 5.0</ins>
@@ -174,7 +179,11 @@ InsertionLead = 2.5</ins>
 <ins class="diff-add">StrokeDrag           = 2.0</ins>
 <ins class="diff-add">StrokeFollowThrough  = 1.0</ins>
 <del class="diff-remove"><span class="removed-setting"># GripOffsetAdjustment = [0.0, 0.0, 1.0]</span></del>
-<ins class="diff-add">GripOffsetAdjustment = [0.0, 0.0, 0.0]</ins>
+<ins class="diff-add">GripOffsetAdjustment = [0.0, 0.0, -0.5]</ins>
+
+<span id="belly">[BellyBulge]</span>
+<ins class="diff-add"><span class="toml-comment"># When PPA's belly bulge is enabled, stop other mods' belly offsets from stacking with it while penetrated.</span>
+OverrideOtherOffsets = true</ins>
 
 <span id="butt"><ins class="diff-add"><span class="toml-comment"># ───────────────────────────────────────────────────────────────────────────────</span>
 <span class="toml-comment">#                             BUTT IMPACT PHYSICS</span>
@@ -379,6 +388,17 @@ ThighMaxDisplacement = 10.0
 <span class="toml-comment"># 0 = thighs only move on impacts.</span>
 <span class="toml-comment"># Range: 0.0 - 5.0 | Default: 0.5</span>
 ThighInertiaScale = 0.5</ins></span></code></pre>
+    </section>
+    <section id="voice-changes">
+        <h2>Voice Packs</h2>
+        <p>In <code>ppa-voice-configs</code>, use <code>Speed</code> instead of <code>OnThrust</code>. It follows movement speed, including deep, short strokes. To keep the old timing, replace the trigger’s type and add:</p>
+<pre><code>[[VoicePreset.Triggers]]
+Type = "Speed"
+SpeedRange = [5.0, 30.0]
+Gap = [0.5, 0.15]</code></pre>
+        <p>Old <code>OnThrust</code> entries convert automatically with those defaults. Remove <code>VelocitySmoothFactor</code> and <code>Thrust*</code> from voice <code>[Settings]</code>; they are no longer used. <code>MasterVolume</code> still works.</p>
+        <p><code>PenetratedSites = ["Hands"]</code> now matches either hand, and <code>PenetratingSites</code> checks where the actor’s own shaft is inserted. <code>VoiceTypes</code> matches NPCs only; use <code>BaseIDs = ["Skyrim.esm|00000007"]</code> for a player preset.</p>
+        <p>See <a href="voice-settings.html#triggers">Voice Settings</a> for timing and matching examples, or <a href="getting-started.html#language">Language</a> to translate the menus.</p>
     </section>
     <footer>Accurate Penetration version migration guide</footer>
 </main>

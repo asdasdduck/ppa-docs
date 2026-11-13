@@ -191,7 +191,7 @@
         <li><a href="#troubleshooting">Troubleshooting</a></li>
         <div class="nav-section">Examples</div>
         <li><a href="#ex-base">Base Voice Pack</a></li>
-        <li><a href="#ex-oral">Oral Thrust Lines</a></li>
+        <li><a href="#ex-oral">Oral Voice Timing</a></li>
         <li><a href="#ex-actor">Actor Override</a></li>
         <li><a href="#ex-globals">Global Tuning</a></li>
         <div class="nav-section">Other Docs</div>
@@ -214,7 +214,7 @@
     <section id="overview">
         <h2>Overview</h2>
         <p>Voice configs are edited in files; the Sound Effects menu controls clap and wet sounds separately.</p>
-        <p>Voice configs are independent TOML files. Each file can define global voice timing settings, one or more <code>[[VoicePreset]]</code> entries, or both.</p>
+        <p>Voice configs are independent TOML files. Each file can set the global voice volume, define one or more <code>[[VoicePreset]]</code> entries, or both.</p>
         <p>When a preset matches and its trigger fires, PPA plays one of its sounds. PPA can suppress SexLab’s voice for actors using its presets. OStim’s own voices are not muted by this integration.</p>
         <div class="callout">
             <div class="callout-label">Choosing a Voice</div>
@@ -245,7 +245,7 @@
     <section id="reload">
         <h2>Reloading Voices</h2>
         <p>After editing a voice file, use Reload (F5 by default) during a supported scene. Voice files only reload while PPA is tracking actors; restart Skyrim to load them before a scene starts.</p>
-        <p>If nothing plays, test one real audio path with just a sex predicate before adding depth, context, or thrust requirements.</p>
+        <p>If nothing plays, test one real audio path with just a sex predicate before adding depth, context, or speed requirements.</p>
     </section>
 
     <section id="audio">
@@ -256,6 +256,7 @@
     <span class="str">"Sound\\PPA\\Voices\\Female\\single_line.wav"</span>,
 ]</pre>
         <p>For lip sync, place a matching <code>.lip</code> file next to the audio using the same relative stem. For <code>Sound\PPA\Voices\Female\moan_01.wav</code>, PPA looks for <code>Sound\PPA\Voices\Female\moan_01.lip</code>.</p>
+        <p>Lip sync follows the playing audio and continues even when penetration stops. Keep <code>[General] EnableExpressionSystem = true</code> in the main config.</p>
         <div class="callout callout-warn">
             <div class="callout-label">Missing Files</div>
             <p>Wildcard directories that do not exist expand to nothing. Non-wildcard sound paths are kept as written and can still fail later if the audio file cannot be opened by Skyrim.</p>
@@ -282,25 +283,15 @@
 
     <section id="settings">
         <h2>Global Settings</h2>
-        <p>Global settings control volume and thrust detection for every voice preset.</p>
+        <p><code>[Settings]</code> controls volume for all voice presets. Tune timing on each preset’s <a href="#triggers">triggers</a>.</p>
         <table class="prop-table">
             <thead><tr><th>Setting</th><th>Default</th><th>Description</th></tr></thead>
             <tbody>
                 <tr><td>MasterVolume</td><td>1.0</td><td>Volume applied to every PPA voice sound handle.</td></tr>
-                <tr><td>VelocitySmoothFactor</td><td>0.3</td><td>Smoothing factor for depth velocity used by thrust detection.</td></tr>
-                <tr><td>ThrustStartVelocity</td><td>5.0</td><td>Smoothed forward velocity required before an <code>OnThrust</code> trigger can fire.</td></tr>
-                <tr><td>ThrustMinWithdrawalRatio</td><td>0.65</td><td>Required withdrawal depth as a ratio of the previous stroke peak before a new thrust can be detected.</td></tr>
-                <tr><td>ThrustMinPeakVelocity</td><td>8.0</td><td>Minimum peak velocity required during the current forward stroke.</td></tr>
-                <tr><td>ThrustMinDepth</td><td>0.5</td><td>Minimum penetration depth required before a thrust event can be accepted.</td></tr>
             </tbody>
         </table>
 <pre><span class="kw">[Settings]</span>
-<span class="kw">MasterVolume</span> = <span class="num">0.85</span>
-<span class="kw">VelocitySmoothFactor</span> = <span class="num">0.35</span>
-<span class="kw">ThrustStartVelocity</span> = <span class="num">5.0</span>
-<span class="kw">ThrustMinWithdrawalRatio</span> = <span class="num">0.65</span>
-<span class="kw">ThrustMinPeakVelocity</span> = <span class="num">8.0</span>
-<span class="kw">ThrustMinDepth</span> = <span class="num">0.5</span></pre>
+<span class="kw">MasterVolume</span> = <span class="num">0.85</span></pre>
     </section>
 
     <section id="presets">
@@ -326,19 +317,25 @@
             <thead><tr><th>Predicate</th><th>Type</th><th>Description</th></tr></thead>
             <tbody>
                 <tr><td>Sex</td><td>int[]</td><td>Matches actor sex. Skyrim values are <code>0</code> male and <code>1</code> female.</td></tr>
+                <tr><td>VoiceTypes</td><td>string[]</td><td>Matches any listed voice-type EditorID, ignoring case. NPCs only; never matches the player.</td></tr>
                 <tr><td>Races</td><td>string[]</td><td>Matches the actor's race FormID.</td></tr>
                 <tr><td>BaseIDs</td><td>string[]</td><td>Matches the actor base FormID. Use this for a specific NPC voice override.</td></tr>
                 <tr><td>PenetrationDepthMin / Max</td><td>float</td><td>Requires max penetration depth to fall within the range. The predicate is only created when max is greater than min.</td></tr>
-                <tr><td>SpeedMin / Max</td><td>float</td><td>Requires tracked penetration speed. If <code>SpeedMax</code> is omitted or not greater than min, the check becomes minimum-only.</td></tr>
+                <tr><td>SpeedMin / Max</td><td>float</td><td>Requires smoothed movement speed in game units/second, including oral and hand interactions. Omit <code>SpeedMax</code> for a minimum-only check.</td></tr>
                 <tr><td>PenisGirthMin / Max</td><td>float</td><td>Requires max penetrator girth to fall within the range. Set both min and max.</td></tr>
-                <tr><td>PenetratedSites</td><td>string[]</td><td>Matches active penetrated sites. Values are <code>Vagina</code>, <code>Anus</code>, <code>Mouth</code>, <code>HandL</code>, and <code>HandR</code>.</td></tr>
-                <tr><td>PenetratingSites</td><td>string[]</td><td>Parsed by the loader, but the current voice runtime does not populate penetrating-site data. Prefer <code>PenetratedSites</code>.</td></tr>
+                <tr><td>PenetratedSites</td><td>string[]</td><td>Sites receiving contact on this actor: <code>Vagina</code>, <code>Anus</code>, <code>Mouth</code>, <code>HandL</code>, <code>HandR</code>, or <code>Hands</code> for either hand.</td></tr>
+                <tr><td>PenetratingSites</td><td>string[]</td><td>Sites this actor’s own shaft is confirmed inside on another actor. For either hand, use <code>["HandL", "HandR"]</code>.</td></tr>
                 <tr><td>Contexts</td><td>string[]</td><td>Requires scene context flags such as <code>Vaginal</code>, <code>Anal</code>, <code>Oral</code>, <code>Aggressive</code>, <code>FemDom</code>, <code>Loving</code>, <code>Dirty</code>, <code>Boobjob</code>, <code>Handjob</code>, <code>Footjob</code>, or <code>Masturbation</code>.</td></tr>
             </tbody>
         </table>
         <p>Sites mean confirmed interaction, not a target PPA is merely aiming toward. Depth and girth ranges use the maximum across active sites. Girth includes mesh measurements when enabled; recheck thresholds after changing measurement modes.</p>
         <p>Contexts come from the scene framework, separately from animation target JSON. All positive context flags must be present.</p>
         <p>String predicates for sites and contexts can be negated with <code>!</code>. Non-negated site values in the same array are ORed together, then negated values are applied as extra must-not-match checks.</p>
+        <p>For example, add this to an NPC preset to match its Skyrim voice type:</p>
+<pre><span class="kw">[VoicePreset.Predicates]</span>
+<span class="kw">VoiceTypes</span> = [<span class="str">"FemaleYoungEager"</span>]</pre>
+        <p>For the player, use <code>BaseIDs = ["Skyrim.esm|00000007"]</code> in a separate preset without <code>VoiceTypes</code>.</p>
+        <p>Another example: female oral lines with depth and girth limits, excluding anal contact and aggressive scenes.</p>
 <pre><span class="kw">[VoicePreset.Predicates]</span>
 <span class="kw">Sex</span> = [<span class="num">1</span>]
 <span class="kw">Races</span> = [<span class="str">"Skyrim.esm|013745"</span>]
@@ -354,7 +351,7 @@
         </div>
         <div class="callout callout-purple">
             <div class="callout-label">Hand Sites</div>
-            <p>The parser accepts <code>Hands</code>, but active hand interactions are expanded to <code>HandL</code> and <code>HandR</code> for evaluation. Use both explicit hand values when you want either hand.</p>
+            <p><code>PenetratedSites = ["Hands"]</code> matches either hand. <code>["!Hands"]</code> excludes both. Use <code>HandL</code> or <code>HandR</code> to pick a side.</p>
         </div>
     </section>
 
@@ -364,15 +361,19 @@
         <table class="prop-table">
             <thead><tr><th>Trigger Field</th><th>Default</th><th>Description</th></tr></thead>
             <tbody>
-                <tr><td>Type</td><td>Interval</td><td><code>Interval</code>, <code>OnThrust</code>, or <code>Random</code>. Unknown values fall back to <code>Interval</code>.</td></tr>
+                <tr><td>Type</td><td>Interval</td><td><code>Interval</code>, <code>Speed</code>, or <code>Random</code>. Unknown values fall back to <code>Interval</code>.</td></tr>
                 <tr><td>Interval</td><td>2.0</td><td>Seconds between checks for <code>Interval</code> triggers.</td></tr>
-                <tr><td>RandomChance</td><td>100.0</td><td>For <code>Interval</code> and <code>OnThrust</code>, percent chance when the event happens. For <code>Random</code>, approximate percent chance per second.</td></tr>
-                <tr><td>MinDelay</td><td>0.0</td><td>Minimum seconds after this trigger successfully played before it can fire again.</td></tr>
-                <tr><td>Site</td><td>any</td><td>Optional site for <code>OnThrust</code>: <code>Vagina</code>, <code>Anus</code>, <code>Mouth</code>, <code>HandL</code>, or <code>HandR</code>.</td></tr>
+                <tr><td>SpeedRange</td><td>[6.0, 30.0]</td><td>For <code>Speed</code>: slow and fast movement speeds in game units/second. Nothing plays below the first value.</td></tr>
+                <tr><td>Gap</td><td>[1.5, 0.2]</td><td>For <code>Speed</code>: seconds of silence after a line ends at the slow and fast speeds. Speeds between them blend the gap; faster movement keeps the fast gap.</td></tr>
+                <tr><td>RandomChance</td><td>100.0</td><td>For <code>Interval</code> and <code>Speed</code>, percent chance per check. For <code>Random</code>, approximate percent chance per second.</td></tr>
+                <tr><td>MinDelay</td><td>0.0</td><td>Cooldown after this trigger plays. Counts only while the preset matches and no PPA line is playing.</td></tr>
+                <tr><td>Site</td><td>any</td><td>Optional site for <code>Speed</code>: <code>Vagina</code>, <code>Anus</code>, <code>Mouth</code>, <code>HandL</code>, <code>HandR</code>, or <code>Hands</code> for either hand.</td></tr>
             </tbody>
         </table>
 <pre><span class="kw">[[VoicePreset.Triggers]]</span>
-<span class="kw">Type</span> = <span class="str">"OnThrust"</span>
+<span class="kw">Type</span> = <span class="str">"Speed"</span>
+<span class="kw">SpeedRange</span> = [<span class="num">6.0</span>, <span class="num">30.0</span>]
+<span class="kw">Gap</span> = [<span class="num">1.5</span>, <span class="num">0.2</span>]
 <span class="kw">RandomChance</span> = <span class="num">55</span>
 <span class="kw">MinDelay</span> = <span class="num">1.25</span>
 
@@ -380,16 +381,17 @@
 <span class="kw">Type</span> = <span class="str">"Interval"</span>
 <span class="kw">Interval</span> = <span class="num">4.0</span>
 <span class="kw">RandomChance</span> = <span class="num">30</span></pre>
-        <p><code>OnThrust</code> uses confirmed depth changes and the global thrust settings. Add <code>Site = "Mouth"</code> to react only to mouth thrusts; omit Site to react to any detected thrust. Use <code>HandL</code> or <code>HandR</code> for hand-specific triggers.</p>
+        <p><code>Speed</code> follows movement in both directions, so deep, short strokes still trigger voices. Add <code>Site = "Mouth"</code> to follow oral movement, or leave it out to use the fastest active site. It needs confirmed contact to play.</p>
+        <p><strong>Old packs:</strong> <code>OnThrust</code> still loads as <code>Speed</code>, defaulting to <code>SpeedRange = [5.0, 30.0]</code> and <code>Gap = [0.5, 0.15]</code>. The old voice <code>VelocitySmoothFactor</code> and <code>Thrust*</code> settings are ignored; use <code>SpeedRange</code> and <code>Gap</code> instead.</p>
     </section>
 
     <section id="selection">
         <h2>Runtime Selection</h2>
-        <div class="step"><span class="step-number">1</span><p>PPA builds an evaluation context for each tracked actor in a sex scene.</p></div>
+        <div class="step"><span class="step-number">1</span><p>PPA checks the actor and interaction against each preset’s predicates.</p></div>
         <div class="step"><span class="step-number">2</span><p>Presets are sorted highest priority first after all files load. Equal priorities keep file load order.</p></div>
         <div class="step"><span class="step-number">3</span><p>When no PPA voice line is active, every matching preset's triggers are evaluated.</p></div>
         <div class="step"><span class="step-number">4</span><p>If multiple presets fire in the same frame, the highest priority candidate plays.</p></div>
-        <div class="step"><span class="step-number">5</span><p>While a PPA voice line is active, trigger timers keep advancing but no new line starts until the current line ends.</p></div>
+        <div class="step"><span class="step-number">5</span><p>While a PPA voice line is active, triggers pause. Once it ends, checks resume; <code>Speed</code> also waits for its silence gap.</p></div>
         <p>Use higher priority for specific cases and lower priority for fallback moans. A higher-priority NPC preset does not remove other presets: if its trigger does not fire, a fallback can still play.</p>
     </section>
 
@@ -402,9 +404,11 @@
                 <tr><td>Preset never matches</td><td>Predicate is too strict, wrong FormID syntax, or context tags are not present for that animation.</td><td>Start with only <code>Sex</code> and <code>PenetratedSites</code>, then add constraints one at a time.</td></tr>
                 <tr><td>Wildcard finds nothing</td><td>The wildcard directory is missing under <code>Data</code> or the prefix/suffix does not match filenames.</td><td>Test with one explicit sound path before switching to wildcards.</td></tr>
                 <tr><td>Globals seem reset</td><td>A later-loaded file omitted <code>[Settings]</code>, replacing globals with defaults.</td><td>Move global tuning to a last-loading file and avoid later voice TOML files.</td></tr>
-                <tr><td>No lip sync</td><td>The matching <code>.lip</code> file is missing or has a different stem.</td><td>Place the <code>.lip</code> beside the audio path using the exact same filename stem.</td></tr>
+                <tr><td>Player never matches</td><td>The preset uses <code>VoiceTypes</code>, which only matches NPCs.</td><td>Use a separate preset with <code>BaseIDs = ["Skyrim.esm|00000007"]</code>.</td></tr>
+                <tr><td>No lip sync</td><td>The <code>.lip</code> is missing, has a different stem, or expressions are disabled.</td><td>Place the matching <code>.lip</code> beside the audio and enable <code>EnableExpressionSystem</code>.</td></tr>
             </tbody>
         </table>
+        <p>For matching problems, enable <strong>General → Diagnostics → Debug logging</strong>. PPA’s log lists each actor’s matching presets and played lines. Unknown site or context names also produce warnings.</p>
     </section>
 
     <section id="ex-base">
@@ -431,12 +435,12 @@
     </section>
 
     <section id="ex-oral">
-        <h2>Example: Oral Thrust Lines</h2>
-        <p>This higher-priority preset requires oral context and mouth insertion. Its trigger reacts only to mouth thrusts, even if another site is active.</p>
+        <h2>Example: Oral Voice Timing</h2>
+        <p>This preset needs mouth insertion and oral context. At a mouth speed of 6 units/second it waits 1.5 seconds after a line ends; at 30 or more, it waits 0.2 seconds.</p>
 <pre><span class="kw">Inherits</span> = [<span class="str">"00_female_base.toml"</span>]
 
 <span class="kw">[[VoicePreset]]</span>
-<span class="kw">Name</span> = <span class="str">"Female oral thrusts"</span>
+<span class="kw">Name</span> = <span class="str">"Female oral voice"</span>
 <span class="kw">Priority</span> = <span class="num">50</span>
 <span class="kw">Sounds</span> = [<span class="str">"Sound\\PPA\\Voices\\Female\\oral_thrust_*.wav"</span>]
 
@@ -448,10 +452,10 @@
 <span class="kw">PenetrationDepthMax</span> = <span class="num">3.0</span>
 
 <span class="kw">[[VoicePreset.Triggers]]</span>
-<span class="kw">Type</span> = <span class="str">"OnThrust"</span>
+<span class="kw">Type</span> = <span class="str">"Speed"</span>
 <span class="kw">Site</span> = <span class="str">"Mouth"</span>
-<span class="kw">RandomChance</span> = <span class="num">45</span>
-<span class="kw">MinDelay</span> = <span class="num">0.9</span></pre>
+<span class="kw">SpeedRange</span> = [<span class="num">6.0</span>, <span class="num">30.0</span>]
+<span class="kw">Gap</span> = [<span class="num">1.5</span>, <span class="num">0.2</span>]</pre>
     </section>
 
     <section id="ex-actor">
@@ -481,12 +485,7 @@
                 <p>This file contains only global settings. Because it loads last, later files do not reset the voice globals back to defaults.</p>
             </div>
 <pre><span class="kw">[Settings]</span>
-<span class="kw">MasterVolume</span> = <span class="num">0.8</span>
-<span class="kw">VelocitySmoothFactor</span> = <span class="num">0.32</span>
-<span class="kw">ThrustStartVelocity</span> = <span class="num">5.5</span>
-<span class="kw">ThrustMinWithdrawalRatio</span> = <span class="num">0.65</span>
-<span class="kw">ThrustMinPeakVelocity</span> = <span class="num">8.5</span>
-<span class="kw">ThrustMinDepth</span> = <span class="num">0.5</span></pre>
+<span class="kw">MasterVolume</span> = <span class="num">0.8</span></pre>
         </div>
     </section>
 

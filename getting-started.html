@@ -179,6 +179,7 @@
         <li><a href="index.html">Docs Home</a></li>
         <li><a href="migration.html">Version Migration</a></li>
         <li><a href="#menus">Find the Menus</a></li>
+        <li><a href="#language">Language</a></li>
         <li><a href="#saving">Apply, Save &amp; Revert</a></li>
         <li><a href="#hotkeys">Hotkeys</a></li>
         <li><a href="#targets">Fix a Target</a></li>
@@ -208,7 +209,7 @@
         <table class="prop-table">
             <thead><tr><th>Page</th><th>What to change</th></tr></thead>
             <tbody>
-                <tr><td>General</td><td>Opening physics, butt physics engine, actor filters, expressions, hotkeys, and debug views.</td></tr>
+                <tr><td>General</td><td>Opening physics, butt physics engine, actor filters, expressions, language, hotkeys, and debug views.</td></tr>
                 <tr><td>Sound Effects</td><td>Clap/wet timing, volume, pitch, rumble, and legacy CBPC impulses.</td></tr>
                 <tr><td>Body Profiles</td><td>Penis size and detection, openings, hands, belly bulge, and built-in butt physics. Pick a config at the top.</td></tr>
                 <tr><td>Expressions</td><td>Facial presets, conditions, and morph effects for the selected config.</td></tr>
@@ -217,6 +218,19 @@
         <p>Dimmed body-profile fields match the inherited value. Changed fields show a dot. Hover a setting for a short explanation.</p>
         <p>To change how an opening moves, go to <strong>Body Profiles → Orifices</strong> and adjust its opening offsets. To move the entrance or internal path, use the <a href="#orifice-editor">orifice editor</a>.</p>
         <p>Body Profiles and Expressions can edit the default config and single-override files. A file marked <strong>read-only</strong> contains multiple overrides; edit its TOML directly.</p>
+    </section>
+
+    <section id="language">
+        <h2>Language</h2>
+        <p>Choose an installed language under <strong>General → Locale → Language</strong>, save, then restart Skyrim. English is the default. Missing translations stay in English.</p>
+        <h3>Make a Translation</h3>
+        <p>Click <strong>Dump</strong> under Locale to write <code>Data/SKSE/Plugins/ppa-translations/english.json</code>. Copy it to a name like <code>german.json</code> and translate the values on the right:</p>
+<pre>{
+    "General": "Allgemein",
+    "Sound Effects": "Soundeffekte"
+}</pre>
+        <p>Keep the keys on the left unchanged, including any <code>||context</code> suffix. Keep placeholders such as <code>{}</code> and <code>%s</code> in the translated text. Save as UTF-8, select the new language, and restart.</p>
+        <p>You can also set <code>Language = "german"</code> under <code>[General]</code> in the main TOML. Use the filename without <code>.json</code>.</p>
     </section>
 
     <section id="saving">
@@ -230,7 +244,7 @@
                 <tr><td>Revert</td><td>Return the selected file to its saved settings, including discarding session-only edits.</td></tr>
             </tbody>
         </table>
-        <p><strong>Auto-save</strong> is on by default. Closing the mod menu saves edits you have not applied yet. Turn it off to apply on close without saving. A change marked <strong>Applied, not saved</strong> still needs Save to keep it for your next game session.</p>
+        <p>With <strong>Auto-save</strong> enabled, closing the mod menu saves edits you have not applied yet. With it disabled, closing applies them without saving. A change marked <strong>Applied, not saved</strong> still needs Save to keep it for your next game session.</p>
         <p><strong>Example:</strong> lower butt <code>Strength</code>, click Apply, and watch a scene. Click Save if you like it, or Revert to restore the saved file.</p>
         <p>Animation targets have their own <strong>Save Changes</strong> button. The orifice editor also has its own Save menu.</p>
     </section>
@@ -261,6 +275,7 @@
         </ol>
         <p>You can also click a highlighted shaft to choose the performer, then an opening or hand to choose its recipient and action. <strong>Auto Detect</strong> restores automatic selection; <strong>None</strong> disables that performer’s tracking for the chosen stages.</p>
         <p><strong>Example:</strong> if actor 2 should target actor 1’s anus in stage 3, select performer 2, target actor 1, stage 3, then Anus. See <a href="animation-tags.html">Animation Action Tags</a> for JSON examples.</p>
+        <p>PPA skips alignment for off-screen actors when Skyrim stops updating their full animation pose. Bring the scene back into view if alignment stops.</p>
     </section>
 
     <section id="orifice-editor">
@@ -294,6 +309,7 @@
                 <tr><td>ppa-animation-tagging/*.json</td><td>Animation targets by stage and actor position.</td></tr>
                 <tr><td>ppa-sound-effect-configs/*.toml</td><td>Sound lists and legacy CBPC impulse overrides.</td></tr>
                 <tr><td>ppa-voice-configs/*.toml</td><td>Voice packs, conditions, timing, and lip sync.</td></tr>
+                <tr><td>ppa-translations/*.json</td><td>Menu translations. See <a href="#language">Language</a>.</td></tr>
             </tbody>
         </table>
         <p>Examples on the reference pages show either a complete override file or fields to edit in an existing table. In TOML, add a setting under its matching section; do not create a second copy of the same table. Keep decimal values as decimals, such as <code>1.0</code>.</p>

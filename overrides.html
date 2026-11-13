@@ -243,12 +243,13 @@
                 <tr><td>HandleOpeningPhysics</td><td>bool</td><td>Enables or disables visual opening physics.</td></tr>
                 <tr><td>FutasUseAnus</td><td>bool</td><td>Routes futa penetrated actors to anal handling when applicable.</td></tr>
                 <tr><td>IgnoredSceneActorCount</td><td>int</td><td>Skips scenes with this many actors or more.</td></tr>
-                <tr><td>IgnoreMaleActors</td><td>bool</td><td>Skips male penetrated actors for orifice handling.</td></tr>
+                <tr><td>IgnoreMaleActors</td><td>bool</td><td>Skips receiver effects on male actors. Their shafts can still be tracked.</td></tr>
                 <tr><td>EnableExpressionSystem</td><td>bool</td><td>Enables the facial preset system.</td></tr>
                 <tr><td>FreecamAudioFix</td><td>bool</td><td>Applies the free camera audio behavior fix.</td></tr>
                 <tr><td>UseSkyrimUI</td><td>bool</td><td>Uses the Skyrim-style fallback target menus.</td></tr>
                 <tr><td>UsePPAImpactPhysics</td><td>bool</td><td>Uses PPA’s built-in butt physics. Set false for legacy CBPC impulses.</td></tr>
                 <tr><td>AutoSaveOnMenuClose</td><td>bool</td><td>Saves menu edits on close. If false, closing applies them for this session.</td></tr>
+                <tr><td>Language</td><td>string</td><td>Translation filename without <code>.json</code>. Default <code>"english"</code>; restart after changing it. See <a href="getting-started.html#language">Language</a>.</td></tr>
             </tbody>
         </table>
 
@@ -618,7 +619,7 @@ Girth = 0.9</pre>
                 <tr><td>Alignment</td><td>float</td><td>Conformity to the hand’s grip direction: <code>0.0</code> pivots straight through the grip, <code>1.0</code> fully follows the hand. Default <code>0.85</code>.</td></tr>
                 <tr><td>StrokeEffects</td><td>bool</td><td>Enables skin drag and follow-through while stroking. Default <code>true</code>.</td></tr>
                 <tr><td>StrokeDrag, StrokeFollowThrough</td><td>float</td><td>Strength of skin drag (<code>2.0</code>, intended range 0–4) and trailing motion past the hand (<code>1.0</code>, intended range 0–2).</td></tr>
-                <tr><td>GripOffsetAdjustment</td><td>float[3]</td><td>Hand-local nudge on top of automatic grip placement. Default <code>[0, 0, 0]</code>; retune old nonzero offsets when <a href="migration.html#hands">migrating from 0.0.38</a>.</td></tr>
+                <tr><td>GripOffsetAdjustment</td><td>float[3]</td><td>Hand-local nudge on top of automatic grip placement. Default <code>[0.0, 0.0, -0.5]</code>; retune old offsets when <a href="migration.html#hands">migrating from 0.0.38</a>.</td></tr>
             </tbody>
         </table>
     </section>
@@ -642,6 +643,7 @@ Girth = 0.9</pre>
             <thead><tr><th>Settings</th><th>Use</th></tr></thead>
             <tbody>
                 <tr><td>Enabled, Node</td><td>Turn it on and choose the belly bone, usually <code>NPC Belly</code>.</td></tr>
+                <tr><td>OverrideOtherOffsets</td><td>Default <code>true</code>. While penetrated, clears other mods’ position/rotation offsets on <code>HDT Belly</code> and <code>NPC Belly</code> so their bulge and jiggle do not stack with PPA’s. Set <code>false</code> to keep them.</td></tr>
                 <tr><td>MinDepth, DepthFull</td><td>Depth where the effect starts and reaches full strength.</td></tr>
                 <tr><td>DisplacementStrength, RotationStrength</td><td>How far the belly moves and turns.</td></tr>
                 <tr><td>ScaleFactor, GirthReference, GirthCap</td><td>A small thickness-based scale effect and its limits.</td></tr>
@@ -657,6 +659,7 @@ BaseIDs = ["Skyrim.esm|00000007"]
 
 [BellyBulge]
 Enabled = true
+OverrideOtherOffsets = true
 DisplacementStrength = 8.0
 NoiseStrength = 0.3</pre>
     </section>
