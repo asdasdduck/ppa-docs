@@ -187,6 +187,7 @@
         <li><a href="#presets">Voice Presets</a></li>
         <li><a href="#predicates">Predicates</a></li>
         <li><a href="#triggers">Triggers</a></li>
+        <li><a href="#cum-events">Cum Events</a></li>
         <li><a href="#selection">Runtime Selection</a></li>
         <li><a href="#troubleshooting">Troubleshooting</a></li>
         <div class="nav-section">Examples</div>
@@ -322,9 +323,10 @@
                 <tr><td>BaseIDs</td><td>string[]</td><td>Matches the actor base FormID. Use this for a specific NPC voice override.</td></tr>
                 <tr><td>PenetrationDepthMin / Max</td><td>float</td><td>Requires max penetration depth to fall within the range. The predicate is only created when max is greater than min.</td></tr>
                 <tr><td>SpeedMin / Max</td><td>float</td><td>Requires smoothed movement speed in game units/second, including oral and hand interactions. Omit <code>SpeedMax</code> for a minimum-only check.</td></tr>
+                <tr><td>Role</td><td>string</td><td>Whose movement the depth and speed checks follow: <code>Penetrated</code> (something inside this actor), <code>Penetrating</code> (this actor’s own penis), or <code>Auto</code>. Default is <code>Auto</code>: penetrated while something is inside, otherwise penetrating.</td></tr>
                 <tr><td>PenisGirthMin / Max</td><td>float</td><td>Requires max penetrator girth to fall within the range. Set both min and max.</td></tr>
                 <tr><td>PenetratedSites</td><td>string[]</td><td>Sites receiving contact on this actor: <code>Vagina</code>, <code>Anus</code>, <code>Mouth</code>, <code>HandL</code>, <code>HandR</code>, or <code>Hands</code> for either hand.</td></tr>
-                <tr><td>PenetratingSites</td><td>string[]</td><td>Sites this actor’s own shaft is confirmed inside on another actor. For either hand, use <code>["HandL", "HandR"]</code>.</td></tr>
+                <tr><td>PenetratingSites</td><td>string[]</td><td>Sites this actor’s own shaft is confirmed inside on another actor. <code>Hands</code> matches either hand.</td></tr>
                 <tr><td>Contexts</td><td>string[]</td><td>Requires scene context flags such as <code>Vaginal</code>, <code>Anal</code>, <code>Oral</code>, <code>Aggressive</code>, <code>FemDom</code>, <code>Loving</code>, <code>Dirty</code>, <code>Boobjob</code>, <code>Handjob</code>, <code>Footjob</code>, or <code>Masturbation</code>.</td></tr>
             </tbody>
         </table>
@@ -361,13 +363,15 @@
         <table class="prop-table">
             <thead><tr><th>Trigger Field</th><th>Default</th><th>Description</th></tr></thead>
             <tbody>
-                <tr><td>Type</td><td>Interval</td><td><code>Interval</code>, <code>Speed</code>, or <code>Random</code>. Unknown values fall back to <code>Interval</code>.</td></tr>
+                <tr><td>Type</td><td>Interval</td><td><code>Interval</code>, <code>Speed</code>, <code>Random</code>, or a <a href="#cum-events">cum event</a>. Unknown values fall back to <code>Interval</code>.</td></tr>
                 <tr><td>Interval</td><td>2.0</td><td>Seconds between checks for <code>Interval</code> triggers.</td></tr>
                 <tr><td>SpeedRange</td><td>[6.0, 30.0]</td><td>For <code>Speed</code>: slow and fast movement speeds in game units/second. Nothing plays below the first value.</td></tr>
                 <tr><td>Gap</td><td>[1.5, 0.2]</td><td>For <code>Speed</code>: seconds of silence after a line ends at the slow and fast speeds. Speeds between them blend the gap; faster movement keeps the fast gap.</td></tr>
                 <tr><td>RandomChance</td><td>100.0</td><td>For <code>Interval</code> and <code>Speed</code>, percent chance per check. For <code>Random</code>, approximate percent chance per second.</td></tr>
                 <tr><td>MinDelay</td><td>0.0</td><td>Cooldown after this trigger plays. Counts only while the preset matches and no PPA line is playing.</td></tr>
                 <tr><td>Site</td><td>any</td><td>Optional site for <code>Speed</code>: <code>Vagina</code>, <code>Anus</code>, <code>Mouth</code>, <code>HandL</code>, <code>HandR</code>, or <code>Hands</code> for either hand.</td></tr>
+                <tr><td>Role</td><td>Auto</td><td>For <code>Speed</code>: same as the <code>Role</code> predicate. With a <code>Site</code>, <code>Auto</code> means this actor’s own site.</td></tr>
+                <tr><td>Delay</td><td>0.0</td><td>For cum events: seconds to wait after the event before speaking, up to 5.</td></tr>
             </tbody>
         </table>
 <pre><span class="kw">[[VoicePreset.Triggers]]</span>
@@ -382,7 +386,28 @@
 <span class="kw">Interval</span> = <span class="num">4.0</span>
 <span class="kw">RandomChance</span> = <span class="num">30</span></pre>
         <p><code>Speed</code> follows movement in both directions, so deep, short strokes still trigger voices. Add <code>Site = "Mouth"</code> to follow oral movement, or leave it out to use the fastest active site. It needs confirmed contact to play.</p>
+        <p>Male presets work too: with nothing inside him, <code>Speed</code> follows his own thrusting.</p>
         <p><strong>Old packs:</strong> <code>OnThrust</code> still loads as <code>Speed</code>, defaulting to <code>SpeedRange = [5.0, 30.0]</code> and <code>Gap = [0.5, 0.15]</code>. The old voice <code>VelocitySmoothFactor</code> and <code>Thrust*</code> settings are ignored; use <code>SpeedRange</code> and <code>Gap</code> instead.</p>
+    </section>
+
+    <section id="cum-events">
+        <h2>Cum Events</h2>
+        <p>These trigger types play a line once when something happens during ejaculation. They need the cum system turned on.</p>
+        <table class="prop-table">
+            <thead><tr><th>Type</th><th>Who Speaks</th><th>When</th></tr></thead>
+            <tbody>
+                <tr><td>Ejaculate</td><td>The one cumming</td><td>As cumming starts.</td></tr>
+                <tr><td>CumInVagina</td><td>The receiver</td><td>After the first burst inside the vagina.</td></tr>
+                <tr><td>CumInAnus</td><td>The receiver</td><td>After the first burst inside the anus.</td></tr>
+                <tr><td>CumInMouth</td><td>The receiver</td><td>After the first burst inside the mouth.</td></tr>
+                <tr><td>CumOnBody</td><td>The receiver</td><td>When the first shot from outside lands on them.</td></tr>
+            </tbody>
+        </table>
+<pre><span class="kw">[[VoicePreset.Triggers]]</span>
+<span class="kw">Type</span> = <span class="str">"CumInVagina"</span>
+<span class="kw">Delay</span> = <span class="num">1.0</span>
+<span class="kw">RandomChance</span> = <span class="num">80</span></pre>
+        <p>Use <code>Delay</code> so the receiver doesn’t talk over the <code>Ejaculate</code> line. If the receiver is already speaking, the line waits a couple of seconds and cuts in if its preset has higher priority.</p>
     </section>
 
     <section id="selection">
@@ -391,7 +416,7 @@
         <div class="step"><span class="step-number">2</span><p>Presets are sorted highest priority first after all files load. Equal priorities keep file load order.</p></div>
         <div class="step"><span class="step-number">3</span><p>When no PPA voice line is active, every matching preset's triggers are evaluated.</p></div>
         <div class="step"><span class="step-number">4</span><p>If multiple presets fire in the same frame, the highest priority candidate plays.</p></div>
-        <div class="step"><span class="step-number">5</span><p>While a PPA voice line is active, triggers pause. Once it ends, checks resume; <code>Speed</code> also waits for its silence gap.</p></div>
+        <div class="step"><span class="step-number">5</span><p>While a PPA voice line is active, triggers pause. Once it ends, checks resume; <code>Speed</code> also waits for its silence gap. A <a href="#cum-events">cum event</a> line can cut off a lower-priority line.</p></div>
         <p>Use higher priority for specific cases and lower priority for fallback moans. A higher-priority NPC preset does not remove other presets: if its trigger does not fire, a fallback can still play.</p>
     </section>
 
