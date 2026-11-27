@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Version Migration | Accurate Penetration</title>
-    <meta name="description" content="Migrate Accurate Penetration configs from 0.0.38 to 0.0.39: new defaults, detection, hands, belly and butt physics, language, and voice timing.">
+    <meta name="description" content="Migrate Accurate Penetration configs from 0.0.40 to 0.0.41 (fluids, hotkeys, self handjob detection) and from 0.0.38 to 0.0.39 (detection, hands, belly and butt physics, language, voice timing).">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
@@ -40,7 +40,8 @@
         p strong, li strong { color: var(--text-main); }
         a { color: var(--accent); }
         code { font-family: 'Fira Code', monospace; background: rgba(255, 255, 255, 0.07); padding: 0.12rem 0.35rem; border-radius: 4px; font-size: 0.85em; overflow-wrap: anywhere; }
-        #config-changes, #voice-changes { margin-top: 2rem; }
+        #config-changes, #voice-changes, #v41-config-changes { margin-top: 2rem; }
+        .hero.previous { margin-top: 5rem; padding-top: 3rem; border-top: 1px solid var(--border); }
         pre { background: var(--bg-code); padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.82rem; line-height: 1.65; }
         pre code { background: none; padding: 0; font-size: inherit; overflow-wrap: normal; }
         .diff-add { color: #a7f3d0; background: rgba(34, 197, 94, 0.12); text-decoration: none; }
@@ -63,7 +64,11 @@
     <div class="logo">Version Migration</div>
     <ul>
         <li><a href="index.html">Docs Home</a></li>
-        <li><a href="#v0-0-38-to-0-0-39" aria-current="page">0.0.38 → 0.0.39 (Current)</a></li>
+        <li><a href="#v0-0-40-to-0-0-41" aria-current="page">0.0.40 → 0.0.41 (Current)</a></li>
+        <li><a href="#v41-hotkeys">Hotkeys</a></li>
+        <li><a href="#v41-fluids">Fluids</a></li>
+        <li><a href="#v41-hands">Hands</a></li>
+        <li><a href="#v0-0-38-to-0-0-39">0.0.38 → 0.0.39</a></li>
         <li><a href="#config-changes">Config Changes</a></li>
         <li><a href="#voice-changes">Voice Packs</a></li>
         <li><a href="overrides.html">Body Profiles &amp; Overrides</a></li>
@@ -74,8 +79,496 @@
 <div class="main-wrapper">
 <main>
     <p><a href="index.html">Docs Home</a> · Version Migration</p>
-    <header class="hero" id="v0-0-38-to-0-0-39">
-        <span class="version-badge">0.0.39 · Current version</span>
+    <header class="hero" id="v0-0-40-to-0-0-41">
+        <span class="version-badge">0.0.41 · Current version</span>
+        <h1>0.0.40 → 0.0.41</h1>
+        <p><ins class="diff-add">Green: add/replace.</ins> <del class="diff-remove">Red: remove.</del> Merge into existing tables. Removed entries are commented out.</p>
+        <p>Hotkeys are now tables with a key, modifiers and a context. <code>ConsoleOnly</code> and <code>HotkeyWhileHoldingShiftOnly</code> are gone: use <code>Context = "Menu"</code> or <code>Modifiers = ["Shift"]</code> on each hotkey instead. The new <code>[Fluids]</code> tables are off by default (<code>Enabled = false</code>).</p>
+    </header>
+
+    <section id="v41-config-changes" aria-label="0.0.41 config changes">
+<pre><code><span id="v41-general">[General]</span>
+
+<ins class="diff-add"><span class="toml-comment"># Check every scene for actors stroking their own penis, not only masturbation scenes or animations tagged for it.</span>
+<span class="toml-comment"># Lowest priority: a hole or a partner's hand takes the penis first.</span>
+AlwaysDetectSelfHandjob = false</ins>
+
+<ins class="diff-add"><span class="toml-comment"># UI language, loaded from Data/SKSE/Plugins/ppa-translations/&lt;Language&gt;.json. Restart the game after changing it.</span>
+<span class="toml-comment"># Untranslated strings stay in English. The Dump button on the General page writes english.json there to translate from.</span>
+Language = "english"</ins>
+
+<ins class="diff-add"><span class="toml-comment"># Every hotkey is { Key = &lt;code&gt;, Modifiers = [...], Context = "..." }. Easier to set in the PPA menu.</span>
+<span class="toml-comment">#   Key:       key code (F2=60, F5=63, Backspace=14). -1 = off.</span>
+<span class="toml-comment">#              Codes: https://www.nexusmods.com/skyrimspecialedition/articles/7704</span>
+<span class="toml-comment">#   Modifiers: keys held with it, any of "Shift", "Ctrl", "Alt". Exactly these must be held: Ctrl + F5 and F5 are different hotkeys.</span>
+<span class="toml-comment">#   Context:   "Gameplay" (no menu open), "Menu" (only while a menu like the console is open), or "Always".</span></ins>
+<span id="v41-hotkeys">[Hotkeys]</span>
+
+<del class="diff-remove"><span class="toml-comment"># Only allow hotkeys while the console is open (Only for Reload, and Pause)</span>
+<span class="removed-setting"># ConsoleOnly = false</span></del>
+
+<del class="diff-remove"><span class="toml-comment"># Key codes (default: F2=60, F5=63, 0=11)</span>
+<span class="toml-comment"># Find codes at: https://www.nexusmods.com/skyrimspecialedition/articles/7704</span>
+<span class="removed-setting"># Pause       = 60    # Pauses the mod</span>
+<span class="removed-setting"># Reload      = 63    # Reload configuration</span>
+<span class="removed-setting"># SelectActor = 14    # Select actor to edit their penis target + Much more</span></del>
+
+<del class="diff-remove"><span class="toml-comment"># Should we REQUIRE holding shift to use these hotkeys? So like Shift+F2 = pauses the mod. (Recommended)</span>
+<span class="removed-setting"># HotkeyWhileHoldingShiftOnly = false</span></del>
+
+<ins class="diff-add"><span class="toml-comment"># Pauses the mod</span>
+Pause = { Key = 60, Modifiers = [], Context = "Always" }</ins>
+
+<ins class="diff-add"><span class="toml-comment"># Reloads every config file from disk</span>
+Reload = { Key = 63, Modifiers = [], Context = "Menu" }</ins>
+
+<ins class="diff-add"><span class="toml-comment"># Select actor to edit their penis target + Much more</span>
+SelectActor = { Key = 14, Modifiers = [], Context = "Gameplay" }</ins>
+
+<span class="toml-comment"># Speed up the sex animation you're looking at</span>
+<del class="diff-remove"><span class="removed-setting"># SpeedUpAnimKey =  -5</span></del>
+<ins class="diff-add">SpeedUpAnimKey = { Key = -1, Modifiers = [], Context = "Gameplay" }</ins>
+
+<span class="toml-comment"># Slow down the sex animation you're looking at</span>
+<del class="diff-remove"><span class="removed-setting"># SlowDownAnimKey = -5</span></del>
+<ins class="diff-add">SlowDownAnimKey = { Key = -1, Modifiers = [], Context = "Gameplay" }</ins>
+
+<span id="v41-fluids"><ins class="diff-add"><span class="toml-comment"># ───────────────────────────────────────────────────────────────────────────────</span>
+<span class="toml-comment">#                                    FLUIDS</span>
+<span class="toml-comment"># ───────────────────────────────────────────────────────────────────────────────</span>
+<span class="toml-comment"># Cum painted onto the body. When an actor with a penis climaxes in a SexLab or OStim scene, he ejaculates.</span>
+<span class="toml-comment">#</span>
+<span class="toml-comment"># Recommended: turn off other cum effects so they don't stack on top of these. In SexLab's MCM, turn off "Apply Cum</span>
+<span class="toml-comment"># Effects". To also mute SexLab's orgasm squish, hide/rename its Sound\fx\SexLab\fxOrgasm01 folder in your mod manager.</span>
+<span class="toml-comment"># With OStim, turn off cum add-ons such as OCum.</span>
+<span class="toml-comment">#</span>
+<span class="toml-comment"># Sizes are in game units: 1 unit is about 1.4 cm (70 units is about 1 metre).</span>
+[Fluids]
+
+<span class="toml-comment"># Turns the whole cum system on or off. Turning it off also removes cum already on actors.</span>
+Enabled = false
+
+<span class="toml-comment"># Texture size for cum on each mesh (the body, head, hands, feet and hair are separate meshes).</span>
+<span class="toml-comment"># Higher looks sharper but uses more memory.</span>
+<span class="toml-comment"># 2048 uses about 85 MB of RAM and 50 MB of VRAM per mesh that has cum on it.</span>
+<span class="toml-comment"># Performance: the biggest cost. Try 1024 on a slower PC.</span>
+MaxMaskResolution = 2048
+
+<span class="toml-comment"># Color of the cum (red, green, blue, each from 0.0 to 1.0).</span>
+Color = [0.86, 0.85, 0.8]
+
+<span class="toml-comment"># How solid thick cum looks (0.0 = invisible, 1.0 = fully solid). Thin cum is always a bit see-through.</span>
+Opacity = 0.6
+
+<span class="toml-comment"># How thick cum has to be to look solid. Thinner cum looks like a wet layer.</span>
+OpaqueThickness = 0.9
+
+<span class="toml-comment"># How fast cum dries, in seconds of play. After this long, it is about a third as thick.</span>
+<span class="toml-comment"># Time passing in the game also dries it: sleeping or waiting an hour counts as 3 minutes at the default timescale.</span>
+DryingTime = 500.0
+
+<span class="toml-comment"># How fast swimming washes cum off, in seconds. Cum still inside the vagina or anus stays. 0 = swimming doesn't wash it off.</span>
+SwimWashTime = 3.0
+
+<span class="toml-comment"># How fast rain washes cum off someone outdoors, in seconds. Snow doesn't. 0 = rain doesn't wash it off.</span>
+RainWashTime = 15.0
+
+<span class="toml-comment"># Whose cum is kept in your save files, so it is still there when you load them:</span>
+<span class="toml-comment"># "Off", "Player", "Followers" (you and your followers) or "Everyone" (everyone near you with cum on them).</span>
+<span class="toml-comment"># Cum still inside the vagina or anus is kept too and leaks out after loading.</span>
+<span class="toml-comment"># Each person with a lot of cum on them adds about 0.1 to 0.5 MB to the save.</span>
+SaveFluidOn = "Player"
+
+<span class="toml-comment"># How bumpy the cum looks. 1.0 is normal, 0 is flat.</span>
+NormalStrength = 1.0
+
+<span class="toml-comment"># Shine size. Higher gives smaller, sharper shine spots.</span>
+Glossiness = 60.0
+
+<span class="toml-comment"># Shine brightness.</span>
+SpecularStrength = 1.0
+
+<span class="toml-comment"># How much thin, see-through cum still shines (0.0 to 1.0). At 1.0 it shines like thick cum, like a wet surface.</span>
+ThinShine = 0.8
+
+<span class="toml-comment"># Shading on the edges of drops and streams, so they look round even in shadow (0.0 to 1.0).</span>
+VolumeShading = 0.35
+
+<span class="toml-comment"># Dark outline around the cum, so it looks like it sits on the skin instead of painted on (0.0 to 1.0).</span>
+ContactShadow = 0.3
+
+<span class="toml-comment"># Key that makes the camera cum, as if it had a penis: spurts (see EjaculationVolume and EjaculationPulses) shoot</span>
+<span class="toml-comment"># where you look, and follow the camera as you turn. Aim a little above where you want it to land. For testing.</span>
+<span class="toml-comment"># It ejaculates at the actor under your crosshair, or the one nearest the camera. -1 = off.</span>
+DebugShotKey = { Key = -1, Modifiers = [], Context = "Gameplay" }
+
+<span class="toml-comment"># Total cum for one whole orgasm, shared by all the spurts (see EjaculationPulses). 1.0 is about 3 ml.</span>
+<span class="toml-comment"># Each orgasm picks a random amount between these two.</span>
+EjaculationVolume = [2.0, 2.5]
+
+<span class="toml-comment"># How hard the first spurt shoots. Each spurt after it is weaker. 220 shoots roughly 1 to 2 metres.</span>
+EjaculationSpeed = 220.0
+
+<span class="toml-comment"># Number of spurts in one orgasm (1 to 12): each orgasm picks a random number between these two. EjaculationVolume is</span>
+<span class="toml-comment"># split between them, so more spurts means smaller spurts, not more cum. The first spurt is the biggest.</span>
+EjaculationPulses = [3, 4]
+
+<span class="toml-comment"># Size of the splat where each spurt lands. 1.0 is normal. Each splat picks a random size between these two.</span>
+<span class="toml-comment"># Bigger spurts make bigger splats anyway.</span>
+SplatSize = [1.0, 1.0]
+
+<span class="toml-comment"># How thick the stream looks in the air. Only changes the look, not how much cum lands.</span>
+<span class="toml-comment"># 1.0 is realistic (about 2 mm), which is hard to see from a distance. 2.0 looks twice as thick.</span>
+StreamWidth = 2.0
+
+<span class="toml-comment"># Key that makes the male actor under your crosshair cum. For testing. He must be in a scene. -1 = off.</span>
+DebugEjaculateKey = { Key = -1, Modifiers = [], Context = "Gameplay" }
+
+<span class="toml-comment"># ── Drips ──</span>
+<span class="toml-comment"># On steep skin, thick ropes and the blob where a spurt lands sag and run down in drips: each drip hangs for a moment,</span>
+<span class="toml-comment"># then runs, leaving a trail nearly as wide as itself, and stops as a rounded bulb when its cum runs out.</span>
+
+<span class="toml-comment"># Most drips running at once on one mesh.</span>
+<span class="toml-comment"># Performance: every drip costs a little each frame.</span>
+MaxDrips = 10
+
+<span class="toml-comment"># How fast drips run down. Flatter skin slows them.</span>
+DripSpeed = 2.5
+
+<span class="toml-comment"># How wide drips are. 1.0 is normal.</span>
+DripSize = 1.0
+
+<span class="toml-comment"># How thick drips are (0.05 to 1.0). Lower is flatter and runnier, and more see-through.</span>
+DripHeight = 0.55
+
+<span class="toml-comment"># How much drips wiggle sideways as they run. 0 = straight down.</span>
+DripWander = 0.3
+
+<span class="toml-comment"># How steep the skin must be for a drip to start (0.0 to 1.0). 0 = drips start even on flat skin, 1.0 = only on</span>
+<span class="toml-comment"># vertical skin. Drips off ropes and from cum piling up need skin a bit steeper than this.</span>
+DripMinSlope = 0.3
+
+<span class="toml-comment"># How much cum goes into drips from cumshots. Bigger drips run farther. 1.0 is normal.</span>
+EjaculationDrips = 1.0
+
+<span class="toml-comment"># How lumpy drips are (0.0 to 0.6). 0 = perfectly round heads. Running drips keep changing shape and stretch out</span>
+<span class="toml-comment"># along the way they run; a drip that stops leaves its head as a bulb in a new shape.</span>
+DripLumps = 0.2
+
+<span class="toml-comment"># How much drips stick and surge as they run (0.0 to 1.0): held for a moment, then slipping on. 0 = they run smoothly.</span>
+DripStickiness = 0.0
+
+<span class="toml-comment"># ── Sounds ──</span>
+<span class="toml-comment"># A random sound from the list plays at the start of each spurt. Which list depends on where the penis is.</span>
+<span class="toml-comment"># Paths start in Skyrim's Data folder. A * matches any text, so one line can pick up many files. Empty list = no sound.</span>
+[Fluids.Sounds]
+
+<span class="toml-comment"># Cumming outside, or in a hand.</span>
+Outside = ["Sound\\Fx\\ppa\\ejaculation\\outside\\cum_-*.wav"]
+
+<span class="toml-comment"># Cumming inside the vagina or anus.</span>
+Body = ["Sound\\Fx\\ppa\\ejaculation\\outside\\cum_-*.wav"]
+
+<span class="toml-comment"># Cumming inside the mouth.</span>
+Mouth = ["Sound\\Fx\\ppa\\ejaculation\\mouth\\cum_-*.wav"]
+
+<span class="toml-comment"># Volume of the Outside sounds. 0 = silent.</span>
+OutsideVolume = 0.3
+
+<span class="toml-comment"># Volume of the Body sounds. 0 = silent.</span>
+BodyVolume = 0.2
+
+<span class="toml-comment"># Volume of the Mouth sounds. 0 = silent.</span>
+MouthVolume = 0.45
+
+<span class="toml-comment"># ── Hair ──</span>
+<span class="toml-comment"># Cum sticks to hair like it does to skin, drips down it and moves with it (SMP hair too).</span>
+[Fluids.Hair]
+
+<span class="toml-comment"># Let hair catch cum.</span>
+<span class="toml-comment"># Performance: Semi heavy (MaxMaskResolution still applies here)</span>
+<span class="toml-comment"># May cause a minor stutter on weaker CPUs the first time cum hits each hairstyle.</span>
+Enabled = false
+
+<span class="toml-comment"># Cum that hits hair also goes on through it: the hair gets cum on it, and so does whatever is under the hair (her</span>
+<span class="toml-comment"># face, back or breasts). Off, hair stops the cum.</span>
+PassThrough = true
+
+<span class="toml-comment"># ── On the penis ──</span>
+<span class="toml-comment"># Cum inside the vagina or anus smears onto the penis as he keeps thrusting: streaks along the part that was inside,</span>
+<span class="toml-comment"># and a ring where her opening reached. A blowjob cleans it off again, a little more with each stroke.</span>
+[Fluids.Penis]
+<span class="toml-comment"># Turns cum on the penis on or off. Off, none of this runs.</span>
+Enabled = false
+
+<span class="toml-comment"># How much cum ends up on the penis (0.0 to 1.0). Lower leaves fewer and thinner streaks, rarer clumps and a broken</span>
+<span class="toml-comment"># ring; 1.0 coats most of it. 0 = none (a blowjob still cleans off cum that landed on it).</span>
+Amount = 0.5
+
+<span class="toml-comment"># How much of the cum inside each thrust picks up (0.0 to 1.0). 0.08 = 8%. Picked-up cum no longer leaks out of her.</span>
+Pickup = 0.08
+
+<span class="toml-comment"># How thick the coat on the shaft gets, at its thickest clumps; most of it is a much thinner, see-through film.</span>
+<span class="toml-comment"># For comparison, a rope of cum on the skin is at most 0.18 thick. Thicker looks whiter and creamier.</span>
+CoatThickness = 0.12
+
+<span class="toml-comment"># How thick the ring gets where her opening reached, at its thickest lumps.</span>
+RingThickness = 0.18
+
+<span class="toml-comment"># How much of the cum on the part in her mouth each stroke cleans off (0.0 to 1.0). 0.4 = 40%.</span>
+CleanPerStroke = 0.4
+
+<span class="toml-comment"># How much of what her mouth cleans off she swallows (0.0 to 1.0). The rest leaks from her lips.</span>
+Swallowed = 0.5
+
+<span class="toml-comment"># The penis comes out wet from her vagina, anus or mouth, even without cum: the skin looks a little darker and glossy</span>
+<span class="toml-comment"># in streaks, then dries in patches.</span>
+Wetness = false
+
+<span class="toml-comment"># How glossy the wetness is. 0 = only darker, no shine.</span>
+WetShine = 0.6
+
+<span class="toml-comment"># How fast the wetness dries, in seconds. After this long, about a third is left.</span>
+WetDryingTime = 45.0
+
+<span class="toml-comment"># ── Leaking after cumming inside ──</span>
+<span class="toml-comment"># Each hole has its own settings below: Vagina, Anus and Mouth.</span>
+[Fluids.Leak.Vagina]
+
+<span class="toml-comment"># How much cum stays inside until he pulls out. Anything more oozes out around him while he's still in.</span>
+<span class="toml-comment"># Same unit as EjaculationVolume: set it to EjaculationVolume's highest value to keep it all in until he pulls out.</span>
+Capacity = 0.3
+
+<span class="toml-comment"># How fast the rest leaks out once he pulls out, in seconds. After this long, about a third is left inside.</span>
+DrainTime = 6.0
+
+<span class="toml-comment"># How wide the leaking stream is. 0.6 is about 9 mm. It gets thinner as the flow slows.</span>
+Width = 0.6
+
+<span class="toml-comment"># How thick the leaking stream is (0.1 to 1.0). Lower is flatter and more see-through.</span>
+Height = 0.6
+
+<span class="toml-comment"># How fast the stream runs down. Flatter skin slows it.</span>
+Speed = 3.0
+
+<span class="toml-comment"># Longest the stream can get. 14 is about 20 cm. Any more cum just pools at the hole.</span>
+MaxLength = 20.0
+
+<span class="toml-comment"># Size of the drop that forms at the hole before the stream starts running. 0 = none.</span>
+BlobSize = 1.0
+
+<span class="toml-comment"># Seconds cum stays runny when it has nowhere to run (for example, facing down in cowgirl). It waits, then runs as</span>
+<span class="toml-comment"># soon as she moves so it can, like when she stands up.</span>
+<span class="toml-comment"># Performance: a waiting stream keeps looking for a way down until this runs out.</span>
+LiquidTime = 60.0
+
+<span class="toml-comment"># Extra gushes after the first leak, each a new stream. 0 = none.</span>
+<span class="toml-comment"># Performance: each gush is one more stream running at the same time.</span>
+FollowUps = 2
+
+<span class="toml-comment"># Seconds between gushes: a random time between these two numbers.</span>
+FollowUpDelay = [1.0, 3.0]
+
+<span class="toml-comment"># How much of the cum still inside each gush pushes out (0.0 to 1.0). 0.3 = 30%.</span>
+FollowUpVolume = 0.3
+
+<span class="toml-comment"># Splatters: while he is still thrusting, cum can squirt out around the hole in little blobs. This uses up the cum</span>
+<span class="toml-comment"># inside, so they stop when it runs low.</span>
+<span class="toml-comment"># Chance of a splatter at each check (0.0 to 1.0).</span>
+<span class="toml-comment"># Performance: each splatter is a small spike in one frame.</span>
+SplatterChance = 0.2
+
+<span class="toml-comment"># Seconds between splatter checks. Lower = more splatters.</span>
+SplatterInterval = 0.5
+
+<span class="toml-comment"># Number of blobs in one splatter: a random number between these two.</span>
+SplatterGlobs = [3, 7]
+
+<span class="toml-comment"># Blob size, smallest to biggest. The biggest land closest to the hole.</span>
+SplatterSize = [0.05, 0.2]
+
+<span class="toml-comment"># How far from the hole the blobs can land.</span>
+SplatterSpread = 2.0
+
+<span class="toml-comment"># Creampie: while he keeps thrusting, cum inside coats the inside of her vagina, streaked and heaviest at the opening,</span>
+<span class="toml-comment"># with a lumpy ring at the opening. It pools at the opening when he pulls out and with each gush. You see it when the</span>
+<span class="toml-comment"># opening gapes.</span>
+<span class="toml-comment"># How much of the inside the coat and ring cover (0.0 to 1.0). Lower leaves fewer streaks and a broken ring.</span>
+CoatAmount = 0.6
+
+<span class="toml-comment"># How thick the coat inside gets, at its thickest clumps; most of it is a much thinner film. 0 = no coat.</span>
+<span class="toml-comment"># The coat is thinner while less cum is inside.</span>
+CoatThickness = 0.1
+
+<span class="toml-comment"># How thick the ring at the opening gets, at its thickest lumps. 0 = no ring.</span>
+RingThickness = 0.15
+
+<span class="toml-comment"># Size of the pool of cum at the opening when he pulls out and with each gush. 0 = none.</span>
+PoolSize = 1.0
+
+[Fluids.Leak.Anus]
+<span class="toml-comment"># How much cum stays inside while the penis is still in. Same unit as EjaculationVolume (not a percentage).</span>
+<span class="toml-comment"># Example: with EjaculationVolume 2.0 and Capacity 0.2, about 10% stays in and the rest slowly leaks out around him.</span>
+Capacity = 0.2
+
+<span class="toml-comment"># How fast the rest leaks out once he pulls out, in seconds. After this long, about a third is left inside.</span>
+DrainTime = 6.0
+
+<span class="toml-comment"># How wide the leaking stream is. 0.6 is about 9 mm. It gets thinner as the flow slows.</span>
+Width = 0.5
+
+<span class="toml-comment"># How thick the leaking stream is (0.1 to 1.0). Lower is flatter and more see-through.</span>
+Height = 0.6
+
+<span class="toml-comment"># How fast the stream runs down. Flatter skin slows it.</span>
+Speed = 3.0
+
+<span class="toml-comment"># Longest the stream can get. 14 is about 20 cm. Any more cum just pools at the hole.</span>
+MaxLength = 16.0
+
+<span class="toml-comment"># Size of the drop that forms at the hole before the stream starts running. 0 = none.</span>
+BlobSize = 0.8
+
+<span class="toml-comment"># Seconds cum stays runny when it has nowhere to run (for example, facing down in cowgirl). It waits, then runs as</span>
+<span class="toml-comment"># soon as she moves so it can, like when she stands up.</span>
+<span class="toml-comment"># Performance: a waiting stream keeps looking for a way down until this runs out.</span>
+LiquidTime = 60.0
+
+<span class="toml-comment"># Extra gushes after the first leak, each a new stream. 0 = none.</span>
+<span class="toml-comment"># Performance: each gush is one more stream running at the same time.</span>
+FollowUps = 2
+
+<span class="toml-comment"># Seconds between gushes: a random time between these two numbers.</span>
+FollowUpDelay = [1.0, 3.0]
+
+<span class="toml-comment"># How much of the cum still inside each gush pushes out (0.0 to 1.0). 0.3 = 30%.</span>
+FollowUpVolume = 0.3
+
+<span class="toml-comment"># Splatters: while he is still thrusting, cum can squirt out around the hole in little blobs. This uses up the cum</span>
+<span class="toml-comment"># inside, so they stop when it runs low.</span>
+<span class="toml-comment"># Chance of a splatter at each check (0.0 to 1.0).</span>
+<span class="toml-comment"># Performance: each splatter is a small spike in one frame.</span>
+SplatterChance = 0.2
+
+<span class="toml-comment"># Seconds between splatter checks. Lower = more splatters.</span>
+SplatterInterval = 0.5
+
+<span class="toml-comment"># Number of blobs in one splatter: a random number between these two.</span>
+SplatterGlobs = [3, 7]
+
+<span class="toml-comment"># Blob size, smallest to biggest. The biggest land closest to the hole.</span>
+SplatterSize = [0.05, 0.2]
+
+<span class="toml-comment"># How far from the hole the blobs can land.</span>
+SplatterSpread = 1.6
+
+<span class="toml-comment"># Creampie: while he keeps thrusting, cum inside coats the inside of her anus, streaked and heaviest at the opening,</span>
+<span class="toml-comment"># with a lumpy ring at the opening. It pools at the opening when he pulls out and with each gush. You see it when the</span>
+<span class="toml-comment"># opening gapes.</span>
+<span class="toml-comment"># How much of the inside the coat and ring cover (0.0 to 1.0). Lower leaves fewer streaks and a broken ring.</span>
+CoatAmount = 0.6
+
+<span class="toml-comment"># How thick the coat inside gets, at its thickest clumps; most of it is a much thinner film. 0 = no coat.</span>
+<span class="toml-comment"># The coat is thinner while less cum is inside.</span>
+CoatThickness = 0.1
+
+<span class="toml-comment"># How thick the ring at the opening gets, at its thickest lumps. 0 = no ring.</span>
+RingThickness = 0.15
+
+<span class="toml-comment"># Size of the pool of cum at the opening when he pulls out and with each gush. 0 = none.</span>
+PoolSize = 0.8
+
+[Fluids.Leak.Mouth]
+<span class="toml-comment"># Leaks from the lips (during a blowjob too) and runs down the chin and neck.</span>
+<span class="toml-comment"># How much cum stays inside while the penis is still in. Same unit as EjaculationVolume (not a percentage).</span>
+<span class="toml-comment"># Example: with EjaculationVolume 2.0 and Capacity 0.15, about 7% stays in and the rest slowly leaks out around him.</span>
+Capacity = 0.15
+
+<span class="toml-comment"># How fast the rest leaks out once he pulls out, in seconds. After this long, about a third is left inside.</span>
+DrainTime = 1.0
+
+<span class="toml-comment"># How wide the leaking stream is. 0.6 is about 9 mm. It gets thinner as the flow slows.</span>
+Width = 0.35
+
+<span class="toml-comment"># How thick the leaking stream is (0.1 to 1.0). Lower is flatter and more see-through.</span>
+Height = 0.6
+
+<span class="toml-comment"># How fast the stream runs down. Flatter skin slows it.</span>
+Speed = 3.0
+
+<span class="toml-comment"># Longest the stream can get. 14 is about 20 cm. Any more cum just pools at the hole.</span>
+MaxLength = 10.0
+
+<span class="toml-comment"># Size of the drop that forms at the lips before the stream starts running. 0 = none.</span>
+BlobSize = 0.5
+
+<span class="toml-comment"># Seconds cum stays runny when it has nowhere to run. It waits, then runs as soon as the pose lets it.</span>
+<span class="toml-comment"># Performance: a waiting stream keeps looking for a way down until this runs out.</span>
+LiquidTime = 60.0
+
+<span class="toml-comment"># Extra gushes after the first leak, each a new stream. 0 = none.</span>
+<span class="toml-comment"># Performance: each gush is one more stream running at the same time.</span>
+FollowUps = 3
+
+<span class="toml-comment"># Seconds between gushes: a random time between these two numbers.</span>
+FollowUpDelay = [1.0, 5.0]
+
+<span class="toml-comment"># How much of the cum still inside each gush pushes out (0.0 to 1.0). 0.3 = 30%.</span>
+FollowUpVolume = 0.3
+
+<span class="toml-comment"># Splatters: while he is still thrusting, cum can squirt out around the lips in little blobs. This uses up the cum</span>
+<span class="toml-comment"># inside, so they stop when it runs low.</span>
+<span class="toml-comment"># Chance of a splatter at each check (0.0 to 1.0).</span>
+<span class="toml-comment"># Performance: each splatter is a small spike in one frame.</span>
+SplatterChance = 0.15
+
+<span class="toml-comment"># Seconds between splatter checks. Lower = more splatters.</span>
+SplatterInterval = 0.5
+
+<span class="toml-comment"># Number of blobs in one splatter: a random number between these two.</span>
+SplatterGlobs = [3, 7]
+
+<span class="toml-comment"># Blob size, smallest to biggest. The biggest land closest to the lips.</span>
+SplatterSize = [0.04, 0.15]
+
+<span class="toml-comment"># How far from the lips the blobs can land.</span>
+SplatterSpread = 2.5
+
+<span class="toml-comment"># Creampie: while he keeps thrusting, cum in her mouth leaves a lumpy ring on her lips, and it pools on her lips when he</span>
+<span class="toml-comment"># pulls out and with each gush.</span>
+<span class="toml-comment"># How much of the lips the ring covers (0.0 to 1.0). Lower leaves a more broken ring.</span>
+CoatAmount = 0.6
+
+<span class="toml-comment"># Unused for the mouth: the lips have no canal to coat.</span>
+CoatThickness = 0.1
+
+<span class="toml-comment"># How thick the ring on the lips gets, at its thickest lumps. 0 = no ring.</span>
+RingThickness = 0.08
+
+<span class="toml-comment"># Size of the pool of cum on the lips when he pulls out and with each gush. 0 = none.</span>
+PoolSize = 0.6</ins></span>
+
+<span id="v41-holes">[Vagina]</span>
+<ins class="diff-add"><span class="toml-comment"># Bone only the skin inside the vagina is weighted to (the canal). Fluid cummed inside leaks out where that skin meets</span>
+<span class="toml-comment"># the rest of the body, so this must name a bone the outside skin isn't weighted to.</span>
+DeepNode = "VaginaDeep1"</ins>
+
+[Anus]
+<ins class="diff-add"><span class="toml-comment"># Bone only the skin inside the anus is weighted to (the canal). Fluid cummed inside leaks out where that skin meets</span>
+<span class="toml-comment"># the rest of the body, so this must name a bone the outside skin isn't weighted to.</span>
+DeepNode = "NPC Anus Deep2"</ins>
+
+<span id="v41-hands">[Hands.Left]</span>
+<del class="diff-remove"><span class="removed-setting"># GripOffsetAdjustment = [0.0, 0.0, 0.0]  </span><span class="toml-comment"># Nudge the grip position on top of the automatic placement (hand X, Y, Z)</span></del>
+<ins class="diff-add">GripOffsetAdjustment = [0.0, 0.0, -0.5] <span class="toml-comment"># Nudge the grip position on top of the automatic placement (hand X, Y, Z)</span></ins>
+
+[Hands.Right]
+<del class="diff-remove"><span class="removed-setting"># GripOffsetAdjustment = [0.0, 0.0, 0.0]</span></del>
+<ins class="diff-add">GripOffsetAdjustment = [0.0, 0.0, -0.5]</ins></code></pre>
+    </section>
+
+    <header class="hero previous" id="v0-0-38-to-0-0-39">
+        <span class="version-badge">0.0.39</span>
         <h1>0.0.38 → 0.0.39</h1>
         <p><ins class="diff-add">Green: add/replace.</ins> <del class="diff-remove">Red: remove.</del> Merge into existing tables. Removed entries are commented out.</p>
     </header>
